@@ -14,23 +14,19 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
 
 import java.util.List;
 
-public class FireSwordItem extends UniqueSwordItem {
-    public FireSwordItem(ToolMaterial toolMaterial, Settings settings) {
+public class BrimstoneClaymoreItem extends UniqueSwordItem implements TwoHandedWeapon {
+    public BrimstoneClaymoreItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
+	private static int stepMod = 0;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {

@@ -3,6 +3,7 @@ package net.sweenus.simplyswords.config;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +18,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Config {
+
+    public static final GemPowersConfig gemPowers = ConfigApiJava.registerAndLoadConfig(GemPowersConfig::new);
 
     public static File createFile(String path, String contents, boolean overwrite) {
         File file = new File(path);

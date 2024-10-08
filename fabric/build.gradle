@@ -42,6 +42,10 @@ repositories {
     maven { url = "https://jitpack.io" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
+    maven {
+        name = "FzzyMaven"
+        url = "https://maven.fzzyhmstrs.me/"
+    }
 }
 
 dependencies {
@@ -57,26 +61,26 @@ modImplementation "curse.maven:mythicmetals-410127:5660718"
 
  */
 
+    modImplementation "maven.modrinth:spell-power:${rootProject.spellpower_version}-fabric"
+    //modImplementation "curse.maven:lambdynamiclights-393442:${rootProject.lambdynlights_version}" 1.21
+    //include modImplementation("dev.lambdaurora:spruceui:${rootProject.spruceui_version}") 1.21
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    //modImplementation "curse.maven:eldritch-end-877553:${rootProject.eldritch_end_version}" 1.21
 
+    // Amethyst Imbuement
+    //modImplementation "curse.maven:amethyst-imbuement-608261:4514358"
 
-modImplementation "maven.modrinth:spell-power:${rootProject.spellpower_version}-fabric"
-//modImplementation "curse.maven:lambdynamiclights-393442:${rootProject.lambdynlights_version}" 1.21
-//include modImplementation("dev.lambdaurora:spruceui:${rootProject.spruceui_version}") 1.21
-modApi("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") {
-    exclude(group: "net.fabricmc.fabric-api")
-}
-//modImplementation "curse.maven:eldritch-end-877553:${rootProject.eldritch_end_version}" 1.21
+    // Patchouli
+    modImplementation "vazkii.patchouli:Patchouli:1.21-87-FABRIC"
 
-// Amethyst Imbuement
-//modImplementation "curse.maven:amethyst-imbuement-608261:4514358"
+    //modImplementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${rootProject.mixin_extras_version}")) 1.21
 
-// Patchouli
-modImplementation "vazkii.patchouli:Patchouli:1.21-87-FABRIC"
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-//modImplementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${rootProject.mixin_extras_version}")) 1.21
-
-common(project(path: ":common", configuration: "namedElements")) { transitive false }
-shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    modImplementation "me.fzzyhmstrs:fzzy_config:${project.fzz_config_version}"
 }
 
 processResources {

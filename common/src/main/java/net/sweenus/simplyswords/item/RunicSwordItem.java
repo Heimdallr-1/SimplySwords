@@ -106,7 +106,7 @@ public class RunicSwordItem extends SwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         String power = stack.getOrCreateNbt().getString("runic_power");
         if (power.equals("momentum")) maxUseTime = 15;
         else if (power.equals("ward") || power.equals("immolation")) maxUseTime = 1;

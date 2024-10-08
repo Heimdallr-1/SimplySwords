@@ -61,7 +61,7 @@ public class EmberIreSwordItem extends UniqueSwordItem {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        if (!world.isClient && remainingUseTicks %10 == 0 && remainingUseTicks < getMaxUseTime(stack) - 5) {
+        if (!world.isClient && remainingUseTicks %10 == 0 && remainingUseTicks < getMaxUseTime(stack, user) - 5) {
             world.playSoundFromEntity(null, user, SoundRegistry.ELEMENTAL_BOW_RECHARGE.get(),
                     user.getSoundCategory(), 0.2f, 1.1f - (remainingUseTicks * 0.001f));
 
@@ -94,7 +94,7 @@ public class EmberIreSwordItem extends UniqueSwordItem {
 
                 final float minAdditionalDamage = 0.0f;
                 final float maxAdditionalDamage = (float) (HelperMethods.getEntityAttackDamage(user) * 3);
-                float chargeRatio = 1.0f - ((float) remainingUseTicks / getMaxUseTime(stack));
+                float chargeRatio = 1.0f - ((float) remainingUseTicks / getMaxUseTime(stack, user));
                 float additionalDamage = minAdditionalDamage + (maxAdditionalDamage - minAdditionalDamage) * chargeRatio;
                 float finalDamage = (float) damageAmount + additionalDamage;
                 targetEntity.timeUntilRegen = 0;
@@ -127,7 +127,7 @@ public class EmberIreSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return 80;
     }
 

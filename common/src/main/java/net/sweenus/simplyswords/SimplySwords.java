@@ -31,8 +31,10 @@ import net.sweenus.simplyswords.config.*;
 import net.sweenus.simplyswords.entity.BattleStandardDarkEntity;
 import net.sweenus.simplyswords.entity.BattleStandardEntity;
 import net.sweenus.simplyswords.entity.SimplySwordsBeeEntity;
+import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.EntityRegistry;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.FileCopier;
@@ -107,12 +109,13 @@ public class SimplySwords {
         SimplySwordsConfig.generateConfigs(json == null || !json.has("regen_simplyswords_config_file") || json.get("regen_simplyswords_config_file").getAsBoolean());
         SimplySwordsConfig.loadConfig();
 
-
         SimplySwords.TABS.register();
         ItemsRegistry.ITEM.register();
         SoundRegistry.SOUND.register();
         EffectRegistry.EFFECT.register();
         EntityRegistry.ENTITIES.register();
+        ComponentTypeRegistry.COMPONENT_TYPES.register();
+        GemPowerRegistry.register();
         EntityAttributeRegistry.register(EntityRegistry.BATTLESTANDARD, BattleStandardEntity::createBattleStandardAttributes);
         EntityAttributeRegistry.register(EntityRegistry.BATTLESTANDARDDARK, BattleStandardDarkEntity::createBattleStandardDarkAttributes);
         EntityAttributeRegistry.register(EntityRegistry.SIMPLYBEEENTITY, SimplySwordsBeeEntity::createSimplyBeeAttributes);

@@ -34,12 +34,7 @@ public class FrostfallSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
+	private static int stepMod = 0;
     public static boolean scalesWithSpellPower;
 
     private final int abilityCooldown = (int) Config.getFloat("frostFuryCooldown", "UniqueEffects", ConfigDefaultValues.frostFuryCooldown);

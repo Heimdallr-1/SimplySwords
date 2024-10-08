@@ -27,7 +27,10 @@ public abstract class UniqueSwordItem extends SwordItem {
         super(toolMaterial, settings.fireproof());
     }
 
-    public abstract int getMaxUseTime(ItemStack stack);
+    @Override
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        return 0;
+    }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {

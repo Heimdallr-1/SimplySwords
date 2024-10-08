@@ -33,12 +33,7 @@ public class MoltenEdgeSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
+	private static int stepMod = 0;
     private static SimpleParticleType particleWalk = ParticleTypes.FALLING_LAVA;
     private static SimpleParticleType particleSprint = ParticleTypes.FALLING_LAVA;
     private static SimpleParticleType particlePassive = ParticleTypes.SMOKE;

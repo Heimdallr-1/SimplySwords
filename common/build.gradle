@@ -28,6 +28,10 @@ repositories {
     maven { url = "https://jitpack.io" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
+    maven {
+        name = "FzzyMaven"
+        url = "https://maven.fzzyhmstrs.me/"
+    }
 }
 
 dependencies {
@@ -40,6 +44,8 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
     }
     modImplementation "curse.maven:necronomicon-586157:${rootProject.necronomicon_version}"
+
+    modImplementation "me.fzzyhmstrs:fzzy_config:${project.fzz_config_version}"
 }
 
 publishing {

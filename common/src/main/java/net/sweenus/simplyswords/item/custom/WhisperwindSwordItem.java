@@ -16,6 +16,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -23,18 +24,13 @@ import net.sweenus.simplyswords.util.HelperMethods;
 
 import java.util.List;
 
-public class WhisperwindSwordItem extends UniqueSwordItem {
+public class WhisperwindSwordItem extends UniqueSwordItem implements TwoHandedWeapon {
     private static int stepMod = 0;
     int skillCooldown = (int) Config.getFloat("fatalFlickerCooldown", "UniqueEffects", ConfigDefaultValues.fatalFlickerCooldown);
     int abilityChance = (int) Config.getFloat("fatalFlickerChance", "UniqueEffects", ConfigDefaultValues.fatalFlickerChance);
 
     public WhisperwindSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
-    }
-
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
     }
 
     @Override

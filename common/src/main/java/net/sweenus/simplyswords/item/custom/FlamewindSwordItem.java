@@ -32,12 +32,7 @@ public class FlamewindSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
+	private static int stepMod = 0;
     public static boolean scalesWithSpellPower;
 
     @Override

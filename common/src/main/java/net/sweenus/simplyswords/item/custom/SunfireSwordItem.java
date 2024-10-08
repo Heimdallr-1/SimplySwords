@@ -39,11 +39,6 @@ public class SunfireSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         HelperMethods.playHitSounds(attacker, target);
         if (!attacker.getWorld().isClient() && attacker.getRandom().nextInt(100) <= abilityChance) {

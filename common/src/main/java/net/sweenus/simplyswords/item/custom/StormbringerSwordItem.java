@@ -72,7 +72,7 @@ public class StormbringerSwordItem extends UniqueSwordItem {
 
                 //Parry attack
                 if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, user)) {
-                    if (le.handSwinging && remainingUseTicks > getMaxUseTime(stack) - perfectParryWindow) {
+                    if (le.handSwinging && remainingUseTicks > getMaxUseTime(stack, user) - perfectParryWindow) {
                         parrySuccess = true;
                         if (parrySuccession < 20) parrySuccession += 1;
                         user.stopUsingItem();
@@ -123,7 +123,7 @@ public class StormbringerSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return ability_timer_max;
     }
 

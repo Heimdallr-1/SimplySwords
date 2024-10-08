@@ -36,12 +36,7 @@ public class DreadtideSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
+	private static int stepMod = 0;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {

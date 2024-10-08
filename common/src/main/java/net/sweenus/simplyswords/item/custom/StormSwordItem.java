@@ -68,7 +68,7 @@ public class StormSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return (int) Config.getFloat("stormDuration", "UniqueEffects", ConfigDefaultValues.stormDuration);
     }
 

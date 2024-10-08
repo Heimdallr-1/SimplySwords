@@ -80,7 +80,7 @@ public class StormsEdgeSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return ability_timer_max;
     }
 

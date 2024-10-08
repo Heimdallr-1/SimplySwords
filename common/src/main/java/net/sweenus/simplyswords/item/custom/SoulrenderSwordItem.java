@@ -19,20 +19,16 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
 
 import java.util.List;
 
-public class RendSwordItem extends UniqueSwordItem {
-    public RendSwordItem(ToolMaterial toolMaterial, Settings settings) {
+public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWeapon {
+    public SoulrenderSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
-    }
-
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
     }
 
     float abilityDamage = Config.getFloat("soulrendDamageMulti", "UniqueEffects", ConfigDefaultValues.soulrendDamageMulti);

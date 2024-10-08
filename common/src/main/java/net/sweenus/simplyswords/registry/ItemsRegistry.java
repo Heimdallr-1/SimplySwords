@@ -690,15 +690,15 @@ public class ItemsRegistry {
                                     (int) (runic_modifier + halberd_positive_modifier - halberd_negative_modifier), halberd_attackspeed))));
 
     // SPECIAL
-    public static final RegistrySupplier<FireSwordItem> BRIMSTONE_CLAYMORE = ITEM.register("brimstone_claymore", () ->
-            new FireSwordItem(
+    public static final RegistrySupplier<BrimstoneClaymoreItem> BRIMSTONE_CLAYMORE = ITEM.register("brimstone_claymore", () ->
+            new BrimstoneClaymoreItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
                                     (int) brimstone_damage_modifier, brimstone_attackspeed))));
 
-    public static final RegistrySupplier<WatcherSwordItem> WATCHER_CLAYMORE = ITEM.register("watcher_claymore", () ->
-            new WatcherSwordItem(
+    public static final RegistrySupplier<WatcherClaymoreItem> WATCHER_CLAYMORE = ITEM.register("watcher_claymore", () ->
+            new WatcherClaymoreItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
@@ -732,8 +732,8 @@ public class ItemsRegistry {
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
                                     (int) bramblethorn_damage_modifier, bramblethorn_attackspeed))));
 
-    public static final RegistrySupplier<WatcherSwordItem> WATCHING_WARGLAIVE = ITEM.register("watching_warglaive", () ->
-            new WatcherSwordItem(
+    public static final RegistrySupplier<WatchingWarglaiveItem> WATCHING_WARGLAIVE = ITEM.register("watching_warglaive", () ->
+            new WatchingWarglaiveItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
@@ -753,22 +753,22 @@ public class ItemsRegistry {
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
                                     (int) emberblade_damage_modifier, emberblade_attackspeed))));
 
-    public static final RegistrySupplier<VolcanicFurySwordItem> HEARTHFLAME = ITEM.register("hearthflame", () ->
-            new VolcanicFurySwordItem(
+    public static final RegistrySupplier<HearthflameSwordItem> HEARTHFLAME = ITEM.register("hearthflame", () ->
+            new HearthflameSwordItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
                                     (int) hearthflame_damage_modifier, hearthflame_attackspeed))));
 
-    public static final RegistrySupplier<SoulSwordItem> SOULKEEPER = ITEM.register("soulkeeper", () ->
-            new SoulSwordItem(
+    public static final RegistrySupplier<SoulkeeperSwordItem> SOULKEEPER = ITEM.register("soulkeeper", () ->
+            new SoulkeeperSwordItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
                                     (int) soulkeeper_damage_modifier, soulkeeper_attackspeed))));
 
-    public static final RegistrySupplier<HasteSwordItem> TWISTED_BLADE = ITEM.register("twisted_blade", () ->
-            new HasteSwordItem(
+    public static final RegistrySupplier<TwistedBladeItem> TWISTED_BLADE = ITEM.register("twisted_blade", () ->
+            new TwistedBladeItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
@@ -781,8 +781,8 @@ public class ItemsRegistry {
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,
                                     (int) soulstealer_damage_modifier, soulstealer_attackspeed))));
 
-    public static final RegistrySupplier<RendSwordItem> SOULRENDER = ITEM.register("soulrender", () ->
-            new RendSwordItem(
+    public static final RegistrySupplier<SoulrenderSwordItem> SOULRENDER = ITEM.register("soulrender", () ->
+            new SoulrenderSwordItem(
                     ModToolMaterial.UNIQUE,
                     new Item.Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof()
                             .attributeModifiers(SwordItem.createAttributeModifiers(ModToolMaterial.UNIQUE,

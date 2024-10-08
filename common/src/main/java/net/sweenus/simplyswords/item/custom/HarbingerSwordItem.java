@@ -38,12 +38,7 @@ public class HarbingerSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    @Override
+	@Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         HelperMethods.playHitSounds(attacker, target);
         if (!attacker.getWorld().isClient() && attacker.getRandom().nextInt(100) <= abilityChance && attacker instanceof PlayerEntity) {

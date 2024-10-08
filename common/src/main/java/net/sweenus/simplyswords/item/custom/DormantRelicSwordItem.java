@@ -27,12 +27,7 @@ public class DormantRelicSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    @Override
+	@Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         HelperMethods.playHitSounds(attacker, target);
         return super.postHit(stack, target, attacker);

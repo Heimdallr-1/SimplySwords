@@ -51,13 +51,13 @@ public class MagibladeSwordItem extends UniqueSwordItem {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (!world.isClient) {
-            if ((remainingUseTicks %5 == 0 && remainingUseTicks < getMaxUseTime(stack) - 5)) {
+            if ((remainingUseTicks %5 == 0 && remainingUseTicks < getMaxUseTime(stack, user) - 5)) {
                 if (remainingUseTicks < 10) {
                     onStoppedUsing(stack, world, user, remainingUseTicks);
                 }
 
             }
-            if (remainingUseTicks == getMaxUseTime(stack)-1) {
+            if (remainingUseTicks == getMaxUseTime(stack, user) - 1) {
                 world.playSoundFromEntity(null, user,  SoundEvents.ENTITY_WARDEN_SONIC_CHARGE,
                         user.getSoundCategory(), 0.6f, 1.4f);
             }
@@ -65,7 +65,7 @@ public class MagibladeSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return 40;
     }
 

@@ -25,11 +25,6 @@ public class WaxweaverSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
     private static int stepMod = 0;
 
     @Override

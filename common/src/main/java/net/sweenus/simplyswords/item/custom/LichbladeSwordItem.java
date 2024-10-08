@@ -20,6 +20,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -28,7 +29,7 @@ import net.sweenus.simplyswords.util.HelperMethods;
 
 import java.util.List;
 
-public class LichbladeSwordItem extends UniqueSwordItem {
+public class LichbladeSwordItem extends UniqueSwordItem implements TwoHandedWeapon {
     public LichbladeSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
@@ -118,7 +119,7 @@ public class LichbladeSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
         return maxDuration * 2;
     }
 

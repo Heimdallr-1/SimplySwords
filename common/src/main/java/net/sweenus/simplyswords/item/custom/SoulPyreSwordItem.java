@@ -18,6 +18,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -25,14 +26,9 @@ import net.sweenus.simplyswords.util.HelperMethods;
 
 import java.util.List;
 
-public class SoulPyreSwordItem extends UniqueSwordItem {
+public class SoulPyreSwordItem extends UniqueSwordItem implements TwoHandedWeapon {
     public SoulPyreSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
-    }
-
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
     }
 
     private int relocationTimer;

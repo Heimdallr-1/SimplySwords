@@ -34,12 +34,7 @@ public class LivyatanSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
+	private static int stepMod = 0;
     public static boolean scalesWithSpellPower;
     int radius = (int) Config.getFloat("frostShatterRadius", "UniqueEffects", ConfigDefaultValues.frostShatterRadius);
     float abilityDamage = Config.getFloat("frostShatterDamage", "UniqueEffects", ConfigDefaultValues.frostShatterDamage);
