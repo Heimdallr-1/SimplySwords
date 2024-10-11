@@ -21,10 +21,22 @@ import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
-public class RunefusedGemItem extends Item {
+public class RunefusedGemItem extends Item implements GemPowerFiller {
 
     public RunefusedGemItem() {
         super(new Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof().maxCount(1));
+    }
+
+    @Override
+    public ValidationResult<GemPowerComponent> fill(ItemStack stack, GemPowerComponent component) {
+        GemPowerComponent gemComponent = SimplSwordsApi.getComponent(stack);
+        if (!gemComponent.hasRunicPower() || !component.runicPower().value().isEmpty() || !component.hasRunicPower()) {
+            return ValidationResult.error(component, "Can't socket to the provided component");
+        }
+        return ValidationResult.success(component.fill(
+            (hasRunic, oldRunic) -> gemComponent.runicPower(), 
+            (hasNether, oldNether) -> oldNether
+        ));
     }
 
     @Override
