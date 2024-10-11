@@ -13,6 +13,7 @@ import net.minecraft.util.Rarity;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.api.SimplySwordsApi;
 import net.sweenus.simplyswords.power.GemPowerComponent;
+import net.sweenus.simplyswords.power.GemPowerFiller;
 import net.sweenus.simplyswords.power.PowerType;
 import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
@@ -21,10 +22,19 @@ import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
-public class NetherfusedGemItem extends Item {
+public class NetherfusedGemItem extends Item implements GemPowerFiller {
 
     public NetherfusedGemItem() {
         super(new Settings().arch$tab(SimplySwords.SIMPLYSWORDS).rarity(Rarity.EPIC).fireproof().maxCount(1));
+    }
+
+    @Override
+    public GemPowerComponent fill(ItemStack stack, GemPowerComponent component) {
+        GemPowerComponent gemComponent = SimplSwordsApi.getComponent(stack);
+        return component.fill(
+            (hasRunic, oldRunic) -> oldRunic, 
+            (hasNether, oldNether) -> (hasNether && gemComponent.hasNetherPower() && oldNether.value().isEmpty()) ? gemComponent.netherPower() : oldNether
+        );
     }
 
     @Override
