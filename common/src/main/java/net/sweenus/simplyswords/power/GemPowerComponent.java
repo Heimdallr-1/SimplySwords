@@ -17,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
+import net.sweenus.simplyswords.util.Styles;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,8 +52,28 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 		return new GemPowerComponent(true, false, power, GemPowerRegistry.EMPTY);
 	}
 
+	public static GemPowerComponent nether(@NotNull RegistryEntry<GemPower> power) {
+		return new GemPowerComponent(false, true, GemPowerRegistry.EMPTY, power);
+	}
+
 	public static GemPowerComponent create(@Nullable RegistryEntry<GemPower> runic, @Nullable RegistryEntry<GemPower> nether) {
 		return new GemPowerComponent(runic != null, nether != null, runic != null ? runic : GemPowerRegistry.EMPTY, nether != null ? nether : GemPowerRegistry.EMPTY);
+	}
+
+	public static GemPowerComponent createEmpty(boolean hasRunic, boolean hasNether) {
+		return new GemPowerComponent(hasRunic, hasNether, GemPowerRegistry.EMPTY, GemPowerRegistry.EMPTY);
+	}
+
+	public GemPowerComponent fill(BiFunction<Boolean, RegistryEntry<GemPower>, RegistryEntry<GemPower>> runicFiller, Function<Boolean, RegistryEntry<GemPower>, RegistryEntry<GemPower>> netherFiller) {
+		return new GemPowerComponent(this.hasRunicPower, this.hasNetherPower, runicFiller.apply(this.hasRunicPower, this.runicPower), netherFiller.apply(this.hasNetherPower, this.netherPower));
+	}
+
+	public boolean canBeFilled() {
+		return hasRunicPower || hasNetherPower;
+	}
+
+	public boolean isEmpty() {
+		return runicPower.value().isEmpty() && netherPower.value().isEmpty();
 	}
 
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -86,10 +107,8 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 	}
 
 	public void inventoryTick(ItemStack stack, World world, LivingEntity user, int slot, boolean selected) {
-		if (!world.isClient) {
-			runicPower.value().inventoryTick(stack, world, user, slot, selected);
-			netherPower.value().inventoryTick(stack, world, user, slot, selected);
-		}
+		runicPower.value().inventoryTick(stack, world, user, slot, selected);
+		netherPower.value().inventoryTick(stack, world, user, slot, selected);
 	}
 
 	public void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
@@ -97,14 +116,25 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 	}
 
 	public void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type, boolean isRunic) {
-		if (hasRunicPower) {
+		if (runicPower.value().isGreater()) {
+			tooltip.add(Text.translatable("item.simplyswords.greater_runic_power").setStyle(Styles.RUNIC));
+		}
+		if (!runicPower.value().isEmpty()) {
 			runicPower.value().appendTooltip(itemStack, tooltipContext, tooltip, type, isRunic);
-			if (hasNetherPower) {
+			if (!netherPower.value().isEmpty()) {
 				tooltip.add(Text.literal(""));
 			}
+		} else if (!isRunic && hasRunicPower) {
+			tooltip.add(Text.translatable("item.simplyswords.empty_runic_slot").formatted(Formatting.GRAY));
 		}
-		if (hasNetherPower) {
+		
+		if (netherPower.value().isGreater()) {
+			tooltip.add(Text.translatable("item.simplyswords.greater_nether_power").setStyle(Styles.NETHERFUSED));
+		}
+		if (!netherPower.value().isEmpty()) {
 			netherPower.value().appendTooltip(itemStack, tooltipContext, tooltip, type, isRunic);
+		} else if (!isRunic && hasNetherPower) {
+			tooltip.add(Text.translatable("item.simplyswords.empty_nether_slot").formatted(Formatting.GRAY));
 		}
 	}
 }
