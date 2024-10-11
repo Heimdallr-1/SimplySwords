@@ -79,6 +79,6 @@ public abstract class UniqueSwordItem extends SwordItem {
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        SimplySwordsAPI.appendTooltipGemSocketLogic(itemStack, tooltip);
+        SimplySwordsAPI.appendTooltipGemSocketLogic(itemStack, tooltipContext, tooltip, type);
     }
 }

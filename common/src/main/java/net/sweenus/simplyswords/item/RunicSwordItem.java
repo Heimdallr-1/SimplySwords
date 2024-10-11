@@ -1,22 +1,33 @@
 package net.sweenus.simplyswords.item;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import net.sweenus.simplyswords.api.SimplySwordsApi;
+import net.sweenus.simplyswords.api.SimplySwordsAPI;
+import net.sweenus.simplyswords.config.Config;
+import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.GemPowerComponent;
 import net.sweenus.simplyswords.power.PowerType;
 import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
-import net.sweenus.simplyswords.util.RunicMethods;
 import net.sweenus.simplyswords.util.Styles;
+
+import java.util.List;
 
 public class RunicSwordItem extends SwordItem {
 
@@ -36,7 +47,7 @@ public class RunicSwordItem extends SwordItem {
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 
         if (!attacker.getWorld().isClient) {
-            GemPowerComponent component = SimplySwordsApi.getComponent(stack);
+            GemPowerComponent component = SimplySwordsAPI.getComponent(stack);
             HelperMethods.playHitSounds(attacker, target);
             component.postHit(stack, target, attacker);
         }
@@ -47,22 +58,22 @@ public class RunicSwordItem extends SwordItem {
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!world.isClient) {
-            GemPowerComponent component = SimplySwordsApi.getComponent(stack);
-            component.onStoppedUsing(stack, world, user, remainingUseTicks)
+            GemPowerComponent component = SimplySwordsAPI.getComponent(stack);
+            component.onStoppedUsing(stack, world, user, remainingUseTicks);
         }
     }
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (!world.isClient) {
-            GemPowerComponent component = SimplySwordsApi.getComponent(stack);
-            component.usageTick(world, user, stack, remainingUseTicks)
+            GemPowerComponent component = SimplySwordsAPI.getComponent(stack);
+            component.usageTick(world, user, stack, remainingUseTicks);
         }
     }
 
     @Override
     public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-        GemPowerComponent component = SimplySwordsApi.getComponent(stack);
+        GemPowerComponent component = SimplySwordsAPI.getComponent(stack);
         return component.getMaxUseTime(stack);
     }
 
@@ -71,7 +82,7 @@ public class RunicSwordItem extends SwordItem {
         ItemStack itemStack = user.getStackInHand(hand);
 
         if (itemStack.getDamage() < itemStack.getMaxDamage() - 1) {
-            GemPowerComponent component = SimplySwordsApi.getComponent(stack);
+            GemPowerComponent component = SimplySwordsAPI.getComponent(itemStack);
             return component.use(world, user, hand);
         }
         return TypedActionResult.fail(itemStack);
@@ -96,7 +107,7 @@ public class RunicSwordItem extends SwordItem {
                         -3 + randomx, 0.0, -3 + randomz);
             }
             if (!world.isClient) {
-                GemPowerComponent component = SimplySwordsApi.getComponent(stack);
+                GemPowerComponent component = SimplySwordsAPI.getComponent(stack);
                 component.inventoryTick(stack, world, user, slot, selected);
             }
         }
@@ -104,7 +115,7 @@ public class RunicSwordItem extends SwordItem {
     }
 
     @Override
-    public void onCraft(ItemStack stack, World world, PlayerEntity player) {
+    public void onCraft(ItemStack stack, World world) {
         if (world.isClient) return;
 
         if(!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
@@ -121,13 +132,13 @@ public class RunicSwordItem extends SwordItem {
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
         tooltip.add(Text.literal("").setStyle(Styles.TEXT));
 
-        GemPowerComponent component = SimplySwordsApi.getComponent(stack);
-        
+        GemPowerComponent component = SimplySwordsAPI.getComponent(itemStack);
+
         if (component.isEmpty()) {
-            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip1").setStyle(RUNIC));
-            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip2").setStyle(TEXT));
+            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip1").setStyle(Styles.RUNIC));
+            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip2").setStyle(Styles.TEXT));
         } else {
-            component.appendTooltip(itemStack, tooltipContext, tooltip, type, true)
+            component.appendTooltip(itemStack, tooltipContext, tooltip, type, true);
         }
     }
 
@@ -195,7 +206,7 @@ public class RunicSwordItem extends SwordItem {
             @Override
             public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
                 ItemStack itemStack = user.getStackInHand(hand);
-        
+
                 if (itemStack.getDamage() < itemStack.getMaxDamage() - 1) {
                     switch (itemStack.getOrCreateNbt().getString("runic_power")) {
                         case "momentum", "greater_momentum" -> {
@@ -231,7 +242,7 @@ public class RunicSwordItem extends SwordItem {
                 String power = stack.getOrCreateNbt().getString("runic_power");
                 if (power.equals("momentum")) maxUseTime = 15;
                 else if (power.equals("ward") || power.equals("immolation")) maxUseTime = 1;
-        
+
                 return maxUseTime;
             }
 
@@ -247,7 +258,7 @@ public class RunicSwordItem extends SwordItem {
                     if (entity.age % 4 == 0 && Config.getBoolean("enablePassiveParticles", "General", ConfigDefaultValues.enablePassiveParticles)) {
                         float randomx = (float) (Math.random() * 6);
                         float randomz = (float) (Math.random() * 6);
-        
+
                         world.addParticle(ParticleTypes.ENCHANT,
                                 user.getX() + user.getHandPosOffset(this).getX(),
                                 user.getY() + user.getHandPosOffset(this).getY() + 1.3,
@@ -269,7 +280,7 @@ public class RunicSwordItem extends SwordItem {
             @Override
             public void onCraft(ItemStack stack, World world, PlayerEntity player) {
                 if (world.isClient) return;
-        
+
                 String runicPowerSelection = HelperMethods.chooseRunicPower();
                 stack.getOrCreateNbt().putString("runic_power", runicPowerSelection);
             }
@@ -285,9 +296,9 @@ public class RunicSwordItem extends SwordItem {
                 Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
                 Style RUNIC = HelperMethods.getStyle("runic");
                 Style TEXT = HelperMethods.getStyle("text");
-        
+
                 tooltip.add(Text.literal("").setStyle(TEXT));
-        
+
                 if (itemStack.getOrCreateNbt().getString("runic_power").isEmpty()) {
                     tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip1").setStyle(RUNIC));
                     tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip2").setStyle(TEXT));

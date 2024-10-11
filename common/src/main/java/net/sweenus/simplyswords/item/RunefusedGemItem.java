@@ -10,14 +10,16 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
+import net.minecraft.world.World;
 import net.sweenus.simplyswords.SimplySwords;
-import net.sweenus.simplyswords.api.SimplySwordsApi;
+import net.sweenus.simplyswords.api.SimplySwordsAPI;
 import net.sweenus.simplyswords.power.GemPowerComponent;
+import net.sweenus.simplyswords.power.GemPowerFiller;
 import net.sweenus.simplyswords.power.PowerType;
 import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
-import net.sweenus.simplyswords.util.HelperMethods;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -30,12 +32,12 @@ public class RunefusedGemItem extends Item implements GemPowerFiller {
 
     @Override
     public ValidationResult<GemPowerComponent> fill(ItemStack stack, GemPowerComponent component) {
-        GemPowerComponent gemComponent = SimplSwordsApi.getComponent(stack);
+        GemPowerComponent gemComponent = SimplySwordsAPI.getComponent(stack);
         if (!gemComponent.hasRunicPower() || !component.runicPower().value().isEmpty() || !component.hasRunicPower()) {
-            return ValidationResult.error(component, "Can't socket to the provided component");
+            return ValidationResult.Companion.error(component, "Can't socket to the provided component");
         }
-        return ValidationResult.success(component.fill(
-            (hasRunic, oldRunic) -> gemComponent.runicPower(), 
+        return ValidationResult.Companion.success(component.fill(
+            (hasRunic, oldRunic) -> gemComponent.runicPower(),
             (hasNether, oldNether) -> oldNether
         ));
     }
@@ -43,7 +45,7 @@ public class RunefusedGemItem extends Item implements GemPowerFiller {
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player,
                              StackReference cursorStackReference) {
-        
+
         if (!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
             stack.set(ComponentTypeRegistry.GEM_POWER.get(), GemPowerComponent.runic(GemPowerRegistry.gemRandomPower(PowerType.RUNEFUSED)));
         }
@@ -52,7 +54,7 @@ public class RunefusedGemItem extends Item implements GemPowerFiller {
 
 
     @Override
-    public void onCraft(ItemStack stack, World world, PlayerEntity player) {
+    public void onCraft(ItemStack stack, World world) {
         if (world.isClient) return;
 
         if (!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
@@ -70,7 +72,7 @@ public class RunefusedGemItem extends Item implements GemPowerFiller {
 
         tooltip.add(Text.literal(""));
 
-        GemPowerComponent component = SimplySwordsApi.getComponent(itemStack);
+        GemPowerComponent component = SimplySwordsAPI.getComponent(itemStack);
 
         if(component.isEmpty()) {
             tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip1").setStyle(Styles.RUNIC));

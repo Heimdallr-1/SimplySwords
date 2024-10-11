@@ -13,6 +13,7 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryFixedCodec;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, RegistryEntry<GemPower> runicPower, RegistryEntry<GemPower> netherPower) {
 
@@ -64,7 +66,7 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 		return new GemPowerComponent(hasRunic, hasNether, GemPowerRegistry.EMPTY, GemPowerRegistry.EMPTY);
 	}
 
-	public GemPowerComponent fill(BiFunction<Boolean, RegistryEntry<GemPower>, RegistryEntry<GemPower>> runicFiller, Function<Boolean, RegistryEntry<GemPower>, RegistryEntry<GemPower>> netherFiller) {
+	public GemPowerComponent fill(BiFunction<Boolean, RegistryEntry<GemPower>, RegistryEntry<GemPower>> runicFiller, BiFunction<Boolean, RegistryEntry<GemPower>, RegistryEntry<GemPower>> netherFiller) {
 		return new GemPowerComponent(this.hasRunicPower, this.hasNetherPower, runicFiller.apply(this.hasRunicPower, this.runicPower), netherFiller.apply(this.hasNetherPower, this.netherPower));
 	}
 
@@ -81,7 +83,7 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 		netherPower.value().postHit(stack, target, attacker);
 	}
 
-	TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack itemStack = user.getStackInHand(hand);
 		TypedActionResult<ItemStack> result1 = runicPower.value().use(world, user, hand, itemStack);
 		TypedActionResult<ItemStack> result2 = netherPower.value().use(world, user, hand, itemStack);
@@ -127,7 +129,7 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 		} else if (!isRunic && hasRunicPower) {
 			tooltip.add(Text.translatable("item.simplyswords.empty_runic_slot").formatted(Formatting.GRAY));
 		}
-		
+
 		if (netherPower.value().isGreater()) {
 			tooltip.add(Text.translatable("item.simplyswords.greater_nether_power").setStyle(Styles.NETHERFUSED));
 		}

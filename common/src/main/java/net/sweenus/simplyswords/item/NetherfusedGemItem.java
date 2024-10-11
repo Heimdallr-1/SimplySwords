@@ -7,18 +7,18 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
+import net.minecraft.world.World;
 import net.sweenus.simplyswords.SimplySwords;
-import net.sweenus.simplyswords.api.SimplySwordsApi;
+import net.sweenus.simplyswords.api.SimplySwordsAPI;
 import net.sweenus.simplyswords.power.GemPowerComponent;
 import net.sweenus.simplyswords.power.GemPowerFiller;
 import net.sweenus.simplyswords.power.PowerType;
 import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
-import net.sweenus.simplyswords.util.HelperMethods;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -31,12 +31,12 @@ public class NetherfusedGemItem extends Item implements GemPowerFiller {
 
     @Override
     public ValidationResult<GemPowerComponent> fill(ItemStack stack, GemPowerComponent component) {
-        GemPowerComponent gemComponent = SimplSwordsApi.getComponent(stack);
+        GemPowerComponent gemComponent = SimplySwordsAPI.getComponent(stack);
         if (!gemComponent.hasNetherPower() || !component.netherPower().value().isEmpty() || !component.hasNetherPower()) {
-            return ValidationResult.error(component, "Can't socket to the provided component");
+            return ValidationResult.Companion.error(component, "Can't socket to the provided component");
         }
-        return ValidationResult.success(component.fill(
-            (hasRunic, oldRunic) -> oldRunic, 
+        return ValidationResult.Companion.success(component.fill(
+            (hasRunic, oldRunic) -> oldRunic,
             (hasNether, oldNether) -> gemComponent.netherPower()
         ));
     }
@@ -44,7 +44,7 @@ public class NetherfusedGemItem extends Item implements GemPowerFiller {
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player,
                              StackReference cursorStackReference) {
-        
+
         if (!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
             stack.set(ComponentTypeRegistry.GEM_POWER.get(), GemPowerComponent.nether(GemPowerRegistry.gemRandomPower(PowerType.NETHER)));
         }
@@ -53,7 +53,7 @@ public class NetherfusedGemItem extends Item implements GemPowerFiller {
     }
 
     @Override
-    public void onCraft(ItemStack stack, World world, PlayerEntity player) {
+    public void onCraft(ItemStack stack, World world) {
         if (world.isClient) return;
 
         if (!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
@@ -71,7 +71,7 @@ public class NetherfusedGemItem extends Item implements GemPowerFiller {
 
         tooltip.add(Text.literal(""));
 
-        GemPowerComponent component = SimplySwordsApi.getComponent(itemStack);
+        GemPowerComponent component = SimplySwordsAPI.getComponent(itemStack);
 
         if(component.isEmpty()) {
             tooltip.add(Text.translatable("item.simplyswords.netherfused_gem.tooltip1").setStyle(Styles.LEGENDARY));

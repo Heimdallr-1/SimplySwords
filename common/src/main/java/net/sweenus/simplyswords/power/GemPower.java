@@ -1,6 +1,5 @@
 package net.sweenus.simplyswords.power;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -36,7 +35,7 @@ public class GemPower {
 	void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {}
 	int getMaxUseTime(ItemStack stack) { return 0; }
 
-	boolean isEmpty() { return false; }
+	public boolean isEmpty() { return false; }
 
 	//////////////////////////////
 
@@ -49,7 +48,7 @@ public class GemPower {
 		}
 
 		@Override
-		boolean isEmpty() {
+		public boolean isEmpty() {
 			return true;
 		}
 	}
