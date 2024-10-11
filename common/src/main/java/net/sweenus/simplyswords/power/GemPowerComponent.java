@@ -17,6 +17,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -43,7 +45,17 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 			GemPowerComponent::new
 	);
 
-	void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+	public static final GemPowerComponent DEFAULT = new GemPowerComponent(false, false, GemPowerRegistry.EMPTY, GemPowerRegistry.EMPTY);
+
+	public static GemPowerComponent runic(@NotNull RegistryEntry<GemPower> power) {
+		return new GemPowerComponent(true, false, power, GemPowerRegistry.EMPTY);
+	}
+
+	public static GemPowerComponent create(@Nullable RegistryEntry<GemPower> runic, @Nullable RegistryEntry<GemPower> nether) {
+		return new GemPowerComponent(runic != null, nether != null, runic != null ? runic : GemPowerRegistry.EMPTY, nether != null ? nether : GemPowerRegistry.EMPTY);
+	}
+
+	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		runicPower.value().postHit(stack, target, attacker);
 		netherPower.value().postHit(stack, target, attacker);
 	}
@@ -59,28 +71,32 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 		}
 	}
 
-	void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
 		runicPower.value().usageTick(world, user, stack, remainingUseTicks);
 		netherPower.value().usageTick(world, user, stack, remainingUseTicks);
 	}
 
-	void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
 		runicPower.value().onStoppedUsing(stack, world, user, remainingUseTicks);
 		netherPower.value().onStoppedUsing(stack, world, user, remainingUseTicks);
 	}
 
-	void inventoryTick(ItemStack stack, World world, LivingEntity user, int slot, boolean selected) {
+	public int getMaxUseTime(ItemStack stack) {
+		return Math.max(runicPower.value().getMaxUseTime(stack), netherPower.value().getMaxUseTime(stack));
+	}
+
+	public void inventoryTick(ItemStack stack, World world, LivingEntity user, int slot, boolean selected) {
 		if (!world.isClient) {
 			runicPower.value().inventoryTick(stack, world, user, slot, selected);
 			netherPower.value().inventoryTick(stack, world, user, slot, selected);
 		}
 	}
 
-	void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
+	public void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
 		appendTooltip(itemStack, tooltipContext, tooltip, type, false);
 	}
 
-	void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type, boolean isRunic) {
+	public void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type, boolean isRunic) {
 		if (hasRunicPower) {
 			runicPower.value().appendTooltip(itemStack, tooltipContext, tooltip, type, isRunic);
 			if (hasNetherPower) {

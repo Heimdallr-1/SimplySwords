@@ -1,7 +1,20 @@
 package net.sweenus.simplyswords.item;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.ClickType;
+import net.minecraft.world.World;
+import net.sweenus.simplyswords.power.GemPowerComponent;
+import net.sweenus.simplyswords.power.PowerType;
+import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
+import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.RunicMethods;
 
 public class RunicSwordItem extends SwordItem {
 
@@ -11,49 +24,82 @@ public class RunicSwordItem extends SwordItem {
         super(toolMaterial, settings.fireproof());
     }
 
-    /* 1.21 temp
+    private GemPowerComponent getComponent(ItemStack stack) {
+        return stack.getOrDefault(ComponentTypeRegistry.GEM_POWER.get(), GemPowerComponent.DEFAULT);
+    }
+
     @Override
-    public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player,
-                             StackReference cursorStackReference) {
-        if (stack.getOrCreateNbt().getString("runic_power").isEmpty()) {
-            String runicPowerSelection = HelperMethods.chooseRunicPower();
-            stack.getOrCreateNbt().putString("runic_power", runicPowerSelection);
+    public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+        if(!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
+            stack.set(ComponentTypeRegistry.GEM_POWER.get(), GemPowerComponent.runic(GemPowerRegistry.gemRandomPower(PowerType.RUNIC)));
         }
         return false;
     }
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (!attacker.getWorld().isClient()) {
-            HelperMethods.playHitSounds(attacker, target);
 
-            switch (stack.getOrCreateNbt().getString("runic_power")) {
-                case "freeze" -> RunicMethods.postHitRunicFreeze(target, attacker);
-                case "wildfire" -> RunicMethods.postHitRunicWildfire(target, attacker);
-                case "slow" -> RunicMethods.postHitRunicSlow(target, attacker);
-                case "greater_slow" -> RunicMethods.postHitRunicGreaterSlow(target, attacker);
-                case "swiftness" -> RunicMethods.postHitRunicSwiftness(attacker);
-                case "greater_swiftness" -> RunicMethods.postHitRunicGreaterSwiftness(attacker);
-                case "float" -> RunicMethods.postHitRunicFloat(target, attacker);
-                case "greater_float" -> RunicMethods.postHitRunicGreaterFloat(target, attacker);
-                case "zephyr" -> RunicMethods.postHitRunicZephyr(attacker);
-                case "greater_zephyr" -> RunicMethods.postHitRunicGreaterZephyr(attacker);
-                case "shielding" -> RunicMethods.postHitRunicShielding(attacker);
-                case "greater_shielding" -> RunicMethods.postHitRunicGreaterShielding(attacker);
-                case "stoneskin" -> RunicMethods.postHitRunicStoneskin(attacker);
-                case "greater_stoneskin" -> RunicMethods.postHitRunicGreaterStoneskin(attacker);
-                case "trailblaze" -> RunicMethods.postHitRunicTrailblaze(attacker);
-                case "greater_trailblaze" -> RunicMethods.postHitRunicGreaterTrailblaze(attacker);
-                case "weaken" -> RunicMethods.postHitRunicWeaken(target, attacker);
-                case "greater_weaken" -> RunicMethods.postHitRunicGreaterWeaken(target, attacker);
-                case "imbued" -> RunicMethods.postHitRunicImbued(stack, target, attacker);
-                case "greater_imbued" -> RunicMethods.postHitRunicGreaterImbued(stack, target, attacker);
-                case "pincushion" -> RunicMethods.postHitRunicPinCushion(target, attacker);
-                case "greater_pincushion" -> RunicMethods.postHitRunicGreaterPinCushion(target, attacker);
-            }
+        if (!attacker.getWorld().isClient) {
+            GemPowerComponent component = getComponent(stack);
+            HelperMethods.playHitSounds(attacker, target);
+            component.postHit(stack, target, attacker);
         }
+
         return super.postHit(stack, target, attacker);
     }
+
+    @Override
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        if (!world.isClient) {
+            GemPowerComponent component = getComponent(stack);
+
+        }
+            RunicMethods.stoppedUsingRunicMomentum(stack, user);
+    }
+
+    /* 1.21 temp
+            @Override
+            public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player,
+                                     StackReference cursorStackReference) {
+                if (stack.getOrCreateNbt().getString("runic_power").isEmpty()) {
+                    String runicPowerSelection = HelperMethods.chooseRunicPower();
+                    stack.getOrCreateNbt().putString("runic_power", runicPowerSelection);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+                if (!attacker.getWorld().isClient()) {
+                    HelperMethods.playHitSounds(attacker, target);
+
+                    switch (stack.getOrCreateNbt().getString("runic_power")) {
+                        case "freeze" -> RunicMethods.postHitRunicFreeze(target, attacker);
+                        case "wildfire" -> RunicMethods.postHitRunicWildfire(target, attacker);
+                        case "slow" -> RunicMethods.postHitRunicSlow(target, attacker);
+                        case "greater_slow" -> RunicMethods.postHitRunicGreaterSlow(target, attacker);
+                        case "swiftness" -> RunicMethods.postHitRunicSwiftness(attacker);
+                        case "greater_swiftness" -> RunicMethods.postHitRunicGreaterSwiftness(attacker);
+                        case "float" -> RunicMethods.postHitRunicFloat(target, attacker);
+                        case "greater_float" -> RunicMethods.postHitRunicGreaterFloat(target, attacker);
+                        case "zephyr" -> RunicMethods.postHitRunicZephyr(attacker);
+                        case "greater_zephyr" -> RunicMethods.postHitRunicGreaterZephyr(attacker);
+                        case "shielding" -> RunicMethods.postHitRunicShielding(attacker);
+                        case "greater_shielding" -> RunicMethods.postHitRunicGreaterShielding(attacker);
+                        case "stoneskin" -> RunicMethods.postHitRunicStoneskin(attacker);
+                        case "greater_stoneskin" -> RunicMethods.postHitRunicGreaterStoneskin(attacker);
+                        case "trailblaze" -> RunicMethods.postHitRunicTrailblaze(attacker);
+                        case "greater_trailblaze" -> RunicMethods.postHitRunicGreaterTrailblaze(attacker);
+                        case "weaken" -> RunicMethods.postHitRunicWeaken(target, attacker);
+                        case "greater_weaken" -> RunicMethods.postHitRunicGreaterWeaken(target, attacker);
+                        case "imbued" -> RunicMethods.postHitRunicImbued(stack, target, attacker);
+                        case "greater_imbued" -> RunicMethods.postHitRunicGreaterImbued(stack, target, attacker);
+                        case "pincushion" -> RunicMethods.postHitRunicPinCushion(target, attacker);
+                        case "greater_pincushion" -> RunicMethods.postHitRunicGreaterPinCushion(target, attacker);
+                    }
+                }
+                return super.postHit(stack, target, attacker);
+            }
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
