@@ -1,5 +1,6 @@
 package net.sweenus.simplyswords.item;
 
+import me.fzzyhmstrs.fzzy_config.util.ValidationResult;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
@@ -29,12 +30,15 @@ public class NetherfusedGemItem extends Item implements GemPowerFiller {
     }
 
     @Override
-    public GemPowerComponent fill(ItemStack stack, GemPowerComponent component) {
+    public ValidationResult<GemPowerComponent> fill(ItemStack stack, GemPowerComponent component) {
         GemPowerComponent gemComponent = SimplSwordsApi.getComponent(stack);
-        return component.fill(
+        if (!gemComponent.hasNetherPower() || !component.netherPower().value().isEmpty() || !component.hasNetherPower()) {
+            return ValidationResult.error(component, "Can't socket to the provided component");
+        }
+        return ValidationResult.success(component.fill(
             (hasRunic, oldRunic) -> oldRunic, 
-            (hasNether, oldNether) -> (hasNether && gemComponent.hasNetherPower() && oldNether.value().isEmpty()) ? gemComponent.netherPower() : oldNether
-        );
+            (hasNether, oldNether) -> gemComponent.netherPower()
+        ));
     }
 
     @Override
