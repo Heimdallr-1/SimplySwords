@@ -11,7 +11,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Rarity;
 import net.sweenus.simplyswords.SimplySwords;
+import net.sweenus.simplyswords.api.SimplySwordsApi;
+import net.sweenus.simplyswords.power.GemPowerComponent;
+import net.sweenus.simplyswords.power.PowerType;
+import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -24,130 +30,43 @@ public class RunefusedGemItem extends Item {
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player,
                              StackReference cursorStackReference) {
-        /* 1.21 temp
-        if (stack.getOrCreateNbt().getString("runic_power").isEmpty()) {
-
-            String runefusedPowerSelection = HelperMethods.chooseRunefusedPower();
-            stack.getOrCreateNbt().putString("runic_power", runefusedPowerSelection);
+        
+        if (!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
+            stack.set(ComponentTypeRegistry.GEM_POWER.get(), GemPowerComponent.runic(GemPowerRegistry.gemRandomPower(PowerType.RUNEFUSED)));
         }
-
-         */
         return false;
     }
 
-    /* 1.21 temp
+
     @Override
     public void onCraft(ItemStack stack, World world, PlayerEntity player) {
         if (world.isClient) return;
 
-        String runefusedPowerSelection = HelperMethods.chooseRunefusedPower();
-        stack.getOrCreateNbt().putString("runic_power", runefusedPowerSelection);
+        if (!stack.contains(ComponentTypeRegistry.GEM_POWER.get())) {
+            stack.set(ComponentTypeRegistry.GEM_POWER.get(), GemPowerComponent.runic(GemPowerRegistry.gemRandomPower(PowerType.RUNEFUSED)));
+        }
     }
-
-     */
 
     @Override
     public Text getName(ItemStack stack) {
-        Style RUNIC = HelperMethods.getStyle("runic");
-        return Text.translatable(this.getTranslationKey(stack)).setStyle(RUNIC);
+        return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.RUNIC);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RUNIC = HelperMethods.getStyle("runic");
-        Style TEXT = HelperMethods.getStyle("text");
 
         tooltip.add(Text.literal(""));
-        /* 1.21 temp
 
-        if (itemStack.getOrCreateNbt().getString("runic_power").isEmpty()) {
-            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip1").setStyle(RUNIC));
-            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip2").setStyle(TEXT));
+        GemPowerComponent component = SimplySwordsApi.getComponent(itemStack);
+
+        if(component.isEmpty()) {
+            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip1").setStyle(Styles.RUNIC));
+            tooltip.add(Text.translatable("item.simplyswords.unidentifiedsworditem.tooltip2").setStyle(Styles.TEXT));
         } else {
-            if (itemStack.getOrCreateNbt().getString("runic_power").contains("greater")) {
-                tooltip.add(Text.translatable("item.simplyswords.greater_runic_power").setStyle(RUNIC));
-            }
-            switch (itemStack.getOrCreateNbt().getString("runic_power")) {
-                case "freeze" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.freeze").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.freezesworditem.tooltip2").setStyle(TEXT));
-                }
-                case "wildfire" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.wildfire").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.wildfiresworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.wildfiresworditem.tooltip3").setStyle(TEXT));
-                }
-                case "slow", "greater_slow" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.slow").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.slownesssworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.slownesssworditem.tooltip3").setStyle(TEXT));
-                }
-                case "swiftness", "greater_swiftness" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.swiftness").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.speedsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.speedsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "float", "greater_float" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.float").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.levitationsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.levitationsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "zephyr", "greater_zephyr" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.zephyr").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.zephyrsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.zephyrsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "shielding", "greater_shielding" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.shielding").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.shieldingsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.shieldingsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "stoneskin", "greater_stoneskin" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.stoneskin").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.stoneskinsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.stoneskinsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "frost_ward" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.frost_ward").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.frostwardsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.frostwardsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "trailblaze", "greater_trailblaze" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.trailblaze").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.trailblazesworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.trailblazesworditem.tooltip3").setStyle(TEXT));
-                }
-                case "active_defence" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.active_defence").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.activedefencesworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.activedefencesworditem.tooltip3").setStyle(TEXT));
-                }
-                case "weaken", "greater_weaken" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.weaken").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.weakensworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.weakensworditem.tooltip3").setStyle(TEXT));
-                }
-                case "unstable" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.unstable").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.unstablesworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.unstablesworditem.tooltip3").setStyle(TEXT));
-                }
-                case "imbued", "greater_imbued" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.imbued").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.imbuedsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.imbuedsworditem.tooltip3").setStyle(TEXT));
-                }
-                case "pincushion", "greater_pincushion" -> {
-                    tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.pincushion").setStyle(RUNIC));
-                    tooltip.add(Text.translatable("item.simplyswords.pincushionsworditem.tooltip2").setStyle(TEXT));
-                    tooltip.add(Text.translatable("item.simplyswords.pincushionsworditem.tooltip3").setStyle(TEXT));
-                }
-            }
+            component.appendTooltip(itemStack, tooltipContext, tooltip, type);
         }
         tooltip.add(Text.literal(""));
         tooltip.add(Text.translatable("item.simplyswords.gem_description").formatted(Formatting.GRAY, Formatting.ITALIC));
         tooltip.add(Text.translatable("item.simplyswords.gem_description2").formatted(Formatting.GRAY, Formatting.ITALIC));
-
-         */
     }
 }
