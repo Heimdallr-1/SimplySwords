@@ -1,5 +1,6 @@
 package net.sweenus.simplyswords.item;
 
+import me.fzzyhmstrs.fzzy_config.util.ValidationResult;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
