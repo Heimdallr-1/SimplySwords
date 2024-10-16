@@ -8,9 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class SlowPower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("slowChance", "RunicEffects", ConfigDefaultValues.slowChance);
-		int duration = (int) Config.getFloat("slowDuration", "RunicEffects", ConfigDefaultValues.slowDuration);
+		int hitChance = Config.gemPowers.slow.chance;
+		int duration = Config.gemPowers.slow.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 2), attacker);
@@ -43,5 +44,12 @@ public class SlowPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.slow").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.slownesssworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.slownesssworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(50, 50, GemPowerRegistry.SLOW);
+		}
 	}
 }

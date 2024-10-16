@@ -8,9 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class FloatPower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("floatChance", "RunicEffects", ConfigDefaultValues.floatChance);
-		int duration = (int) Config.getFloat("floatDuration", "RunicEffects", ConfigDefaultValues.floatDuration);
+		int hitChance = Config.gemPowers.floating.chance;
+		int duration = Config.gemPowers.floating.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			target.addStatusEffect(new StatusEffectInstance(StatusEffects.LEVITATION, duration, this.isGreater() ? 3 : 2), attacker);
@@ -41,5 +42,12 @@ public class FloatPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.float").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.levitationsworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.levitationsworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(15, 50, GemPowerRegistry.FLOAT);
+		}
 	}
 }

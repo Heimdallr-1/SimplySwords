@@ -165,7 +165,7 @@ public abstract class ServerPlayerEntityMixin {
                     ItemStack stackInSlot = serverPlayer.getInventory().getStack(i);
 
                     if (stackInSlot.isOf(containedRemnant.getItem()) || stackInSlot.isOf(tamperedRemnant.getItem())) {
-                        if (chance < 21 && Config.getBoolean("enableContainedRemnants", "Loot", ConfigDefaultValues.enableContainedRemnants)) {
+                        if (chance < 21 && Config.loot.enableContainedRemnants.get()) {
                             List<Item> itemsFromTag = Registries.ITEM.stream()
                                     .filter(item -> item.getDefaultStack().isIn(desiredItemsTag))
                                     .toList();

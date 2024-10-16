@@ -170,8 +170,8 @@ public class HelperMethods {
     public static void playHitSounds(LivingEntity attacker, LivingEntity target) {
         if (!attacker.getWorld().isClient()) {
             ServerWorld world = (ServerWorld) attacker.getWorld();
-            boolean impactsounds_enabled = Config.getBoolean("enableWeaponImpactSounds", "General",ConfigDefaultValues.enableWeaponImpactSounds);
-            float impactsounds_volume = Config.getFloat("weaponImpactSoundsVolume", "General",ConfigDefaultValues.weaponImpactSoundsVolume);
+            boolean impactsounds_enabled = Config.general.enableWeaponImpactSounds;
+            float impactsounds_volume = Config.general.weaponImpactSoundsVolume;
 
             if (impactsounds_enabled) {
                 int choose_sound = (int) (Math.random() * 30);
@@ -392,7 +392,7 @@ public class HelperMethods {
     // createFootfalls - creates weapon footfall particle effects (footsteps)
     public static void createFootfalls(Entity entity, ItemStack stack, World world, int stepMod, SimpleParticleType particle,
                                        SimpleParticleType sprintParticle, SimpleParticleType passiveParticle, boolean passiveParticles) {
-        if ((entity instanceof PlayerEntity player) && Config.getBoolean("enableWeaponFootfalls", "General",ConfigDefaultValues.enableWeaponFootfalls) && player.getEquippedStack(EquipmentSlot.MAINHAND) == stack) {
+        if ((entity instanceof PlayerEntity player) && Config.general.enableWeaponFootfalls && player.getEquippedStack(EquipmentSlot.MAINHAND) == stack) {
             if (isWalking(player) && !player.isSwimming() && player.isOnGround()) {
                 if (stepMod == 6) {
                     if (player.isSprinting()) {
@@ -420,7 +420,7 @@ public class HelperMethods {
                     }
                 }
             }
-            if (passiveParticles && Config.getBoolean("enablePassiveParticles", "General",ConfigDefaultValues.enablePassiveParticles)) {
+            if (passiveParticles && Config.general.enablePassiveParticles) {
                 float randomy = (float) (Math.random());
                 if (stepMod == 1) {
                     world.addParticle(passiveParticle, player.getX() - player.getHandPosOffset(stack.getItem()).getX(),
@@ -499,7 +499,7 @@ public class HelperMethods {
 
     public static float commonSpellAttributeScaling(float damageModifier, Entity entity, String magicSchool) {
         if (Platform.isModLoaded("spell_power") && Platform.isFabric())
-            if ((entity instanceof PlayerEntity player) && Config.getBoolean("compatEnableSpellPowerScaling", "General",ConfigDefaultValues.compatEnableSpellPowerScaling) && SimplySwords.passVersionCheck("spell_power", minimumSpellPowerVersion))
+            if ((entity instanceof PlayerEntity player) && Config.general.compatEnableSpellPowerScaling && SimplySwords.passVersionCheck("spell_power", minimumSpellPowerVersion))
                 return SimplySwordsExpectPlatform.getSpellPowerDamage(damageModifier, player, magicSchool);
 
         return 0f;

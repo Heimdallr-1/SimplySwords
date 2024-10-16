@@ -1,5 +1,8 @@
 package net.sweenus.simplyswords.power.powers;
 
+import me.fzzyhmstrs.fzzy_config.annotations.Translation;
+import me.fzzyhmstrs.fzzy_config.util.Walkable;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -16,7 +19,9 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
 import net.sweenus.simplyswords.util.Styles;
 
@@ -30,8 +35,9 @@ public class UnstablePower extends RunefusedGemPower {
 
 	@Override
 	public void inventoryTick(ItemStack stack, World world, LivingEntity user, int slot, boolean selected) {
-		int duration = (int) Config.getFloat("unstableDuration", "RunicEffects", ConfigDefaultValues.unstableDuration);
-		int frequency = (int) Config.getFloat("unstableFrequency", "RunicEffects", ConfigDefaultValues.unstableFrequency);
+		int duration = Config.gemPowers.unstable.duration;
+		int frequency = Config.gemPowers.unstable.frequency;
+
 		if (user.age % frequency == 0) {
 			int random = (int) (Math.random() * 100);
 			if (random < 10)
@@ -68,4 +74,20 @@ public class UnstablePower extends RunefusedGemPower {
 		tooltip.add(Text.translatable("item.simplyswords.unstablesworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.unstablesworditem.tooltip3").setStyle(Styles.TEXT));
 	}
+
+	public static class Settings extends TooltipSettings {
+
+		public Settings() {
+			super(GemPowerRegistry.UNSTABLE);
+		}
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedInt.Restrict(min = 1)
+		public int frequency = 140;
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedInt.Restrict(min = 0)
+		public int duration = 140;
+	}
+
 }

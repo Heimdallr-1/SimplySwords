@@ -7,7 +7,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 @Config(name = "runic_effects")
 public class RunicEffectsConfig implements ConfigData {
 
-    @ConfigEntry.Gui.PrefixText
+    /*@ConfigEntry.Gui.PrefixText
     public boolean enableActiveDefence = true;
     public boolean enableFloat = true;
     public boolean enableGreaterFloat = true;
@@ -36,7 +36,7 @@ public class RunicEffectsConfig implements ConfigData {
     public boolean enablePincushion = true;
     public boolean enableGreaterPincushion = true;
     public boolean enableWard = true;
-    public boolean enableImmolate = true;
+    public boolean enableImmolate = true;*/
 
 
     @ConfigEntry.Gui.PrefixText

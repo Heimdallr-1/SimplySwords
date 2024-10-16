@@ -1,5 +1,8 @@
 package net.sweenus.simplyswords.power.powers;
 
+import me.fzzyhmstrs.fzzy_config.annotations.Translation;
+import me.fzzyhmstrs.fzzy_config.util.Walkable;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -9,7 +12,9 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.Styles;
 
@@ -23,7 +28,8 @@ public class ImbuedPower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("imbuedChance", "RunicEffects", ConfigDefaultValues.imbuedChance);
+		int hitChance = Config.gemPowers.imbued.chance;
+
 		int damage = (this.isGreater() ? 10 : 6) - ((stack.getDamage() / stack.getMaxDamage()) * 100) / 20;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
@@ -42,5 +48,16 @@ public class ImbuedPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.imbued").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.imbuedsworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.imbuedsworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends TooltipSettings {
+
+		public Settings() {
+			super(GemPowerRegistry.IMBUED);
+		}
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedInt.Restrict(min = 0, max = 100)
+		public int chance = 15;
 	}
 }

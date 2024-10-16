@@ -20,11 +20,11 @@ public class WildfireEffect extends StatusEffect {
     public boolean applyUpdateEffect(LivingEntity pLivingEntity, int pAmplifier) {
         if (!pLivingEntity.getWorld().isClient()) {
             LivingEntity pPlayer = pLivingEntity.getAttacker();
-            if (pPlayer != null){
+            if (pPlayer != null) {
                 if (pPlayer instanceof PlayerEntity) {
                     ServerWorld world = (ServerWorld) pLivingEntity.getWorld();
-                    int hradius = (int) Config.getFloat("wildfireRadius", "RunicEffects", ConfigDefaultValues.wildfireRadius);
-                    int vradius = (int) (Config.getFloat("wildfireRadius", "RunicEffects", ConfigDefaultValues.wildfireRadius) / 2);
+                    double hradius = Config.gemPowers.wildfire.radius;
+                    double vradius = Config.gemPowers.wildfire.radius / 2.0;
                     double x = pLivingEntity.getX();
                     double y = pLivingEntity.getY();
                     double z = pLivingEntity.getZ();

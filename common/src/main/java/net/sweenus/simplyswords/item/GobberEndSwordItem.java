@@ -34,7 +34,7 @@ public class GobberEndSwordItem extends SwordItem {
     }
 
     //Unbreakable weapon support for Gobber
-    static boolean unbreakable = Config.getBoolean("compatGobberEndWeaponsUnbreakable", "General", ConfigDefaultValues.compatGobberEndWeaponsUnbreakable);
+    static boolean unbreakable = Config.general.compatGobberEndWeaponsUnbreakable;
 
     /* 1.21
     @Override

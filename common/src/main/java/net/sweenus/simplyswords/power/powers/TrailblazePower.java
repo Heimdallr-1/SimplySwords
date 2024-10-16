@@ -10,7 +10,9 @@ import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -42,5 +44,12 @@ public class TrailblazePower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.trailblaze").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.trailblazesworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.trailblazesworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(15, 120, GemPowerRegistry.TRAILBLAZE);
+		}
 	}
 }

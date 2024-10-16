@@ -4,16 +4,19 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class GemPower {
+public class GemPower implements TooltipAppender {
 
 	public GemPower(boolean isGreater, PowerType... applicableTypes) {
 		this.isGreater = isGreater;
@@ -25,6 +28,15 @@ public class GemPower {
 
 	public boolean isGreater() { return isGreater; }
 	public List<PowerType> applicableTypes() { return applicableTypes; }
+
+	@Override
+	public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type) {
+		List<Text> list = new ArrayList<>();
+		appendTooltip(ItemStack.EMPTY, context, list, type, false);
+		for (Text text : list) {
+			tooltip.accept(text);
+		}
+	}
 
 	public void appendTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Text> tooltip, TooltipType type, boolean isRunic) {}
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {}

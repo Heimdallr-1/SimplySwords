@@ -63,9 +63,7 @@ public class SimplySwords {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public static boolean isConfigOutdated;
-    public static GeneralConfig generalConfig;
-    public static LootConfig lootConfig;
-    public static GemEffectsConfig gemEffectsConfig;
+    public static LootConfigOld lootConfigOld;
     public static RunicEffectsConfig runicEffectsConfig;
     public static StatusEffectsConfig statusEffectsConfig;
     public static UniqueEffectsConfig uniqueEffectsConfig;
@@ -78,12 +76,11 @@ public class SimplySwords {
 
         //CONFIG
 
+        Config.init();
         SimplySwordsConfig.init();
 
         AutoConfig.register(ConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
-        generalConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().general;
-        lootConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().loot;
-        gemEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().gem_effects;
+        lootConfigOld = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().loot;
         runicEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().runic_effects;
         statusEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().status_effects;
         uniqueEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().unique_effects;

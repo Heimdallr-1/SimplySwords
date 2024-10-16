@@ -1,5 +1,9 @@
 package net.sweenus.simplyswords.power.powers;
 
+import me.fzzyhmstrs.fzzy_config.annotations.Translation;
+import me.fzzyhmstrs.fzzy_config.util.Walkable;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -19,7 +23,9 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
 import net.sweenus.simplyswords.util.Styles;
 
@@ -33,11 +39,12 @@ public class FrostWardPower extends RunefusedGemPower {
 
 	@Override
 	public void inventoryTick(ItemStack stack, World world, LivingEntity user, int slot, boolean selected) {
-		int frequency = (int) Config.getFloat("frostWardFrequency", "RunicEffects", ConfigDefaultValues.frostWardFrequency);
-		int duration = (int) Config.getFloat("frostWardDuration", "RunicEffects", ConfigDefaultValues.frostWardDuration);
+		int frequency = Config.gemPowers.frostWard.frequency;
+
 		if (user.age % frequency == 0) {
-			float sRadius = Config.getFloat("frostWardRadius", "RunicEffects", ConfigDefaultValues.frostWardRadius);
-			float vRadius = sRadius / 2f;
+			int duration = Config.gemPowers.frostWard.duration;
+			double sRadius = Config.gemPowers.frostWard.radius;
+			double vRadius = Config.gemPowers.frostWard.radius / 2.0;
 			double x = user.getX();
 			double y = user.getY();
 			double z = user.getZ();
@@ -68,5 +75,24 @@ public class FrostWardPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.frost_ward").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.frostwardsworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.frostwardsworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends TooltipSettings {
+
+		public Settings() {
+			super(GemPowerRegistry.FROST_WARD);
+		}
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedInt.Restrict(min = 1)
+		public int frequency = 20;
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedDouble.Restrict(min = 0.0)
+		public double radius = 5.0;
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedInt.Restrict(min = 0)
+		public int duration = 60;
 	}
 }

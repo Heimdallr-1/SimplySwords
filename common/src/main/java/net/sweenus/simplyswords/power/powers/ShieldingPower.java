@@ -8,9 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class ShieldingPower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("shieldingChance", "RunicEffects", ConfigDefaultValues.shieldingChance);
-		int duration = (int) Config.getFloat("shieldingDuration", "RunicEffects", ConfigDefaultValues.shieldingDuration);
+		int hitChance = Config.gemPowers.shielding.chance;
+		int duration = Config.gemPowers.shielding.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, duration, this.isGreater() ? 1 : 0), attacker);
@@ -41,5 +42,12 @@ public class ShieldingPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.float").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.shieldingsworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.shieldingsworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(15, 120, GemPowerRegistry.SHIELDING);
+		}
 	}
 }

@@ -8,9 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class StoneskinPower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("stoneskinChance", "RunicEffects", ConfigDefaultValues.stoneskinChance);
-		int duration = (int) Config.getFloat("stoneskinDuration", "RunicEffects", ConfigDefaultValues.stoneskinDuration);
+		int hitChance = Config.gemPowers.stoneskin.chance;
+		int duration = Config.gemPowers.stoneskin.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, duration,  this.isGreater() ? 2 : 1), attacker);
@@ -43,5 +44,12 @@ public class StoneskinPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.stoneskin").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.stoneskinsworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.stoneskinsworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(15, 60, GemPowerRegistry.STONESKIN);
+		}
 	}
 }

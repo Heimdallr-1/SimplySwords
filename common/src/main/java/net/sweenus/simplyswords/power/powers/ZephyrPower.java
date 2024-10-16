@@ -8,9 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -23,8 +24,8 @@ public class ZephyrPower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("zephyrChance", "RunicEffects", ConfigDefaultValues.zephyrChance);
-		int duration = (int) Config.getFloat("zephyrDuration", "RunicEffects", ConfigDefaultValues.zephyrDuration);
+		int hitChance = Config.gemPowers.zephyr.chance;
+		int duration = Config.gemPowers.zephyr.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, duration, this.isGreater() ? 1 : 0), attacker);
@@ -42,5 +43,12 @@ public class ZephyrPower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.zephyr").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.zephyrsworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.zephyrsworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(15, 180, GemPowerRegistry.ZEPHYR);
+		}
 	}
 }

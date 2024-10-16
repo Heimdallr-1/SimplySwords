@@ -97,6 +97,7 @@ public class BattleStandardEntity extends PathAwareEntity {
                     abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, ownerEntity, "fire");
                 }
                 // AOE Aura
+                //living entity, ownerEntity, abilityDamage,
                 if (this.age % 10 == 0) {
                     Box box = new Box(this.getX() + radius, this.getY() + (float) radius / 3, this.getZ() + radius,
                             this.getX() - radius, this.getY() - (float) radius / 3, this.getZ() - radius);

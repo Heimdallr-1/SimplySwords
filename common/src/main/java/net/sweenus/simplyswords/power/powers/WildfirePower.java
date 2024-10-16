@@ -1,25 +1,20 @@
 package net.sweenus.simplyswords.power.powers;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import me.fzzyhmstrs.fzzy_config.annotations.Translation;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
 import net.sweenus.simplyswords.registry.EffectRegistry;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
-import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -32,8 +27,8 @@ public class WildfirePower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("wildfireChance", "RunicEffects", ConfigDefaultValues.wildfireChance);
-		int duration = (int) Config.getFloat("wildfireDuration", "RunicEffects", ConfigDefaultValues.wildfireDuration);
+		int hitChance = Config.gemPowers.wildfire.chance;
+		int duration = Config.gemPowers.wildfire.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			target.addStatusEffect(new StatusEffectInstance(EffectRegistry.WILDFIRE, duration, 3), attacker);
@@ -50,5 +45,16 @@ public class WildfirePower extends RunefusedGemPower {
 			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.wildfire").setStyle(Styles.RUNIC));
 		tooltip.add(Text.translatable("item.simplyswords.wildfiresworditem.tooltip2").setStyle(Styles.TEXT));
 		tooltip.add(Text.translatable("item.simplyswords.wildfiresworditem.tooltip3").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(10, 180, GemPowerRegistry.WILDFIRE);
+		}
+
+		@Translation(prefix = "simplyswords.config.basic_settings")
+		@ValidatedDouble.Restrict(min = 0.0)
+		public double radius = 10.0;
 	}
 }

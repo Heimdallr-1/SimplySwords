@@ -8,10 +8,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
 import net.sweenus.simplyswords.registry.EffectRegistry;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
+import net.sweenus.simplyswords.config.settings.BasicSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class FreezePower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("freezeChance", "RunicEffects", ConfigDefaultValues.freezeChance);
-		int freezeDuration = (int) Config.getFloat("freezeDuration", "RunicEffects", ConfigDefaultValues.freezeDuration);
+		int hitChance = Config.gemPowers.freeze.chance;
+		int freezeDuration = Config.gemPowers.freeze.duration;
 		int duration = freezeDuration * 3;
 
 		target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 1), attacker);
@@ -42,8 +43,15 @@ public class FreezePower extends RunefusedGemPower {
 		if (isRunic)
 			tooltip.add(Text.translatable("item.simplyswords.freezesworditem.tooltip1").setStyle(Styles.RUNIC));
 		else
-			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.freeze").setStyle(Styles.TEXT));
+			tooltip.add(Text.translatable("item.simplyswords.uniquesworditem.runefused_power.freeze").setStyle(Styles.RUNIC));
 
 		tooltip.add(Text.translatable("item.simplyswords.freezesworditem.tooltip2").setStyle(Styles.TEXT));
+	}
+
+	public static class Settings extends BasicSettings {
+
+		public Settings() {
+			super(15, 120, GemPowerRegistry.FREEZE);
+		}
 	}
 }

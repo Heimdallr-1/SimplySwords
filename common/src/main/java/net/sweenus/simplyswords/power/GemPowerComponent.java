@@ -78,6 +78,19 @@ public record GemPowerComponent(boolean hasRunicPower, boolean hasNetherPower, R
 		return runicPower.value().isEmpty() && netherPower.value().isEmpty();
 	}
 
+	public boolean hasPower(RegistryEntry<GemPower> power) {
+		if (isEmpty()) return false;
+		return (!this.runicPower.value().isEmpty() && power.getKeyOrValue() == this.runicPower.getKeyOrValue()) || (!this.netherPower.value().isEmpty() && power.getKeyOrValue() == this.netherPower.getKeyOrValue());
+	}
+
+	public boolean hasRunic(RegistryEntry<GemPower> power) {
+		return (!this.runicPower.value().isEmpty() && power.getKeyOrValue().equals(this.runicPower.getKeyOrValue()));
+	}
+
+	public boolean hasNether(RegistryEntry<GemPower> power) {
+		return (!this.netherPower.value().isEmpty() && power.getKeyOrValue() == this.netherPower.getKeyOrValue());
+	}
+
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		runicPower.value().postHit(stack, target, attacker);
 		netherPower.value().postHit(stack, target, attacker);
