@@ -3,6 +3,7 @@ package net.sweenus.simplyswords.config.settings;
 import me.fzzyhmstrs.fzzy_config.util.Translatable;
 import me.fzzyhmstrs.fzzy_config.util.Walkable;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.MutableText;
@@ -10,6 +11,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class TooltipSettings implements Translatable, Walkable {
@@ -18,8 +20,12 @@ public class TooltipSettings implements Translatable, Walkable {
 		this.appender = appender;
 	}
 
+	public TooltipSettings(ItemStack stack) {
+		this(() -> new ItemStackAppender(stack));
+	}
+
 	public TooltipSettings() {
-		this(null);
+		this((Supplier<? extends TooltipAppender>) null);
 	}
 
 	@Nullable
@@ -68,5 +74,13 @@ public class TooltipSettings implements Translatable, Walkable {
 	public boolean hasDescription() {
 		System.out.println("description check??");
 		return appender != null;
+	}
+
+	private static record ItemStackAppender(ItemStack stack) implements TooltipAppender {
+
+		@Override
+		public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type) {
+			stack.getTooltip(context, null, type).forEach(tooltip);
+		}
 	}
 }

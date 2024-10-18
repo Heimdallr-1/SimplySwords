@@ -1,11 +1,17 @@
 package net.sweenus.simplyswords.config;
 
+import me.fzzyhmstrs.fzzy_config.config.Config;
 import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import net.minecraft.util.Identifier;
+import net.sweenus.simplyswords.SimplySwords;
+import org.jetbrains.annotations.NotNull;
 
-@Config(name = "unique_effects")
-public class UniqueEffectsConfig implements ConfigData {
+public class UniqueEffectsConfig extends Config {
+
+    public UniqueEffectsConfig() {
+        super(Identifier.of(SimplySwords.MOD_ID, "unique_effects"));
+    }
 
     @ConfigEntry.Gui.Tooltip
     public float abilityAbsorptionCap = 20f;
@@ -260,5 +266,4 @@ public class UniqueEffectsConfig implements ConfigData {
     public float astralShiftDamageModifier = 1.0f;
     public float astralShiftDamageMax = 300f;
     public float astralShiftChance = 5f;
-
 }

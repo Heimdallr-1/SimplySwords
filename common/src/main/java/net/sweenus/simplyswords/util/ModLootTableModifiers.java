@@ -8,14 +8,12 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.function.EnchantRandomlyLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
-import net.sweenus.simplyswords.config.SimplySwordsConfig;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 
@@ -27,24 +25,17 @@ public class ModLootTableModifiers {
 
     public static void init() {
 
-        float standardLootWeight = Config.getFloat("standardLootTableWeight", "Loot", ConfigDefaultValues.standardLootTableWeight);
-        float rareLootWeight = Config.getFloat("rareLootTableWeight", "Loot", ConfigDefaultValues.rareLootTableWeight);
-        float runicLootWeight = Config.getFloat("runicLootTableWeight", "Loot", ConfigDefaultValues.runicLootTableWeight);
-
-
         // 1.21 temp
-        /*//STANDARD
-        LootEvent.MODIFY_LOOT_TABLE.register(((lootTables, id, context, builtin) -> {
-            if (Config.getBoolean("enableLootDrops", "Loot", ConfigDefaultValues.enableLootDrops) && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
+        //STANDARD
+        LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
+            Identifier id = key.getValue();
+            if (Config.loot.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
                 //System.out.println( id.getNamespace() + ":" + id.getPath()); //PRINT POSSIBLE PATHS
-                if (!Config.getBoolean("enableLootInVillages", "Loot", ConfigDefaultValues.enableLootInVillages) && id.getPath().contains("village")) {
-                    //Do nothing
-                }
-                else {
+                if (Config.loot.enableLootInVillages.get() || !id.getPath().contains("village")) {
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(standardLootWeight)) // 1 = 100% of the time
-                            .apply(EnchantRandomlyLootFunction.builder())
+                            .conditionally(RandomChanceLootCondition.builder(Config.loot.standardLootTableWeight.get())) // 1 = 100% of the time
+                            .apply(EnchantRandomlyFromTagLootFunction.create(EnchantmentTags.ON_RANDOM_LOOT)) //This is not ideal, but forge doesn't expose the registry wrapper so...
                             .with(ItemEntry.builder(ItemsRegistry.IRON_LONGSWORD.get()))
                             .with(ItemEntry.builder(ItemsRegistry.IRON_TWINBLADE.get()))
                             .with(ItemEntry.builder(ItemsRegistry.IRON_RAPIER.get()))
@@ -79,19 +70,17 @@ public class ModLootTableModifiers {
                     context.addPool(pool);
                 }
             }
-        }));*/
+        }));
 
-        /*//RARE
-        LootEvent.MODIFY_LOOT_TABLE.register(((lootTables, id, context, builtin) -> {
-            if (Config.getBoolean("enableLootDrops", "Loot", ConfigDefaultValues.enableLootDrops) && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
-                if (!Config.getBoolean("enableLootInVillages", "Loot", ConfigDefaultValues.enableLootInVillages) && id.getPath().contains("village")) {
-                    //Do nothing
-                }
-                else {
+        //RARE
+        LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
+            Identifier id = key.getValue();
+            if (Config.loot.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
+                if (Config.loot.enableLootInVillages.get() || !id.getPath().contains("village")) {
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(rareLootWeight)) // 1 = 100% of the time
-                            .apply(EnchantRandomlyLootFunction.builder())
+                            .conditionally(RandomChanceLootCondition.builder(Config.loot.rareLootTableWeight.get())) // 1 = 100% of the time
+                            .apply(EnchantRandomlyFromTagLootFunction.create(EnchantmentTags.ON_RANDOM_LOOT)) //This is not ideal, but forge doesn't expose the registry wrapper so...
                             .with(ItemEntry.builder(ItemsRegistry.DIAMOND_LONGSWORD.get()))
                             .with(ItemEntry.builder(ItemsRegistry.DIAMOND_TWINBLADE.get()))
                             .with(ItemEntry.builder(ItemsRegistry.DIAMOND_RAPIER.get()))
@@ -111,22 +100,21 @@ public class ModLootTableModifiers {
                     context.addPool(pool);
                 }
             }
-        }));*/
-        /*//RARE 2
-        LootEvent.MODIFY_LOOT_TABLE.register(((lootTables, id, context, builtin) -> {
-            if (Config.getBoolean("enableLootDrops", "Loot", ConfigDefaultValues.enableLootDrops) && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
-                if (!Config.getBoolean("enableLootInVillages", "Loot", ConfigDefaultValues.enableLootInVillages) && id.getPath().contains("village")) {
-                    //Do nothing
-                }
-                else {
+        }));
+
+        //Runic / Rare 2
+        LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
+            Identifier id = key.getValue();
+            if (Config.loot.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
+                if (Config.loot.enableLootInVillages.get() || !id.getPath().contains("village")) {
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(runicLootWeight)) // 1 = 100% of the time
+                            .conditionally(RandomChanceLootCondition.builder(Config.loot.runicLootTableWeight.get())) // 1 = 100% of the time
                             .with(ItemEntry.builder(ItemsRegistry.RUNIC_TABLET.get()));
                     context.addPool(pool);
                 }
             }
-        }));*/
+        }));
 
         //UNIQUE
         // Check each loot table against the listed namespaces in the loot_config.json, if there's a match modify the
@@ -134,8 +122,8 @@ public class ModLootTableModifiers {
 
         LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
             Identifier id = key.getValue();
-            if (Config.loot.enableLootDrops) {
-                Float lootChance = Config.loot.lootTableOptions.get(id);
+            if (Config.loot.enableLootDrops.get()) {
+                Float lootChance = Config.loot.uniqueLootTableOptions.get(id);
                 if (lootChance != null && lootChance > 0f) {
 
                     LootPool.Builder pool = LootPool.builder()
