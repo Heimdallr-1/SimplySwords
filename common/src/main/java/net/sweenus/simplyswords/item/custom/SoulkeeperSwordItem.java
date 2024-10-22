@@ -1,5 +1,7 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -11,18 +13,20 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -36,23 +40,23 @@ public class SoulkeeperSwordItem extends UniqueSwordItem implements TwoHandedWea
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
-            int fhitchance = (int) Config.getFloat("soulMeldChance", "UniqueEffects", ConfigDefaultValues.soulMeldChance);
-            int fduration = (int) Config.getFloat("soulMeldDuration", "UniqueEffects", ConfigDefaultValues.soulMeldDuration);
+            int hitChance = Config.uniqueEffects.soulkeeper.chance;
+            int duration = Config.uniqueEffects.soulkeeper.duration;
             HelperMethods.playHitSounds(attacker, target);
 
-            if (attacker.getRandom().nextInt(100) <= fhitchance) {
+            if (attacker.getRandom().nextInt(100) <= hitChance) {
                 //world.playSoundFromEntity(null, target, SoundRegistry.MAGIC_BOW_CHARGE_SHORT_VERSION.get(), SoundCategory.PLAYERS, 0.3f, 1.2f);
                 if (attacker.hasStatusEffect(StatusEffects.MINING_FATIGUE) && attacker.hasStatusEffect(StatusEffects.RESISTANCE)) {
 
                     int a = (attacker.getStatusEffect(StatusEffects.MINING_FATIGUE).getAmplifier() + 1);
 
                     if ((attacker.getStatusEffect(StatusEffects.MINING_FATIGUE).getAmplifier() <= 2)) {
-                        attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, fduration, a), attacker);
-                        attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, fduration, a), attacker);
+                        attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, duration, a), attacker);
+                        attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, duration, a), attacker);
                     }
                 } else {
-                    attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, fduration, 1), attacker);
-                    attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, fduration, 1), attacker);
+                    attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, duration, 1), attacker);
+                    attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, duration, 1), attacker);
                 }
             }
         }
@@ -62,8 +66,8 @@ public class SoulkeeperSwordItem extends UniqueSwordItem implements TwoHandedWea
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!user.getWorld().isClient()) {
-            int hradius = (int) Config.getFloat("soulMeldRadius", "UniqueEffects", ConfigDefaultValues.soulMeldRadius);
-            int vradius = (int) (Config.getFloat("soulMeldRadius", "UniqueEffects", ConfigDefaultValues.soulMeldRadius) / 2);
+            double hradius = Config.uniqueEffects.soulkeeper.radius;
+            double vradius = Config.uniqueEffects.soulkeeper.radius;
             double x = user.getX();
             double y = user.getY();
             double z = user.getZ();
@@ -101,20 +105,30 @@ public class SoulkeeperSwordItem extends UniqueSwordItem implements TwoHandedWea
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip3").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip1").setStyle(Styles.NETHERFUSED));
+        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip3").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip6").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.soulsworditem.tooltip6").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.SOULKEEPER::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int chance = 75;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 250;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 5.0;
     }
 }

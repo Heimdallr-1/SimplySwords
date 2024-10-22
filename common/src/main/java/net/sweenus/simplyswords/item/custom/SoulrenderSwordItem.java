@@ -1,5 +1,9 @@
 package net.sweenus.simplyswords.item.custom;
 
+import dev.architectury.platform.Platform;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -19,10 +23,14 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -31,21 +39,15 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
         super(toolMaterial, settings);
     }
 
-    float abilityDamage = Config.getFloat("soulrendDamageMulti", "UniqueEffects", ConfigDefaultValues.soulrendDamageMulti);
-    float spellScalingModifier = Config.getFloat("soulrendDamageSpellScaling", "UniqueEffects", ConfigDefaultValues.soulrendDamageSpellScaling);
-
-    private static int stepMod = 0;
-    public static boolean scalesWithSpellPower;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
             ServerWorld world = (ServerWorld) attacker.getWorld();
-            int fhitchance = (int) Config.getFloat("soulrendChance", "UniqueEffects", ConfigDefaultValues.soulrendChance);
-            int fduration = (int) Config.getFloat("soulrendDuration", "UniqueEffects", ConfigDefaultValues.soulrendDuration);
-            int maxstacks = (int) Config.getFloat("soulrendMaxStacks", "UniqueEffects", ConfigDefaultValues.soulrendMaxStacks);
+            int hitChance = Config.uniqueEffects.soulRend.chance;
+            int duration = Config.uniqueEffects.soulRend.duration;
+            int maxStacks = Config.uniqueEffects.soulRend.maxStacks;
 
-            if (attacker.getRandom().nextInt(100) <= fhitchance) {
+            if (attacker.getRandom().nextInt(100) <= hitChance) {
 
                 int choose_sound = (int) (Math.random() * 30);
                 if (choose_sound <= 10)
@@ -62,20 +64,20 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
                     int a = (target.getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1);
 
                     if ((target.getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() <= 0)) {
-                        target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, fduration, a), attacker);
+                        target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration, a), attacker);
                     }
                 } else {
-                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, fduration, 0), attacker);
+                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration, 0), attacker);
                 }
 
                 if (target.hasStatusEffect(StatusEffects.SLOWNESS)) {
                     int a = (target.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() + 1);
 
-                    if ((target.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() < maxstacks)) {
-                        target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, fduration, a), attacker);
+                    if ((target.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() < maxStacks)) {
+                        target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, a), attacker);
                     }
                 } else {
-                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, fduration, 0), attacker);
+                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 0), attacker);
                 }
             }
         }
@@ -85,11 +87,10 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!user.getWorld().isClient()) {
-            float heal_amount = Config.getFloat("soulrendHealMulti", "UniqueEffects", ConfigDefaultValues.soulrendHealMulti);
+            float heal_amount = Config.uniqueEffects.soulRend.healMulti;
             int healamp = 0;
-            boolean cantrigger = false;
-            int hradius = (int) Config.getFloat("soulrendRadius", "UniqueEffects", ConfigDefaultValues.soulrendRadius);
-            int vradius = (int) (Config.getFloat("soulrendRadius", "UniqueEffects", ConfigDefaultValues.soulrendRadius) / 2);
+            double hradius = Config.uniqueEffects.soulRend.radius;
+            double vradius = Config.uniqueEffects.soulRend.radius / 2.0;
             double x = user.getX();
             double y = user.getY();
             double z = user.getZ();
@@ -101,21 +102,22 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
                         && le.hasStatusEffect(StatusEffects.WEAKNESS) && HelperMethods.checkFriendlyFire(le, user)) {
 
                     healamp += (le.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier());
-                    cantrigger = true;
-                    le.damage(user.getDamageSources().indirectMagic(user, user), le.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() * abilityDamage);
+                    float scaling = HelperMethods.commonSpellAttributeScaling(Config.uniqueEffects.soulRend.damageSpellScaling, entity, "soul");
+                    float multiplier = scaling > 0f ? scaling : Config.uniqueEffects.soulRend.damageMulti;
+                    le.damage(user.getDamageSources().indirectMagic(user, user), le.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() * multiplier);
                     le.removeStatusEffect(StatusEffects.WEAKNESS);
                     le.removeStatusEffect(StatusEffects.SLOWNESS);
                     world.playSoundFromEntity(null, entity, SoundRegistry.DARK_SWORD_SPELL.get(),
                             entity.getSoundCategory(), 0.1f, 2f);
                 }
             }
-            if (cantrigger) {
-                healamp = (int) (healamp * heal_amount);
+            if (healamp > 0) {
+                float heal = ((float)healamp * heal_amount);
 
-                if (healamp < 1) healamp = 1;
-                else if (healamp > 6) healamp = 6;
+                if (heal < 1f) heal = 1f;
+                else if (heal > 6f) heal = 6f;
 
-                user.heal(healamp);
+                user.heal(heal);
             }
         }
         return super.use(world, user, hand);
@@ -123,12 +125,7 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "soul") > 0) {
-            abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "soul");
-            scalesWithSpellPower = true;
-        }
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
+        int stepMod = (int)(world.getTime() % 7) + 1;
         HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SOUL, ParticleTypes.SCULK_SOUL,
                 ParticleTypes.WARPED_SPORE, true);
         super.inventoryTick(stack, world, entity, slot, selected);
@@ -136,23 +133,41 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip3").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip3").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip6").setStyle(TEXT));
-        if (scalesWithSpellPower) {
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.rendsworditem.tooltip6").setStyle(Styles.TEXT));
+        if (Platform.isModLoaded("spell_power")) {
             tooltip.add(Text.literal(""));
             tooltip.add(Text.translatable("item.simplyswords.compat.scaleSoul"));
         }
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.SOULRENDER::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int chance = 85;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 500;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damageMulti = 3f;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float healMulti = 0.5f;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 10.0;
+        @ValidatedInt.Restrict(min = 1)
+        public int maxStacks = 8;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damageSpellScaling = 0.4f;
     }
 }

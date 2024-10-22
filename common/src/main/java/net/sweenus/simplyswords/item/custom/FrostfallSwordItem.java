@@ -1,5 +1,9 @@
 package net.sweenus.simplyswords.item.custom;
 
+import dev.architectury.platform.Platform;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -22,10 +26,14 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -34,7 +42,6 @@ public class FrostfallSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-	private static int stepMod = 0;
     public static boolean scalesWithSpellPower;
 
     private final int abilityCooldown = (int) Config.getFloat("frostFuryCooldown", "UniqueEffects", ConfigDefaultValues.frostFuryCooldown);
@@ -130,7 +137,7 @@ public class FrostfallSwordItem extends UniqueSwordItem {
             user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, shatter_timer_max, 4), user);
             user.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, shatter_timer_max, 2), user);
             player_shatter_timer = shatter_timer_max;
-            user.getItemCooldownManager().set(this, abilityCooldown);
+            user.getItemCooldownManager().set(this, Config.uniqueEffects.frostFury.cooldown);
         }
         return super.use(world, user, hand);
     }
@@ -220,8 +227,7 @@ public class FrostfallSwordItem extends UniqueSwordItem {
             abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "frost");
             scalesWithSpellPower = true;
         }
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
+        int stepMod = 7 - (int)(world.getTime() % 7);
         HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE,
                 ParticleTypes.WHITE_ASH, true);
         super.inventoryTick(stack, world, entity, slot, selected);
@@ -229,23 +235,39 @@ public class FrostfallSwordItem extends UniqueSwordItem {
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip3").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip4", shatter_timer_max / 20, abilityDamage).setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip3").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip4", shatter_timer_max / 20, abilityDamage).setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip5", shatter_timer_max / 20).setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip6").setStyle(TEXT));
-        if (scalesWithSpellPower) {
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip5", shatter_timer_max / 20).setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip6").setStyle(Styles.TEXT));
+        if (Platform.isModLoaded("spell_power")) {
             tooltip.add(Text.literal(""));
             tooltip.add(Text.translatable("item.simplyswords.compat.scaleFrost"));
         }
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.FROSTFALL::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int chance = 15;
+        @ValidatedInt.Restrict(min = 0)
+        public float duration = 80;
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 380;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 3.0;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damage = 18f;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float spellScaling = 1.4f;
     }
 }

@@ -2,7 +2,6 @@ package net.sweenus.simplyswords.power.powers;
 
 import me.fzzyhmstrs.fzzy_config.annotations.Translation;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
-import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
@@ -10,11 +9,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.sweenus.simplyswords.config.Config;
+import net.sweenus.simplyswords.config.settings.ChanceDurationRadiusSettings;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
-import net.sweenus.simplyswords.config.settings.BasicSettings;
+import net.sweenus.simplyswords.config.settings.ChanceDurationSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -47,14 +47,10 @@ public class WildfirePower extends RunefusedGemPower {
 		tooltip.add(Text.translatable("item.simplyswords.wildfiresworditem.tooltip3").setStyle(Styles.TEXT));
 	}
 
-	public static class Settings extends BasicSettings {
+	public static class Settings extends ChanceDurationRadiusSettings {
 
 		public Settings() {
-			super(10, 180, GemPowerRegistry.WILDFIRE);
+			super(10, 180, 10.0, GemPowerRegistry.WILDFIRE);
 		}
-
-		@Translation(prefix = "simplyswords.config.basic_settings")
-		@ValidatedDouble.Restrict(min = 0.0)
-		public double radius = 10.0;
 	}
 }

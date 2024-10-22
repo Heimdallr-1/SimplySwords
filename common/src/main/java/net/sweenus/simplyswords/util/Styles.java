@@ -9,6 +9,7 @@ public class Styles {
 	public static Style UNIQUE = color(0xE2A834);
 	public static Style LEGENDARY = color(0xE26234);
 	public static Style NETHERFUSED = LEGENDARY;
+	public static Style ABILITY = UNIQUE;
 	public static Style RIGHT_CLICK = color(0x20BD69);
 	public static Style CORRUPTED = color(0x544988);
 	public static Style CORRUPTED_LIGHT = color(0x7140A3);

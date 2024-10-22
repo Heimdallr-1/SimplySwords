@@ -56,7 +56,7 @@ public class HelperMethods {
      * getTargetedEntity taken heavily from ZsoltMolnarrr's CombatSpells
      * https://github.com/ZsoltMolnarrr/SpellEngine/blob/1.19.2/common/src/main/java/net/spell_engine/utils/TargetHelper.java#L136
      */
-    public static Entity getTargetedEntity(Entity user, int range) {
+    public static Entity getTargetedEntity(Entity user, double range) {
         Vec3d rayCastOrigin = user.getEyePos();
         Vec3d userView = user.getRotationVec(1.0F).normalize().multiply(range);
         Vec3d rayCastEnd = rayCastOrigin.add(userView);

@@ -21,10 +21,7 @@ public class Config {
 
     public static void init() {}
 
-    public static final GeneralConfig general = ConfigApiJava.registerAndLoadConfig(GeneralConfig::new);
-    public static final GemPowersConfig gemPowers = ConfigApiJava.registerAndLoadConfig(GemPowersConfig::new);
-    public static final LootConfig loot = ConfigApiJava.registerAndLoadConfig(LootConfig::new);
-    public static final StatusEffectsConfig statusEffects = ConfigApiJava.registerAndLoadConfig(StatusEffectsConfig::new);
+
 
     public static File createFile(String path, String contents, boolean overwrite) {
         File file = new File(path);
@@ -189,5 +186,10 @@ public class Config {
         }
     }
 
+
+    public static final GeneralConfig general = ConfigApiJava.registerAndLoadConfig(GeneralConfig::new);
+    public static final GemPowersConfig gemPowers = ConfigApiJava.registerAndLoadConfig(GemPowersConfig::new);
+    public static final StatusEffectsConfig statusEffects = ConfigApiJava.registerAndLoadConfig(StatusEffectsConfig::new);
+    public static final UniqueEffectsConfig uniqueEffects = ConfigApiJava.registerAndLoadConfig(UniqueEffectsConfig::new);
 
 }

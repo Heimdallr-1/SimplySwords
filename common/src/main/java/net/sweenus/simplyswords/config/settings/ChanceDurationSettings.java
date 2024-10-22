@@ -6,15 +6,15 @@ import net.minecraft.item.tooltip.TooltipAppender;
 
 import java.util.function.Supplier;
 
-public class BasicSettings extends TooltipSettings {
+public class ChanceDurationSettings extends TooltipSettings {
 
-	public BasicSettings(int chance, int duration, Supplier<? extends TooltipAppender> appender) {
+	public ChanceDurationSettings(int chance, int duration, Supplier<? extends TooltipAppender> appender) {
 		super(appender);
 		this.chance = chance;
 		this.duration = duration;
 	}
 
-	public BasicSettings(int chance, int duration) {
+	public ChanceDurationSettings(int chance, int duration) {
 		super();
 		this.chance = chance;
 		this.duration = duration;

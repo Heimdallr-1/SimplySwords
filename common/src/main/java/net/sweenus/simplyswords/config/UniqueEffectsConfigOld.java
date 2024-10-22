@@ -1,45 +1,88 @@
 package net.sweenus.simplyswords.config;
 
 import me.fzzyhmstrs.fzzy_config.config.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;
-import net.sweenus.simplyswords.item.custom.BrambleSwordItem;
-import net.sweenus.simplyswords.item.custom.BrimstoneClaymoreItem;
-import net.sweenus.simplyswords.item.custom.EmberIreSwordItem;
-import net.sweenus.simplyswords.item.custom.FrostfallSwordItem;
-import net.sweenus.simplyswords.item.custom.HearthflameSwordItem;
-import net.sweenus.simplyswords.item.custom.PlagueSwordItem;
-import net.sweenus.simplyswords.item.custom.SoulPyreSwordItem;
-import net.sweenus.simplyswords.item.custom.SoulkeeperSwordItem;
-import net.sweenus.simplyswords.item.custom.SoulrenderSwordItem;
-import net.sweenus.simplyswords.item.custom.StealSwordItem;
-import net.sweenus.simplyswords.item.custom.StormSwordItem;
-import net.sweenus.simplyswords.item.custom.TwistedBladeItem;
-import net.sweenus.simplyswords.item.custom.WatcherSwordItem;
 
-public class UniqueEffectsConfig extends Config {
+public class UniqueEffectsConfigOld extends Config {
 
-    public UniqueEffectsConfig() {
+    public UniqueEffectsConfigOld() {
         super(Identifier.of(SimplySwords.MOD_ID, "unique_effects"));
     }
 
+    @ConfigEntry.Gui.Tooltip
     public float abilityAbsorptionCap = 20f;
 
-    public WatcherSwordItem.EffectSettings      watcher = new WatcherSwordItem.EffectSettings();
-    public StealSwordItem.EffectSettings        steal = new StealSwordItem.EffectSettings();
-    public SoulkeeperSwordItem.EffectSettings   soulkeeper = new SoulkeeperSwordItem.EffectSettings();
-    public SoulrenderSwordItem.EffectSettings   soulRend = new SoulrenderSwordItem.EffectSettings();
-    public TwistedBladeItem.EffectSettings      ferocity = new TwistedBladeItem.EffectSettings();
-    public EmberIreSwordItem.EffectSettings     emberIre = new EmberIreSwordItem.EffectSettings();
-    public HearthflameSwordItem.EffectSettings  volcanicFury = new HearthflameSwordItem.EffectSettings();
-    public StormSwordItem.EffectSettings        storm = new StormSwordItem.EffectSettings();
-    public PlagueSwordItem.EffectSettings       plague = new PlagueSwordItem.EffectSettings();
-    public BrimstoneClaymoreItem.EffectSettings brimstone = new BrimstoneClaymoreItem.EffectSettings();
-    public BrambleSwordItem.EffectSettings      bramble = new BrambleSwordItem.EffectSettings();
-    public SoulPyreSwordItem.EffectSettings     soultether = new SoulPyreSwordItem.EffectSettings();
-    public FrostfallSwordItem.EffectSettings    frostFury = new FrostfallSwordItem.EffectSettings();
+    @ConfigEntry.Gui.PrefixText
+    public float watcherChance = 5f;
+    public float watcherRestoreAmount = 0.5f;
+    public float watcherRadius = 8f;
+    public float omenChance = 5f;
+    public float omenAbsorptionCap = 20f;
+    public float omenInstantKillThreshold = 0.25f;
 
-    /*
+    @ConfigEntry.Gui.PrefixText
+    public float stealChance = 25f;
+    public float stealDuration = 400f;
+    public float stealInvisDuration = 120f;
+    public float stealBlindDuration = 200f;
+    public float stealRadius = 30f;
+    public float stealSpellScaling = 2.6f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float soulMeldChance = 75f;
+    public float soulMeldDuration = 250f;
+    public float soulMeldRadius = 5f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float soulrendChance = 85f;
+    public float soulrendDuration = 500f;
+    public float soulrendDamageMulti = 3f;
+    public float soulrendHealMulti = 0.5f;
+    public float soulrendRadius = 10f;
+    public float soulrendMaxStacks = 8f;
+    public float soulrendDamageSpellScaling = 0.4f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float ferocityChance = 75f;
+    public float ferocityDuration = 100f;
+    public float ferocityMaxStacks = 15f;
+    public float ferocityStrengthTier = 2f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float emberIreChance = 30f;
+    public float emberIreDuration = 150f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float volcanicFuryChance = 25f;
+    public float volcanicFuryRadius = 3f;
+    public float volcanicFuryCooldown = 300f;
+    public float volcanicFuryDamage = 3f;
+    public float volcanicFurySpellScaling = 1.4f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float stormChance = 15f;
+    public float stormRadius = 10f;
+    public float stormCooldown = 700f;
+    public float stormFrequency = 10f;
+    public float stormDuration = 200f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float plagueChance = 55f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float brimstoneChance = 15f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float brambleChance = 45f;
+
+    @ConfigEntry.Gui.PrefixText
+    public float soultetherRange = 32f;
+    public float soultetherRadius = 8f;
+    public float soultetherDuration = 120f;
+    public float soultetherIgniteDuration = 120f;
+    public float soultetherResistanceDuration = 60f;
 
     @ConfigEntry.Gui.PrefixText
     public float frostFuryCooldown = 380f;
@@ -220,5 +263,5 @@ public class UniqueEffectsConfig extends Config {
     public float astralShiftDuration = 100f;
     public float astralShiftDamageModifier = 1.0f;
     public float astralShiftDamageMax = 300f;
-    public float astralShiftChance = 5f;*/
+    public float astralShiftChance = 5f;
 }

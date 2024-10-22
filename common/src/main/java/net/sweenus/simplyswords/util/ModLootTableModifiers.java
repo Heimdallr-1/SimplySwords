@@ -13,7 +13,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Identifier;
-import net.sweenus.simplyswords.config.Config;
+import net.sweenus.simplyswords.config.LootConfig;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 
@@ -23,18 +23,20 @@ public class ModLootTableModifiers {
 
     private static final Supplier<List<Item>> swords = Suppliers.memoize(() -> Registries.ITEM.stream().filter(it -> it instanceof UniqueSwordItem).toList());
 
+
+
     public static void init() {
 
         // 1.21 temp
         //STANDARD
         LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
             Identifier id = key.getValue();
-            if (Config.loot.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
+            if (LootConfig.INSTANCE.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
                 //System.out.println( id.getNamespace() + ":" + id.getPath()); //PRINT POSSIBLE PATHS
-                if (Config.loot.enableLootInVillages.get() || !id.getPath().contains("village")) {
+                if (LootConfig.INSTANCE.enableLootInVillages.get() || !id.getPath().contains("village")) {
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(Config.loot.standardLootTableWeight.get())) // 1 = 100% of the time
+                            .conditionally(RandomChanceLootCondition.builder(LootConfig.INSTANCE.standardLootTableWeight.get())) // 1 = 100% of the time
                             .apply(EnchantRandomlyFromTagLootFunction.create(EnchantmentTags.ON_RANDOM_LOOT)) //This is not ideal, but forge doesn't expose the registry wrapper so...
                             .with(ItemEntry.builder(ItemsRegistry.IRON_LONGSWORD.get()))
                             .with(ItemEntry.builder(ItemsRegistry.IRON_TWINBLADE.get()))
@@ -75,11 +77,11 @@ public class ModLootTableModifiers {
         //RARE
         LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
             Identifier id = key.getValue();
-            if (Config.loot.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
-                if (Config.loot.enableLootInVillages.get() || !id.getPath().contains("village")) {
+            if (LootConfig.INSTANCE.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
+                if (LootConfig.INSTANCE.enableLootInVillages.get() || !id.getPath().contains("village")) {
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(Config.loot.rareLootTableWeight.get())) // 1 = 100% of the time
+                            .conditionally(RandomChanceLootCondition.builder(LootConfig.INSTANCE.rareLootTableWeight.get())) // 1 = 100% of the time
                             .apply(EnchantRandomlyFromTagLootFunction.create(EnchantmentTags.ON_RANDOM_LOOT)) //This is not ideal, but forge doesn't expose the registry wrapper so...
                             .with(ItemEntry.builder(ItemsRegistry.DIAMOND_LONGSWORD.get()))
                             .with(ItemEntry.builder(ItemsRegistry.DIAMOND_TWINBLADE.get()))
@@ -105,11 +107,11 @@ public class ModLootTableModifiers {
         //Runic / Rare 2
         LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
             Identifier id = key.getValue();
-            if (Config.loot.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
-                if (Config.loot.enableLootInVillages.get() || !id.getPath().contains("village")) {
+            if (LootConfig.INSTANCE.enableLootDrops.get() && id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
+                if (LootConfig.INSTANCE.enableLootInVillages.get() || !id.getPath().contains("village")) {
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
-                            .conditionally(RandomChanceLootCondition.builder(Config.loot.runicLootTableWeight.get())) // 1 = 100% of the time
+                            .conditionally(RandomChanceLootCondition.builder(LootConfig.INSTANCE.runicLootTableWeight.get())) // 1 = 100% of the time
                             .with(ItemEntry.builder(ItemsRegistry.RUNIC_TABLET.get()));
                     context.addPool(pool);
                 }
@@ -122,15 +124,15 @@ public class ModLootTableModifiers {
 
         LootEvent.MODIFY_LOOT_TABLE.register(((RegistryKey<LootTable> key, LootEvent.LootTableModificationContext context, boolean builtin) -> {
             Identifier id = key.getValue();
-            if (Config.loot.enableLootDrops.get()) {
-                Float lootChance = Config.loot.uniqueLootTableOptions.get(id);
+            if (LootConfig.INSTANCE.enableLootDrops.get()) {
+                Float lootChance = LootConfig.INSTANCE.uniqueLootTableOptions.get(id);
                 if (lootChance != null && lootChance > 0f) {
 
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantLootNumberProvider.create(1))
                             .conditionally(RandomChanceLootCondition.builder(lootChance));
 
-                    swords.get().stream().filter(it -> !Config.loot.disabledUniqueWeaponLoot.contains(it)).forEach( item ->
+                    swords.get().stream().filter(it -> !LootConfig.INSTANCE.disabledUniqueWeaponLoot.contains(it)).forEach( item ->
                             pool.with(ItemEntry.builder(item))
                     );
 
@@ -140,9 +142,9 @@ public class ModLootTableModifiers {
                     if (id.getPath().contains("chests") && !id.getPath().contains("spectrum")) {
                         LootPool.Builder pool = LootPool.builder()
                                 .rolls(ConstantLootNumberProvider.create(1))
-                                .conditionally(RandomChanceLootCondition.builder(Config.loot.uniqueLootTableWeight.get())); // 1 = 100% of the time
+                                .conditionally(RandomChanceLootCondition.builder(LootConfig.INSTANCE.uniqueLootTableWeight.get())); // 1 = 100% of the time
 
-                        swords.get().stream().filter(it -> !Config.loot.disabledUniqueWeaponLoot.contains(it)).forEach( item ->
+                        swords.get().stream().filter(it -> !LootConfig.INSTANCE.disabledUniqueWeaponLoot.contains(it)).forEach( item ->
                                 pool.with(ItemEntry.builder(item))
                         );
 

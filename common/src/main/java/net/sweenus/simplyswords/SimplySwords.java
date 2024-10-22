@@ -66,7 +66,7 @@ public class SimplySwords {
     public static LootConfigOld lootConfigOld;
     public static RunicEffectsConfig runicEffectsConfig;
     public static StatusEffectsConfig statusEffectsConfig;
-    public static UniqueEffectsConfig uniqueEffectsConfig;
+    public static UniqueEffectsConfigOld uniqueEffectsConfigOld;
     public static WeaponAttributesConfig weaponAttributesConfig;
 
     public static String minimumEldritchEndVersion = "0.2.40";
@@ -81,9 +81,6 @@ public class SimplySwords {
 
         AutoConfig.register(ConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
         lootConfigOld = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().loot;
-        runicEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().runic_effects;
-        statusEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().status_effects;
-        uniqueEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().unique_effects;
         weaponAttributesConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().weapon_attributes;
 
         String version = SimplySwordsExpectPlatform.getVersion();

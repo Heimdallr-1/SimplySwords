@@ -410,6 +410,7 @@ public class AbilityMethods {
             }
         }
     }
+
     public static void astralShiftSounds(ServerPlayerEntity serverPlayer) {
         SoundEvent[] soundOptions = new SoundEvent[]{
                 SoundRegistry.DISTORTION_ARC_01.get(),

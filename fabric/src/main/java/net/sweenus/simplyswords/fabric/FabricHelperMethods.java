@@ -17,25 +17,19 @@ public class FabricHelperMethods {
                 double damageOutput = 0.1;
 
                 // Fetch attributes (crit damage/chance is now handled internally in API via randomValue)
-                double lightningPower = SpellPower.getSpellPower(SpellSchools.LIGHTNING, player).randomValue();
-                double firePower =      SpellPower.getSpellPower(SpellSchools.FIRE, player).randomValue();
-                double frostPower =     SpellPower.getSpellPower(SpellSchools.FROST, player).randomValue();
-                double arcanePower =    SpellPower.getSpellPower(SpellSchools.ARCANE, player).randomValue();
-                double soulPower =      SpellPower.getSpellPower(SpellSchools.SOUL, player).randomValue();
-                double healingPower =   SpellPower.getSpellPower(SpellSchools.HEALING, player).randomValue();
 
                 if (magicSchool.contains("lightning"))
-                    attributePower = lightningPower;
+                    attributePower = SpellPower.getSpellPower(SpellSchools.LIGHTNING, player).randomValue();
                 else if (magicSchool.contains("fire"))
-                    attributePower = firePower;
+                    attributePower = SpellPower.getSpellPower(SpellSchools.FIRE, player).randomValue();
                 else if (magicSchool.contains("frost"))
-                    attributePower = frostPower;
+                    attributePower = SpellPower.getSpellPower(SpellSchools.FROST, player).randomValue();
                 else if (magicSchool.contains("arcane"))
-                    attributePower = arcanePower;
+                    attributePower = SpellPower.getSpellPower(SpellSchools.ARCANE, player).randomValue();
                 else if (magicSchool.contains("soul"))
-                    attributePower = soulPower;
+                    attributePower = SpellPower.getSpellPower(SpellSchools.SOUL, player).randomValue();
                 else if (magicSchool.contains("healing"))
-                    attributePower = healingPower;
+                    attributePower = SpellPower.getSpellPower(SpellSchools.HEALING, player).randomValue();
 
 
                 damageOutput = (damageModifier * attributePower);

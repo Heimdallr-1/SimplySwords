@@ -24,6 +24,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.LootConfig;
 import net.sweenus.simplyswords.item.custom.CaelestisSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
@@ -165,7 +166,7 @@ public abstract class ServerPlayerEntityMixin {
                     ItemStack stackInSlot = serverPlayer.getInventory().getStack(i);
 
                     if (stackInSlot.isOf(containedRemnant.getItem()) || stackInSlot.isOf(tamperedRemnant.getItem())) {
-                        if (chance < 21 && Config.loot.enableContainedRemnants.get()) {
+                        if (chance < 21 && LootConfig.INSTANCE.enableContainedRemnants.get()) {
                             List<Item> itemsFromTag = Registries.ITEM.stream()
                                     .filter(item -> item.getDefaultStack().isIn(desiredItemsTag))
                                     .toList();

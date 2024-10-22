@@ -11,7 +11,7 @@ import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.power.RunefusedGemPower;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
-import net.sweenus.simplyswords.config.settings.BasicSettings;
+import net.sweenus.simplyswords.config.settings.ChanceDurationSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class SwiftnessPower extends RunefusedGemPower {
 		tooltip.add(Text.translatable("item.simplyswords.speedsworditem.tooltip3").setStyle(Styles.TEXT));
 	}
 
-	public static class Settings extends BasicSettings {
+	public static class Settings extends ChanceDurationSettings {
 
 		public Settings() {
 			super(15, 300, GemPowerRegistry.SWIFTNESS);
