@@ -21,7 +21,7 @@ public record RelocationComponent(double relocateX, double relocateY, double rel
 
 	public RelocationComponent tickDown() {
 		if (this == DEFAULT) return this;
-		return new RelocationComponent(relocateX, relocateY, relocateZ, relocateTarget, relocationTimer - 1, canRelocate);
+		return new RelocationComponent(relocateX, relocateY, relocateZ, relocateTarget, Math.max(0, relocationTimer - 1), canRelocate);
 	}
 
 	public RelocationComponent clear() {

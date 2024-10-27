@@ -1,5 +1,7 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -12,27 +14,23 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
 public class ShadowstingSwordItem extends UniqueSwordItem {
-    private static int stepMod = 0;
-    int skillCooldown = (int) Config.getFloat("shadowmistCooldown", "UniqueEffects", ConfigDefaultValues.shadowmistCooldown);
-    int abilityChance = (int) Config.getFloat("shadowmistChance", "UniqueEffects", ConfigDefaultValues.shadowmistChance);
-    int damageArmorMultiplier = (int) (Config.getFloat("shadowmistDamageMulti", "UniqueEffects", ConfigDefaultValues.shadowmistDamageMulti) * 2);
-    int blindDuration = (int) Config.getFloat("shadowmistBlindDuration", "UniqueEffects", ConfigDefaultValues.shadowmistBlindDuration);
-    int radius = (int) Config.getFloat("shadowmistRadius", "UniqueEffects", ConfigDefaultValues.shadowmistRadius);
 
     public ShadowstingSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
@@ -42,10 +40,10 @@ public class ShadowstingSwordItem extends UniqueSwordItem {
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         HelperMethods.playHitSounds(attacker, target);
         if (!attacker.getWorld().isClient()) {
-            if (attacker.getRandom().nextInt(100) <= abilityChance && attacker instanceof PlayerEntity) {
+            if (attacker.getRandom().nextInt(100) <= Config.uniqueEffects.shadowmist.chance && attacker instanceof PlayerEntity) {
                 attacker.getWorld().playSoundFromEntity(null, attacker, SoundRegistry.MAGIC_SWORD_SPELL_02.get(),
                         attacker.getSoundCategory(), 0.3f, 1.8f);
-                int extraDamage = (target.getArmor() * damageArmorMultiplier) / 2;
+                float extraDamage = (target.getArmor() * Config.uniqueEffects.shadowmist.damageMulti) / 2;
                 target.damage(attacker.getDamageSources().indirectMagic(attacker, attacker), extraDamage);
             }
         }
@@ -56,13 +54,14 @@ public class ShadowstingSwordItem extends UniqueSwordItem {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         world.playSoundFromEntity(null, user, SoundRegistry.ELEMENTAL_SWORD_EARTH_ATTACK_01.get(),
                 user.getSoundCategory(), 0.4f, 1.6f);
-        user.getItemCooldownManager().set(this.getDefaultStack().getItem(), skillCooldown);
+        user.getItemCooldownManager().set(this.getDefaultStack().getItem(), Config.uniqueEffects.shadowmist.cooldown);
 
+        int radius = Config.uniqueEffects.shadowmist.radius;
         Box box = new Box(user.getX() + radius, user.getY() + radius, user.getZ() + radius,
                 user.getX() - radius, user.getY() - radius, user.getZ() - radius);
         for (Entity entity : world.getOtherEntities(user, box, EntityPredicates.VALID_LIVING_ENTITY)) {
             if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, user)) {
-                le.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, blindDuration, 3), user);
+                le.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, Config.uniqueEffects.shadowmist.blindDuration, 3), user);
             }
         }
 
@@ -98,28 +97,41 @@ public class ShadowstingSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM,
                 ParticleTypes.MYCELIUM, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip3").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip3").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip5").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.shadowmistsworditem.tooltip5").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.SHADOWSTING::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int chance = 25;
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 200;
+        @ValidatedFloat.Restrict(min = 0)
+        public float damageMulti = 0.8f;
+        @ValidatedInt.Restrict(min = 1)
+        public int radius = 4;
+        @ValidatedInt.Restrict(min = 0)
+        public int blindDuration = 60;
+
     }
 }

@@ -19,7 +19,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -31,8 +30,6 @@ import java.util.function.Supplier;
 public class BattleStandardDarkEntity extends PathAwareEntity {
     public static final Supplier<EntityType<BattleStandardDarkEntity>> TYPE = Suppliers.memoize(() ->
             EntityType.Builder.create(BattleStandardDarkEntity::new, SpawnGroup.MISC).build("battlestandarddark"));
-    float abilityDamage = Config.getFloat("abyssalStandardDamage", "UniqueEffects", ConfigDefaultValues.abyssalStandardDamage);
-    float spellScalingModifier = Config.getFloat("abyssalStandardSpellScaling", "UniqueEffects", ConfigDefaultValues.abyssalStandardSpellScaling);
     public PlayerEntity ownerEntity;
     public String standardType;
     public int decayRate;
@@ -78,15 +75,12 @@ public class BattleStandardDarkEntity extends PathAwareEntity {
                 if (!ownerEntity.isAlive())
                     this.setHealth(this.getHealth() - 1000);
                 int radius = 6;
-                if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, ownerEntity, "soul") > 0)
-                    abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, ownerEntity, "soul");
                 if (standardType.equals("enigma") && !this.isInvisible())
                     this.setInvisible(true);
 
                 if (standardType.equals("enigma")) {
                     radius = 2;
-                    int moveRadius = (int) Config.getFloat("enigmaChaseRadius", "UniqueEffects", ConfigDefaultValues.enigmaChaseRadius);
-                    abilityDamage = 1;
+                    double moveRadius = Config.uniqueEffects.enigma.enigmaChaseRadius;
                     Box box = HelperMethods.createBox(this, moveRadius);
                     Entity closestEntity = this.getWorld().getOtherEntities(this, box, EntityPredicates.VALID_LIVING_ENTITY).stream()
                             .filter(entity -> {
@@ -106,6 +100,8 @@ public class BattleStandardDarkEntity extends PathAwareEntity {
                         }
                     }
                 }
+
+                float abilityDamage = standardType.equals("enigma") ? 1f : HelperMethods.spellScaledDamage("soul", ownerEntity, Config.uniqueEffects.abyssalStandard.spellScaling, Config.uniqueEffects.abyssalStandard.damage);
 
                 //AOE Aura
                 if (this.age % 10 == 0) {

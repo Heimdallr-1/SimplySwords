@@ -11,7 +11,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.Box;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.item.custom.MagiscytheSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -36,14 +35,13 @@ public class MagistormEffect extends HighOrbitingEffect {
             double x = livingEntity.getX();
             double y = livingEntity.getY();
             double z = livingEntity.getZ();
-            float damage = Config.getFloat("magistormDamage", "UniqueEffects", ConfigDefaultValues.magistormDamage);
-            double radius = Config.getFloat("magistormRadius", "UniqueEffects", ConfigDefaultValues.magistormRadius);
-            float duration = Config.getFloat("magistormDuration", "UniqueEffects", ConfigDefaultValues.magistormDuration);
+            double radius = Config.uniqueEffects.magistorm.radius;
+            float duration = Config.uniqueEffects.magistorm.duration;
             int frequency = Math.max(3, 10 - amplifier);
 
-            float spellScalingModifier = Config.getFloat("magistormSpellScaling", "UniqueEffects", ConfigDefaultValues.magistormSpellScaling);
-            if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, livingEntity, "arcane") > damage)
-                damage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, livingEntity, "arcane");
+            float spellScalingModifier = Config.uniqueEffects.magistorm.spellScaling;
+
+            float damage = Math.max(Config.uniqueEffects.magistorm.damage, HelperMethods.commonSpellAttributeScaling(spellScalingModifier, livingEntity, "arcane"));
 
             DamageSource damageSource =  livingEntity.getDamageSources().indirectMagic(livingEntity, livingEntity);
             if (livingEntity.age % frequency == 0 && livingEntity instanceof  PlayerEntity player) {

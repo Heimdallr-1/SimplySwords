@@ -1,7 +1,5 @@
 package net.sweenus.simplyswords.item.custom;
 
-import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
-import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -13,13 +11,11 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
@@ -84,9 +80,7 @@ public class TwistedBladeItem extends UniqueSwordItem implements TwoHandedWeapon
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.ASH,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.ASH,
                 ParticleTypes.ASH, ParticleTypes.ASH, false);
         super.inventoryTick(stack, world, entity, slot, selected);
     }

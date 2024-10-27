@@ -21,7 +21,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
@@ -32,10 +31,6 @@ import java.util.function.Supplier;
 public class BattleStandardEntity extends PathAwareEntity {
     public static final Supplier<EntityType<BattleStandardEntity>> TYPE = Suppliers.memoize(() ->
             EntityType.Builder.create(BattleStandardEntity::new, SpawnGroup.MISC).build("battlestandard"));
-    float abilityDamage = Config.getFloat("righteousStandardDamage", "UniqueEffects", ConfigDefaultValues.righteousStandardDamage);
-    float abilityHeal = 3;
-    float abilityHealScalingModifier = Config.getFloat("righteousStandardSpellScalingHeal", "UniqueEffects", ConfigDefaultValues.righteousStandardSpellScalingHeal);
-    float spellScalingModifier = Config.getFloat("righteousStandardSpellScaling", "UniqueEffects", ConfigDefaultValues.righteousStandardSpellScaling);
     public LivingEntity ownerEntity;
     public String standardType;
     public int decayRate;
@@ -93,9 +88,7 @@ public class BattleStandardEntity extends PathAwareEntity {
                 if (!ownerEntity.isAlive())
                     this.setHealth(this.getHealth() - 1000);
                 int radius = 6;
-                if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, ownerEntity, "fire") > 0) {
-                    abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, ownerEntity, "fire");
-                }
+                float abilityDamage = HelperMethods.spellScaledDamage("fire", ownerEntity, Config.uniqueEffects.righteousStandard.spellScaling, Config.uniqueEffects.righteousStandard.damage);
                 // AOE Aura
                 //living entity, ownerEntity, abilityDamage,
                 if (this.age % 10 == 0) {
@@ -179,9 +172,7 @@ public class BattleStandardEntity extends PathAwareEntity {
                             this.getX() - radius, this.getY() - (float) radius / 3, this.getZ() - radius);
                     for (Entity entities : getWorld().getOtherEntities(this, box, EntityPredicates.VALID_LIVING_ENTITY)) {
                         if (entities instanceof LivingEntity le && !HelperMethods.checkFriendlyFire(le, ownerEntity)) {
-                            if (HelperMethods.commonSpellAttributeScaling(abilityHealScalingModifier, ownerEntity, "healing") > 0) {
-                                abilityHeal = HelperMethods.commonSpellAttributeScaling(abilityHealScalingModifier, ownerEntity, "healing");
-                            }
+                            float abilityHeal = HelperMethods.spellScaledDamage("healing", ownerEntity, Config.uniqueEffects.righteousStandard.spellScalingHeal, 3f);
                             //Sunfire positive effects
                             switch (standardType) {
                                 case "sunfire" -> {

@@ -6,6 +6,7 @@ import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -17,7 +18,6 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -25,10 +25,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.item.component.ChargedLocationComponent;
+import net.sweenus.simplyswords.item.component.StoredChargeComponent;
+import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -42,122 +44,111 @@ public class FrostfallSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    public static boolean scalesWithSpellPower;
-
-    private final int abilityCooldown = (int) Config.getFloat("frostFuryCooldown", "UniqueEffects", ConfigDefaultValues.frostFuryCooldown);
-    int radius = (int) Config.getFloat("frostFuryRadius", "UniqueEffects", ConfigDefaultValues.frostFuryRadius);
-    float abilityDamage = Config.getFloat("frostFuryDamage", "UniqueEffects", ConfigDefaultValues.frostFuryDamage);
-    int proc_chance = (int) Config.getFloat("frostFuryChance", "UniqueEffects", ConfigDefaultValues.frostFuryChance);
-    int shatter_timer_max = (int) Config.getFloat("frostFuryDuration", "UniqueEffects", ConfigDefaultValues.frostFuryDuration);
-    float spellScalingModifier = Config.getFloat("frostFurySpellScaling", "UniqueEffects", ConfigDefaultValues.frostFurySpellScaling);
-    int shatter_timer;
-    int player_shatter_timer;
-    double lastX;
-    double lastY;
-    double lastZ;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (!attacker.getWorld().isClient()) {
-            ServerWorld world = (ServerWorld) attacker.getWorld();
-            HelperMethods.playHitSounds(attacker, target);
-            //AOE freeze
-            if (attacker.getRandom().nextInt(100) <= proc_chance) {
-                Box box = new Box(target.getX() + radius, target.getY() + radius, target.getZ() + radius,
-                        target.getX() - radius, target.getY() - radius, target.getZ() - radius);
-                for (Entity entity : world.getOtherEntities(attacker, box, EntityPredicates.VALID_LIVING_ENTITY)) {
-                    if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, attacker)) {
-                        le.addStatusEffect(new StatusEffectInstance(EffectRegistry.FREEZE, shatter_timer_max + 10, 0), attacker);
-                        le.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, shatter_timer_max - 10, 4), attacker);
-                        world.playSoundFromEntity(null, le, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_01.get(),
-                                le.getSoundCategory(), 0.1f, 3f);
-                        BlockPos pos = BlockPos.ofFloored(le.getX(), le.getY(), le.getZ());
-                        BlockPos pos2 = BlockPos.ofFloored(le.getX(), le.getY() + 1, le.getZ());
-                        BlockState state = Blocks.ICE.getDefaultState();
-                        if (world.getBlockState(pos) == Blocks.AIR.getDefaultState())
-                            world.setBlockState(pos, state);
-                        if (world.getBlockState(pos2) == Blocks.AIR.getDefaultState())
-                            world.setBlockState(pos2, state);
-                    }
+        if (attacker.getWorld().isClient()) super.postHit(stack, target, attacker);
+
+        ServerWorld world = (ServerWorld) attacker.getWorld();
+        HelperMethods.playHitSounds(attacker, target);
+        //AOE freeze
+        int proc_chance = Config.uniqueEffects.frostFury.chance;
+        double radius = Config.uniqueEffects.frostFury.radius;
+        int shatter_timer_max = Config.uniqueEffects.frostFury.duration;
+        if (attacker.getRandom().nextInt(100) <= proc_chance) {
+            Box box = new Box(target.getX() + radius, target.getY() + radius, target.getZ() + radius,
+                    target.getX() - radius, target.getY() - radius, target.getZ() - radius);
+            for (Entity entity : world.getOtherEntities(attacker, box, EntityPredicates.VALID_LIVING_ENTITY)) {
+                if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, attacker)) {
+                    le.addStatusEffect(new StatusEffectInstance(EffectRegistry.FREEZE, shatter_timer_max + 10, 0), attacker);
+                    le.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, shatter_timer_max - 10, 4), attacker);
+                    world.playSoundFromEntity(null, le, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_01.get(),
+                            le.getSoundCategory(), 0.1f, 3f);
+                    BlockPos pos = BlockPos.ofFloored(le.getX(), le.getY(), le.getZ());
+                    BlockPos pos2 = BlockPos.ofFloored(le.getX(), le.getY() + 1, le.getZ());
+                    BlockState state = Blocks.ICE.getDefaultState();
+                    if (world.getBlockState(pos) == Blocks.AIR.getDefaultState())
+                        world.setBlockState(pos, state);
+                    if (world.getBlockState(pos2) == Blocks.AIR.getDefaultState())
+                        world.setBlockState(pos2, state);
                 }
-                shatter_timer = shatter_timer_max;
             }
+            stack.set(ComponentTypeRegistry.STORED_CHARGE.get(), new StoredChargeComponent(shatter_timer_max));
         }
         return super.postHit(stack, target, attacker);
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        if (!user.getWorld().isClient()) {
-            lastX = user.getX();
-            lastY = user.getY();
-            lastZ = user.getZ();
+        if (user.getWorld().isClient()) return super.use(world, user, hand);
 
-            world.playSoundFromEntity(null, user, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_03.get(),
-                    user.getSoundCategory(), 0.6f, 2f);
+        double lastX = user.getX();
+        double lastY = user.getY();
+        double lastZ = user.getZ();
 
-            double xpos = user.getX() - 2;
-            double ypos = user.getY();
-            double zpos = user.getZ() - 2;
-            user.setVelocity(0, 0, 0); // Stop player in place
-            user.velocityModified = true;
-            user.teleport(lastX, lastY, lastZ, false); // Ensure they don't end up stuck inside a block
+        world.playSoundFromEntity(null, user, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_03.get(),
+                user.getSoundCategory(), 0.6f, 2f);
 
-            for (int i = 3; i > 0; i--) {
-                for (int j = 3; j > 0; j--) {
-                    BlockPos poscheck = BlockPos.ofFloored(xpos + i, ypos, zpos + j);
-                    BlockPos poscheck2 = BlockPos.ofFloored(xpos + i, ypos + 1, zpos + j);
-                    BlockPos poscheck3 = BlockPos.ofFloored(xpos + i, ypos + 2, zpos + j);
-                    BlockPos poscheck4 = BlockPos.ofFloored(xpos + i, ypos - 1, zpos + j);
+        double xPos = user.getX() - 2;
+        double yPos = user.getY();
+        double zPos = user.getZ() - 2;
+        user.setVelocity(0, 0, 0); // Stop player in place
+        user.velocityModified = true;
+        user.teleport(lastX, lastY, lastZ, false); // Ensure they don't end up stuck inside a block
 
-                    BlockState currentState = world.getBlockState(poscheck);
-                    BlockState currentState2 = world.getBlockState(poscheck2);
-                    BlockState currentState3 = world.getBlockState(poscheck3);
-                    BlockState currentState4 = world.getBlockState(poscheck4);
-                    BlockState state = Blocks.ICE.getDefaultState();
-                    if (i + j != 4) {
-                        if (currentState == Blocks.AIR.getDefaultState() || currentState == Blocks.SNOW.getDefaultState() || currentState == Blocks.GRASS_BLOCK.getDefaultState()
-                                || currentState == Blocks.LARGE_FERN.getDefaultState() || currentState == Blocks.FERN.getDefaultState())
-                            world.setBlockState(poscheck, state);
-                        if (currentState2 == Blocks.AIR.getDefaultState() || currentState2 == Blocks.SNOW.getDefaultState() || currentState2 == Blocks.GRASS_BLOCK.getDefaultState()
-                                || currentState2 == Blocks.LARGE_FERN.getDefaultState() || currentState2 == Blocks.FERN.getDefaultState())
-                            world.setBlockState(poscheck2, state);
-                    }
-                    if (currentState3 == Blocks.AIR.getDefaultState() || currentState3 == Blocks.SNOW.getDefaultState() || currentState3 == Blocks.GRASS_BLOCK.getDefaultState()
-                            || currentState3 == Blocks.LARGE_FERN.getDefaultState() || currentState3 == Blocks.FERN.getDefaultState())
-                        world.setBlockState(poscheck3, state);
-                    if (currentState4 == Blocks.AIR.getDefaultState() || currentState4 == Blocks.SNOW.getDefaultState() || currentState4 == Blocks.GRASS_BLOCK.getDefaultState()
-                            || currentState4 == Blocks.LARGE_FERN.getDefaultState() || currentState4 == Blocks.FERN.getDefaultState())
-                        world.setBlockState(poscheck4, state);
+        for (int i = 3; i > 0; i--) {
+            for (int j = 3; j > 0; j--) {
+                BlockPos poscheck = BlockPos.ofFloored(xPos + i, yPos, zPos + j);
+                BlockPos poscheck2 = BlockPos.ofFloored(xPos + i, yPos + 1, zPos + j);
+                BlockPos poscheck3 = BlockPos.ofFloored(xPos + i, yPos + 2, zPos + j);
+                BlockPos poscheck4 = BlockPos.ofFloored(xPos + i, yPos - 1, zPos + j);
+
+                BlockState currentState = world.getBlockState(poscheck);
+                BlockState currentState2 = world.getBlockState(poscheck2);
+                BlockState currentState3 = world.getBlockState(poscheck3);
+                BlockState currentState4 = world.getBlockState(poscheck4);
+                BlockState state = Blocks.ICE.getDefaultState();
+                if (i + j != 4) {
+                    if (currentState == Blocks.AIR.getDefaultState() || currentState == Blocks.SNOW.getDefaultState() || currentState == Blocks.GRASS_BLOCK.getDefaultState()
+                            || currentState == Blocks.LARGE_FERN.getDefaultState() || currentState == Blocks.FERN.getDefaultState())
+                        world.setBlockState(poscheck, state);
+                    if (currentState2 == Blocks.AIR.getDefaultState() || currentState2 == Blocks.SNOW.getDefaultState() || currentState2 == Blocks.GRASS_BLOCK.getDefaultState()
+                            || currentState2 == Blocks.LARGE_FERN.getDefaultState() || currentState2 == Blocks.FERN.getDefaultState())
+                        world.setBlockState(poscheck2, state);
                 }
+                if (currentState3 == Blocks.AIR.getDefaultState() || currentState3 == Blocks.SNOW.getDefaultState() || currentState3 == Blocks.GRASS_BLOCK.getDefaultState()
+                        || currentState3 == Blocks.LARGE_FERN.getDefaultState() || currentState3 == Blocks.FERN.getDefaultState())
+                    world.setBlockState(poscheck3, state);
+                if (currentState4 == Blocks.AIR.getDefaultState() || currentState4 == Blocks.SNOW.getDefaultState() || currentState4 == Blocks.GRASS_BLOCK.getDefaultState()
+                        || currentState4 == Blocks.LARGE_FERN.getDefaultState() || currentState4 == Blocks.FERN.getDefaultState())
+                    world.setBlockState(poscheck4, state);
             }
-            user.teleport(lastX, lastY, lastZ, false);
-            user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, shatter_timer_max, 4), user);
-            user.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, shatter_timer_max, 4), user);
-            user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, shatter_timer_max, 4), user);
-            user.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, shatter_timer_max, 2), user);
-            player_shatter_timer = shatter_timer_max;
-            user.getItemCooldownManager().set(this, Config.uniqueEffects.frostFury.cooldown);
         }
+        user.teleport(lastX, lastY, lastZ, false);
+        int shatter_timer_max = Config.uniqueEffects.frostFury.duration;
+        user.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, shatter_timer_max, 4), user);
+        user.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, shatter_timer_max, 4), user);
+        user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, shatter_timer_max, 4), user);
+        user.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, shatter_timer_max, 2), user);
+        ItemStack stack = user.getStackInHand(hand);
+        stack.set(ComponentTypeRegistry.CHARGED_LOCATION.get(), new ChargedLocationComponent(shatter_timer_max, lastX, lastY, lastZ));
+        user.getItemCooldownManager().set(this, Config.uniqueEffects.frostFury.cooldown);
         return super.use(world, user, hand);
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (!world.isClient && (entity instanceof PlayerEntity player)) {
-            if (shatter_timer > 0) {
-                shatter_timer--;
-            }
-            if (player_shatter_timer > 0) {
-                player_shatter_timer--;
-            }
-            if (shatter_timer == 1) {
+            StoredChargeComponent shatterComponent = stack.apply(ComponentTypeRegistry.STORED_CHARGE.get(), StoredChargeComponent.DEFAULT, StoredChargeComponent::decrement);
+            ChargedLocationComponent chargedLocationComponent = stack.apply(ComponentTypeRegistry.CHARGED_LOCATION.get(), ChargedLocationComponent.DEFAULT, ChargedLocationComponent::decrement);
+            if (shatterComponent != null && shatterComponent.charge() == 1) {
+                double radius = Config.uniqueEffects.frostFury.radius;
                 Box box = new Box(player.getX() + radius + 10, player.getY() + radius + 10, player.getZ() + radius + 10,
                         player.getX() - radius - 10, player.getY() - radius - 10, player.getZ() - radius - 10);
                 for (Entity otherEntity : world.getOtherEntities(player, box, EntityPredicates.VALID_LIVING_ENTITY)) {
                     //Ice shatter
                     if (otherEntity instanceof LivingEntity le) {
                         if (le.hasStatusEffect(EffectRegistry.FREEZE)) {
+                            float abilityDamage = HelperMethods.spellScaledDamage("frost", player, Config.uniqueEffects.frostFury.spellScaling, Config.uniqueEffects.frostFury.damage);
                             world.playSoundFromEntity(null, le, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_02.get(),
                                     le.getSoundCategory(), 0.2f, 3f);
                             le.damage(player.getDamageSources().indirectMagic(entity, entity), abilityDamage);
@@ -191,20 +182,21 @@ public class FrostfallSwordItem extends UniqueSwordItem {
                         }
                     }
                 }
+                stack.set(ComponentTypeRegistry.STORED_CHARGE.get(), null);
             }
-            if (player_shatter_timer == 1) {
+            if (chargedLocationComponent != null && chargedLocationComponent.charge() == 1) {
                 world.playSoundFromEntity(null, player, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_02.get(),
                         player.getSoundCategory(), 0.6f, 3f);
-                double xpos = lastX - 2;
-                double ypos = lastY;
-                double zpos = lastZ - 2;
+                double xPos = chargedLocationComponent.lastX() - 2;
+                double yPos = chargedLocationComponent.lastY();
+                double zPos = chargedLocationComponent.lastZ() - 2;
 
                 for (int i = 3; i > 0; i--) {
                     for (int j = 3; j > 0; j--) {
-                        BlockPos poscheck = BlockPos.ofFloored(xpos + i, ypos, zpos + j);
-                        BlockPos poscheck2 = BlockPos.ofFloored(xpos + i, ypos + 1, zpos + j);
-                        BlockPos poscheck3 = BlockPos.ofFloored(xpos + i, ypos + 2, zpos + j);
-                        BlockPos poscheck4 = BlockPos.ofFloored(xpos + i, ypos - 1, zpos + j);
+                        BlockPos poscheck = BlockPos.ofFloored(xPos + i, yPos, zPos + j);
+                        BlockPos poscheck2 = BlockPos.ofFloored(xPos + i, yPos + 1, zPos + j);
+                        BlockPos poscheck3 = BlockPos.ofFloored(xPos + i, yPos + 2, zPos + j);
+                        BlockPos poscheck4 = BlockPos.ofFloored(xPos + i, yPos - 1, zPos + j);
 
                         BlockState currentState = world.getBlockState(poscheck);
                         BlockState currentState2 = world.getBlockState(poscheck2);
@@ -223,12 +215,7 @@ public class FrostfallSwordItem extends UniqueSwordItem {
                 }
             }
         }
-        if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "frost") > 0) {
-            abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "frost");
-            scalesWithSpellPower = true;
-        }
-        int stepMod = 7 - (int)(world.getTime() % 7);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE,
                 ParticleTypes.WHITE_ASH, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
@@ -239,10 +226,11 @@ public class FrostfallSwordItem extends UniqueSwordItem {
         tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip1").setStyle(Styles.ABILITY));
         tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip2").setStyle(Styles.TEXT));
         tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip3").setStyle(Styles.TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip4", shatter_timer_max / 20, abilityDamage).setStyle(Styles.TEXT));
+        float abilityDamage = HelperMethods.spellScaledDamage("frost", MinecraftClient.getInstance().player, Config.uniqueEffects.frostFury.spellScaling, Config.uniqueEffects.frostFury.damage);
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip4", Config.uniqueEffects.frostFury.duration / 20, abilityDamage).setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
         tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
-        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip5", shatter_timer_max / 20).setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip5", Config.uniqueEffects.frostFury.duration / 20).setStyle(Styles.TEXT));
         tooltip.add(Text.translatable("item.simplyswords.frostfallsworditem.tooltip6").setStyle(Styles.TEXT));
         if (Platform.isModLoaded("spell_power")) {
             tooltip.add(Text.literal(""));
@@ -260,13 +248,13 @@ public class FrostfallSwordItem extends UniqueSwordItem {
         @ValidatedInt.Restrict(min = 0, max = 100)
         public int chance = 15;
         @ValidatedInt.Restrict(min = 0)
-        public float duration = 80;
-        @ValidatedInt.Restrict(min = 0)
         public int cooldown = 380;
-        @ValidatedDouble.Restrict(min = 1.0)
-        public double radius = 3.0;
         @ValidatedFloat.Restrict(min = 0f)
         public float damage = 18f;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 80;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 3.0;
         @ValidatedFloat.Restrict(min = 0f)
         public float spellScaling = 1.4f;
     }

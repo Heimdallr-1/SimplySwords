@@ -15,14 +15,12 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
@@ -102,7 +100,7 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
                         && le.hasStatusEffect(StatusEffects.WEAKNESS) && HelperMethods.checkFriendlyFire(le, user)) {
 
                     healamp += (le.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier());
-                    float scaling = HelperMethods.commonSpellAttributeScaling(Config.uniqueEffects.soulRend.damageSpellScaling, entity, "soul");
+                    float scaling = HelperMethods.commonSpellAttributeScaling(Config.uniqueEffects.soulRend.spellScaling, entity, "soul");
                     float multiplier = scaling > 0f ? scaling : Config.uniqueEffects.soulRend.damageMulti;
                     le.damage(user.getDamageSources().indirectMagic(user, user), le.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() * multiplier);
                     le.removeStatusEffect(StatusEffects.WEAKNESS);
@@ -125,8 +123,7 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        int stepMod = (int)(world.getTime() % 7) + 1;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SOUL, ParticleTypes.SCULK_SOUL,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SOUL, ParticleTypes.SCULK_SOUL,
                 ParticleTypes.WARPED_SPORE, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
@@ -159,15 +156,16 @@ public class SoulrenderSwordItem extends UniqueSwordItem implements TwoHandedWea
         public int chance = 85;
         @ValidatedInt.Restrict(min = 0)
         public int duration = 500;
+        @ValidatedInt.Restrict(min = 1)
+        public int maxStacks = 8;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 10.0;
+
+        @ValidatedFloat.Restrict(min = 0f)
+        public float healMulti = 0.5f;
         @ValidatedFloat.Restrict(min = 0f)
         public float damageMulti = 3f;
         @ValidatedFloat.Restrict(min = 0f)
-        public float healMulti = 0.5f;
-        @ValidatedDouble.Restrict(min = 1.0)
-        public double radius = 10.0;
-        @ValidatedInt.Restrict(min = 1)
-        public int maxStacks = 8;
-        @ValidatedFloat.Restrict(min = 0f)
-        public float damageSpellScaling = 0.4f;
+        public float spellScaling = 0.4f;
     }
 }

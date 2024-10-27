@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.compat.eldritch_end.EldritchEndCompatMethods;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -42,7 +41,7 @@ public abstract class LivingEntityMixin {
                         && (stack.isOf(ItemsRegistry.WAXWEAVER.get())
                         || stack.isOf(ItemsRegistry.WICKPIERCER.get()))) {
 
-                    int skillCooldown = (int) Config.getFloat("waxweaveCooldown", "UniqueEffects", ConfigDefaultValues.waxweaveCooldown);
+                    int skillCooldown = Config.uniqueEffects.waxweave.cooldown;
                     player.setHealth(player.getMaxHealth());
                     HelperMethods.incrementStatusEffect(player, StatusEffects.RESISTANCE, 100, 2, 3);
                     player.getItemCooldownManager().set(stack.getItem(), skillCooldown);

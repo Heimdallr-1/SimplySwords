@@ -12,7 +12,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
 
@@ -32,11 +31,11 @@ public class MagislamEffect extends OrbitingEffect {
 
             if (livingEntity instanceof PlayerEntity player) {
                 int ability_timer = Objects.requireNonNull(player.getStatusEffect(EffectRegistry.MAGISLAM)).getDuration();
-                int radius = (int) Config.getFloat("magislamRadius", "UniqueEffects", ConfigDefaultValues.magislamRadius);
+                double radius = Config.uniqueEffects.magislam.radius;
                 double leapVelocity = 1.5;
                 double height = 0.9;
                 double descentVelocity = 1;
-                double damage_multiplier = Config.getFloat("magislamDamageModifier", "UniqueEffects", ConfigDefaultValues.magislamDamageModifier);
+                double damage_multiplier = Config.uniqueEffects.magislam.damageModifier;
                 double damage = (HelperMethods.getEntityAttackDamage(livingEntity) * damage_multiplier);
 
                 if (ability_timer >= 60) {

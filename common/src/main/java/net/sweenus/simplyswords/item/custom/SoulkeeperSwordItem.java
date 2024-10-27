@@ -35,8 +35,6 @@ public class SoulkeeperSwordItem extends UniqueSwordItem implements TwoHandedWea
         super(toolMaterial, settings);
     }
 
-    private static int stepMod = 0;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
@@ -96,9 +94,7 @@ public class SoulkeeperSwordItem extends UniqueSwordItem implements TwoHandedWea
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SOUL, ParticleTypes.SOUL,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SOUL, ParticleTypes.SOUL,
                 ParticleTypes.SPORE_BLOSSOM_AIR, false);
         super.inventoryTick(stack, world, entity, slot, selected);
     }

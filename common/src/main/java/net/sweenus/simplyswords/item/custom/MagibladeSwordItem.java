@@ -1,5 +1,7 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,16 +12,18 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -28,7 +32,6 @@ public class MagibladeSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    private static int stepMod = 0;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -77,10 +80,10 @@ public class MagibladeSwordItem extends UniqueSwordItem {
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!user.getWorld().isClient() && user instanceof  PlayerEntity player) {
-            int skillCooldown = (int) Config.getFloat("magibladeCooldown", "UniqueEffects", ConfigDefaultValues.magibladeCooldown);
-            float damageModifier = Config.getFloat("magibladeDamageModifier", "UniqueEffects", ConfigDefaultValues.magibladeDamageModifier);
+            int skillCooldown = Config.uniqueEffects.magiblade.cooldown;
+            float damageModifier = Config.uniqueEffects.magiblade.damageModifier;
             float damage = (float) (HelperMethods.getEntityAttackDamage(user) * damageModifier);
-            float distance = Config.getFloat("magibladeSonicDistance", "UniqueEffects", ConfigDefaultValues.magibladeSonicDistance);
+            float distance = Config.uniqueEffects.magiblade.sonicDistance;
             DamageSource damageSource = player.getDamageSources().playerAttack(player);
 
             if (remainingUseTicks < 11) {
@@ -98,32 +101,45 @@ public class MagibladeSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.ENCHANT,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.ENCHANT,
                 ParticleTypes.ENCHANT, ParticleTypes.ASH, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip3").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip4").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip3").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip4").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclickheld").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip6").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip7").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip8").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip9").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclickheld").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip6").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip7").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip8").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magibladesworditem.tooltip9").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.MAGIBLADE::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 35;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damageModifier = 0.7f;
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int repelChance = 55;
+        @ValidatedFloat.Restrict(min = 1f)
+        public float repelRadius = 4f;
+        @ValidatedFloat.Restrict(min = 1f)
+        public float sonicDistance = 16f;
+
     }
 }

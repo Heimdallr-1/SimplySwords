@@ -1,5 +1,8 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -9,17 +12,19 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 import java.util.Random;
@@ -29,17 +34,15 @@ public class MagispearSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-	private static int stepMod = 0;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
             HelperMethods.playHitSounds(attacker, target);
             ServerWorld world = (ServerWorld) attacker.getWorld();
-            float hitChance = Config.getFloat("magislamMagicChance", "UniqueEffects", ConfigDefaultValues.magislamMagicChance);
+            float hitChance = Config.uniqueEffects.magislam.magicChance;
             int random = new Random().nextInt(100);
             if (random < hitChance) {
-                float damage = (float) (HelperMethods.getEntityAttackDamage(attacker) * Config.getFloat("magislamMagicModifier", "UniqueEffects", ConfigDefaultValues.magislamMagicModifier));
+                float damage = Config.uniqueEffects.magislam.magicModifier;
                 target.timeUntilRegen = 0;
                 target.damage(attacker.getDamageSources().indirectMagic(attacker, attacker), damage);
                 target.timeUntilRegen = 0;
@@ -52,7 +55,7 @@ public class MagispearSwordItem extends UniqueSwordItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        int skillCooldown = (int) Config.getFloat("magislamCooldown", "UniqueEffects", ConfigDefaultValues.magislamCooldown);
+        int skillCooldown = Config.uniqueEffects.magislam.cooldown;
 
         world.playSound(null, user.getBlockPos(), SoundRegistry.MAGIC_SHAMANIC_NORDIC_27.get(),
                 user.getSoundCategory(), 0.2f, 1.1f);
@@ -65,32 +68,45 @@ public class MagispearSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.ENCHANT,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.ENCHANT,
                 ParticleTypes.ENCHANT, ParticleTypes.ASH, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip3").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip4").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip3").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip4").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip6").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip7").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip8").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip9").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip6").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip7").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip8").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.magispearsworditem.tooltip9").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.MAGISPEAR::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 140;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damageModifier = 2.0f;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 4.0;
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int magicChance = 35;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float magicModifier = 0.5f;
+
     }
 }

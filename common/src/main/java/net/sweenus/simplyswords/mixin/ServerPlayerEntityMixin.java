@@ -23,7 +23,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.LootConfig;
 import net.sweenus.simplyswords.item.custom.CaelestisSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
@@ -120,8 +119,8 @@ public abstract class ServerPlayerEntityMixin {
             //Magiblade repellent
             if (serverPlayer.getMainHandStack().isOf(ItemsRegistry.MAGIBLADE.get())) {
                 int frequency = 8;
-                int radius = (int) Config.getFloat("magibladeRepelRadius", "UniqueEffects", ConfigDefaultValues.magibladeRepelRadius);
-                int chance = (int) Config.getFloat("magibladeRepelChance", "UniqueEffects", ConfigDefaultValues.magibladeRepelChance);
+                double radius = Config.uniqueEffects.magiblade.repelRadius;
+                int chance = Config.uniqueEffects.magiblade.repelChance;
                 int totalChance = new Random().nextInt(100);
                 if (serverPlayer.age % frequency == 0 && totalChance < chance) {
                     Box box = HelperMethods.createBox(player, radius);

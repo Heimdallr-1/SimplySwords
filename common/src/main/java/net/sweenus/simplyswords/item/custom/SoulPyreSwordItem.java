@@ -108,12 +108,11 @@ public class SoulPyreSwordItem extends UniqueSwordItem implements TwoHandedWeapo
                 }
             }
         }
-        int stepMod = 7 - (int)(world.getTime() % 7);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SOUL_FIRE_FLAME,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SOUL_FIRE_FLAME,
                 ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.MYCELIUM, true);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SMALL_FLAME,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SMALL_FLAME,
                 ParticleTypes.SMALL_FLAME, ParticleTypes.MYCELIUM, false);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SMOKE, ParticleTypes.SMOKE,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SMOKE, ParticleTypes.SMOKE,
                 ParticleTypes.MYCELIUM, false);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
@@ -143,12 +142,13 @@ public class SoulPyreSwordItem extends UniqueSwordItem implements TwoHandedWeapo
             super(new ItemStackTooltipAppender(ItemsRegistry.SOULPYRE::get));
         }
 
-        @ValidatedDouble.Restrict(min = 1.0)
-        public double range = 32.0;
-        @ValidatedDouble.Restrict(min = 1.0)
-        public double radius = 8.0;
         @ValidatedInt.Restrict(min = 0)
         public int duration = 120;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double radius = 8.0;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double range = 32.0;
+
         @ValidatedInt.Restrict(min = 0)
         public int igniteDuration = 120;
         @ValidatedInt.Restrict(min = 0)

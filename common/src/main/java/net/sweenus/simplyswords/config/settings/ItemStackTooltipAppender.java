@@ -1,9 +1,7 @@
 package net.sweenus.simplyswords.config.settings;
 
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
@@ -38,6 +36,7 @@ public class ItemStackTooltipAppender implements Supplier<TooltipAppender> {
 		@Override
 		public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type) {
 			Item s = stack.get();
+			if (s == null) return;
 			List<Text> list = new ArrayList<>();
 			s.appendTooltip(s.getDefaultStack(), context, list, type);
 			if (!list.isEmpty() && Objects.equals(list.get(0).getString(), "")) {

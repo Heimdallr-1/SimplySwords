@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.server.world.ServerWorld;
@@ -37,10 +36,13 @@ import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance
 import net.sweenus.simplyswords.entity.BattleStandardDarkEntity;
 import net.sweenus.simplyswords.entity.BattleStandardEntity;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
-import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import static net.sweenus.simplyswords.SimplySwords.minimumSpellPowerVersion;
 
@@ -51,6 +53,8 @@ public class HelperMethods {
     public static Random random() {
         return random;
     }
+
+
 
     /*
      * getTargetedEntity taken heavily from ZsoltMolnarrr's CombatSpells
@@ -304,7 +308,7 @@ public class HelperMethods {
     }
 
     //Create Box
-    public static Box createBox(Entity entity, int radius) {
+    public static Box createBox(Entity entity, double radius) {
         return new Box(entity.getX() + radius, entity.getY() + (float) radius / 3, entity.getZ() + radius,
                 entity.getX() - radius, entity.getY() - (float) radius / 3, entity.getZ() - radius);
     }
@@ -390,8 +394,9 @@ public class HelperMethods {
     }
 
     // createFootfalls - creates weapon footfall particle effects (footsteps)
-    public static void createFootfalls(Entity entity, ItemStack stack, World world, int stepMod, SimpleParticleType particle,
-                                       SimpleParticleType sprintParticle, SimpleParticleType passiveParticle, boolean passiveParticles) {
+    public static void createFootfalls(Entity entity, ItemStack stack, World world, ParticleEffect particle,
+                                       ParticleEffect sprintParticle, ParticleEffect passiveParticle, boolean passiveParticles) {
+        int stepMod = 7 - (int)(world.getTime() % 7);
         if ((entity instanceof PlayerEntity player) && Config.general.enableWeaponFootfalls && player.getEquippedStack(EquipmentSlot.MAINHAND) == stack) {
             if (isWalking(player) && !player.isSwimming() && player.isOnGround()) {
                 if (stepMod == 6) {
@@ -496,6 +501,10 @@ public class HelperMethods {
         }
     }
 
+    public static float spellScaledDamage(String spellSchool, Entity entity, float damageModifier, float damageFallback) {
+        float scaling = commonSpellAttributeScaling(damageModifier, entity, spellSchool);
+        return scaling > 0 ? scaling : damageFallback;
+    }
 
     public static float commonSpellAttributeScaling(float damageModifier, Entity entity, String magicSchool) {
         if (Platform.isModLoaded("spell_power") && Platform.isFabric())

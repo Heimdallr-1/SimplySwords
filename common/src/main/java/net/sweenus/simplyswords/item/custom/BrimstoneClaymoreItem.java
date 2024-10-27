@@ -10,11 +10,9 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
@@ -78,8 +76,7 @@ public class BrimstoneClaymoreItem extends UniqueSwordItem implements TwoHandedW
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        int stepMod = 7 - (int)(world.getTime() % 7);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.FALLING_LAVA, ParticleTypes.FALLING_LAVA,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.FALLING_LAVA, ParticleTypes.FALLING_LAVA,
                 ParticleTypes.SMOKE, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }

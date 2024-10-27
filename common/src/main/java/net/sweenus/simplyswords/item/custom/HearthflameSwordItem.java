@@ -26,12 +26,12 @@ import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.item.component.StoredChargeComponent;
 import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.AbilityMethods;
 import net.sweenus.simplyswords.util.HelperMethods;
-import net.sweenus.simplyswords.item.component.StoredChargeComponent;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
@@ -147,8 +147,7 @@ public class HearthflameSwordItem extends UniqueSwordItem implements TwoHandedWe
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        int stepMod = 7 - (int)(world.getTime() % 7);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM,
                 ParticleTypes.MYCELIUM, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
@@ -183,12 +182,12 @@ public class HearthflameSwordItem extends UniqueSwordItem implements TwoHandedWe
 
         @ValidatedInt.Restrict(min = 0, max = 100)
         public int chance = 25;
-        @ValidatedInt.Restrict(min = 1)
-        public int radius = 3;
         @ValidatedInt.Restrict(min = 0)
         public int cooldown = 300;
         @ValidatedFloat.Restrict(min = 0f)
         public float damage = 3f;
+        @ValidatedInt.Restrict(min = 1)
+        public int radius = 3;
         @ValidatedFloat.Restrict(min = 0f)
         public float spellScaling = 1.4f;
     }

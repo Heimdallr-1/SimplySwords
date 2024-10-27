@@ -1,19 +1,16 @@
 package net.sweenus.simplyswords.item.custom;
 
-import me.fzzyhmstrs.fzzy_config.annotations.Translation;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -23,7 +20,6 @@ import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
-import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
@@ -35,8 +31,6 @@ public class WatcherSwordItem extends UniqueSwordItem {
     public WatcherSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
-
-    private static int stepMod = 0;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -89,9 +83,7 @@ public class WatcherSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.ENCHANT, ParticleTypes.ENCHANT,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.ENCHANT, ParticleTypes.ENCHANT,
                 ParticleTypes.MYCELIUM, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
@@ -120,14 +112,15 @@ public class WatcherSwordItem extends UniqueSwordItem {
 
         @ValidatedInt.Restrict(min = 0, max = 100)
         public int watcherChance = 5;
-        @ValidatedFloat.Restrict(min = 0f)
-        public float watcherRestoreAmount = 0.5f;
         @ValidatedDouble.Restrict(min = 1.0)
         public double watcherRadius = 8.0;
-        @ValidatedInt.Restrict(min = 0, max = 100)
-        public int omenChance = 5;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float watcherRestoreAmount = 0.5f;
+
         @ValidatedFloat.Restrict(min = 0, max = 100)
         public float omenAbsorptionCap = 20f;
+        @ValidatedInt.Restrict(min = 0, max = 100)
+        public int omenChance = 5;
         @ValidatedFloat.Restrict(min = 0f, max = 1f)
         public float omenInstantKillThreshold = 0.25f;
     }

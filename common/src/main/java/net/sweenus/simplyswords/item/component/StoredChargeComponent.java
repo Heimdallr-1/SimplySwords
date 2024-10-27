@@ -11,6 +11,14 @@ public record StoredChargeComponent(int charge) {
 		return new StoredChargeComponent(this.charge + addedCharge);
 	}
 
+	public StoredChargeComponent increment() {
+		return new StoredChargeComponent(charge + 1);
+	}
+
+	public StoredChargeComponent decrement() {
+		return new StoredChargeComponent(Math.max(0, charge - 1));
+	}
+
 	public StoredChargeComponent set(int newCharge) {
 		return new StoredChargeComponent(newCharge);
 	}

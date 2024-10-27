@@ -1,6 +1,8 @@
 package net.sweenus.simplyswords.item.custom;
 
 import dev.architectury.platform.Platform;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -12,19 +14,20 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -32,8 +35,6 @@ public class RibboncleaverSwordItem extends UniqueSwordItem {
     public RibboncleaverSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
-
-    private static int stepMod = 0;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -47,8 +48,8 @@ public class RibboncleaverSwordItem extends UniqueSwordItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        int skillCooldown = (int) Config.getFloat("ribbonwrathCooldown", "UniqueEffects", ConfigDefaultValues.ribbonwrathCooldown);
-        int resilienceAmplifier = (int) Config.getFloat("ribbonwrathResilienceAmplifier", "UniqueEffects", ConfigDefaultValues.ribbonwrathResilienceAmplifier);
+        int skillCooldown = Config.uniqueEffects.ribbonwrath.cooldown;
+        int resilienceAmplifier = Config.uniqueEffects.ribbonwrath.resilienceAmplifier;
 
 
         world.playSound(null, user.getBlockPos(), SoundRegistry.ELEMENTAL_BOW_EARTH_SHOOT_IMPACT_03.get(),
@@ -70,10 +71,6 @@ public class RibboncleaverSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        //HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.FALLING_OBSIDIAN_TEAR,
-        //        ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM, true);
 
         //Drag weapon particles
         if (entity.isOnGround() && Platform.isModLoaded("bettercombat") && HelperMethods.isWalking(entity)
@@ -115,24 +112,35 @@ public class RibboncleaverSwordItem extends UniqueSwordItem {
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip3").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip4").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip3").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip4").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip6").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip7").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip8").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip9").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip10").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip6").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip7").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip8").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip9").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.ribboncleaversworditem.tooltip10").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.RIBBONCLEAVER::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 40;
+        @ValidatedDouble.Restrict(min = 0.0)
+        public double damageBonusPercent = 0.95;
+        @ValidatedInt.Restrict(min = 0)
+        public int resilienceAmplifier = 1;
+
     }
 }

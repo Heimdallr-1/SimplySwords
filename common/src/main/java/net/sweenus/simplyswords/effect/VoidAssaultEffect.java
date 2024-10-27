@@ -6,7 +6,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.particle.ParticleTypes;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 
@@ -27,7 +26,7 @@ public class VoidAssaultEffect extends OrbitingEffect {
     @Override
     public boolean applyUpdateEffect(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.getWorld().isClient()) {
-            int voidcallerStartingTickFrequency = (int) Config.getFloat("voidcallerStartingTickFrequency", "UniqueEffects", ConfigDefaultValues.voidcallerStartingTickFrequency);
+            int voidcallerStartingTickFrequency = Config.uniqueEffects.voidcaller.get().startingTickFrequency;
 
             if (livingEntity.getStatusEffect(EffectRegistry.VOIDASSAULT) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();

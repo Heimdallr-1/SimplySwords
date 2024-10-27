@@ -1,5 +1,6 @@
 package net.sweenus.simplyswords.item.custom;
 
+import dev.architectury.platform.Platform;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
@@ -15,7 +16,6 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -37,10 +37,6 @@ public class StealSwordItem extends UniqueSwordItem {
     public StealSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
-
-    private static int stepMod = 0;
-    public static boolean scalesWithSpellPower;
-    float abilityDamage = 5;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -97,6 +93,7 @@ public class StealSwordItem extends UniqueSwordItem {
                             user.teleport(le.getX(), le.getY(), le.getZ(), false);
                             sworld.playSoundFromEntity(null, le, SoundRegistry.ELEMENTAL_SWORD_SCIFI_ATTACK_03.get(),
                                     le.getSoundCategory(), 0.3f, 1.5f);
+                            float abilityDamage = HelperMethods.spellScaledDamage("soul", user, Config.uniqueEffects.steal.spellScaling, 5);
                             le.damage(user.getDamageSources().freeze(), abilityDamage);
                         } else {
                             user.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, iduration, 1), user);
@@ -116,14 +113,7 @@ public class StealSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        float spellScalingModifier = Config.uniqueEffects.steal.spellScaling;
-        if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "soul") > 0) {
-            abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "soul");
-            scalesWithSpellPower = true;
-        }
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.NAUTILUS, ParticleTypes.NAUTILUS,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.NAUTILUS, ParticleTypes.NAUTILUS,
                 ParticleTypes.MYCELIUM, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
@@ -148,7 +138,7 @@ public class StealSwordItem extends UniqueSwordItem {
         tooltip.add(Text.translatable("item.simplyswords.stealsworditem.tooltip8").setStyle(Styles.TEXT));
         tooltip.add(Text.translatable("item.simplyswords.stealsworditem.tooltip9").setStyle(Styles.TEXT));
         tooltip.add(Text.translatable("item.simplyswords.stealsworditem.tooltip10").setStyle(Styles.TEXT));
-        if (scalesWithSpellPower) {
+        if (Platform.isModLoaded("spell_power")) {
             tooltip.add(Text.literal(""));
             tooltip.add(Text.translatable("item.simplyswords.compat.scaleSoul"));
         }
@@ -165,13 +155,14 @@ public class StealSwordItem extends UniqueSwordItem {
         public int chance = 25;
         @ValidatedInt.Restrict(min = 0)
         public int duration = 400;
-        @ValidatedInt.Restrict(min = 0)
-        public int invisDuration = 120;
-        @ValidatedInt.Restrict(min = 0)
-        public int blindDuration = 200;
         @ValidatedDouble.Restrict(min = 1.0)
         public double radius = 30.0;
         @ValidatedFloat.Restrict(min = 0f)
         public float spellScaling = 2.6f;
+
+        @ValidatedInt.Restrict(min = 0)
+        public int blindDuration = 200;
+        @ValidatedInt.Restrict(min = 0)
+        public int invisDuration = 120;
     }
 }

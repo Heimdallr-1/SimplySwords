@@ -8,7 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
@@ -31,8 +30,7 @@ public class FireVortexEffect extends OrbitingEffect {
     public boolean applyUpdateEffect(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.getWorld().isClient()) {
             ServerWorld serverWorld = (ServerWorld) livingEntity.getWorld();
-            float abilityDamage = 0;
-            if (livingEntity.getStatusEffect(EffectRegistry.FIRE_VORTEX) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+			if (livingEntity.getStatusEffect(EffectRegistry.FIRE_VORTEX) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
             }
@@ -40,11 +38,11 @@ public class FireVortexEffect extends OrbitingEffect {
             if (livingEntity.age % Math.max(1, (15 - (amplifier))) == 0 && additionalData != 0) {
                 DamageSource damageSource = livingEntity.getDamageSources().magic();
                 livingEntity.timeUntilRegen = 0;
-                if (sourceEntity != null) {
+				float abilityDamage = 0;
+				if (sourceEntity != null) {
                     damageSource = livingEntity.getDamageSources().indirectMagic(livingEntity, sourceEntity);
-                    float spellScalingModifier = Config.getFloat("vortexSpellScaling", "UniqueEffects", ConfigDefaultValues.vortexSpellScaling);
-                    if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "fire") > 1)
-                        abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "fire");
+                    float spellScalingModifier = Config.uniqueEffects.vortex.spellScaling;
+                    abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "fire");
                     if (livingEntity instanceof PlayerEntity && sourceEntity instanceof PlayerEntity sourcePlayer)
                         damageSource = livingEntity.getDamageSources().playerAttack(sourcePlayer);
                 }

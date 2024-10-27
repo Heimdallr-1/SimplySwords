@@ -16,14 +16,12 @@ import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.config.settings.ChanceDurationSettings;
 import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
@@ -150,7 +148,7 @@ public class EmberIreSwordItem extends UniqueSwordItem {
             }
         }
         int stepMod = 7 - (int)(world.getTime() % 7);
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, particleWalk, particleSprint, particlePassive, true);
+        HelperMethods.createFootfalls(entity, stack, world, particleWalk, particleSprint, particlePassive, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 

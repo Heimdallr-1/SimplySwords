@@ -1,5 +1,7 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -11,16 +13,18 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -29,13 +33,11 @@ public class StarsEdgeSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    private static int stepMod = 0;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
-            float skillDamageModifier = Config.getFloat("celestialSurgeDamageModifier", "UniqueEffects", ConfigDefaultValues.celestialSurgeDamageModifier);
-            float skillLifestealModifier = Config.getFloat("celestialSurgeLifestealModifier", "UniqueEffects", ConfigDefaultValues.celestialSurgeLifestealModifier);
+            float skillDamageModifier = Config.uniqueEffects.celestialSurge.damageModifier;
+            float skillLifestealModifier = Config.uniqueEffects.celestialSurge.lifestealModifier;
             ServerWorld world = (ServerWorld) attacker.getWorld();
             DamageSource damageSource = world.getDamageSources().generic();
             float abilityDamage = (float) HelperMethods.getEntityAttackDamage(attacker);
@@ -58,9 +60,9 @@ public class StarsEdgeSwordItem extends UniqueSwordItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        int skillCooldown = (int) Config.getFloat("celestialSurgeCooldown", "UniqueEffects", ConfigDefaultValues.celestialSurgeCooldown);
-        int skillDuration = (int) Config.getFloat("celestialSurgeDuration", "UniqueEffects", ConfigDefaultValues.celestialSurgeDuration);
-        int skillStacks = (int) Config.getFloat("celestialSurgeStacks", "UniqueEffects", ConfigDefaultValues.celestialSurgeStacks);
+        int skillCooldown = Config.uniqueEffects.celestialSurge.cooldown;
+        int skillDuration = Config.uniqueEffects.celestialSurge.duration;
+        int skillStacks = Config.uniqueEffects.celestialSurge.stacks;
 
         if (!user.hasStatusEffect(StatusEffects.SPEED)) {
             user.swingHand(hand);
@@ -91,34 +93,49 @@ public class StarsEdgeSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.FALLING_OBSIDIAN_TEAR,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.FALLING_OBSIDIAN_TEAR,
                 ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-        float skillDamageModifier = Config.getFloat("celestialSurgeDamageModifier", "UniqueEffects", ConfigDefaultValues.celestialSurgeDamageModifier);
+
+        float skillDamageModifier = Config.uniqueEffects.celestialSurge.damageModifier;
 
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip3", skillDamageModifier).setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip3", skillDamageModifier).setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip4").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip4").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip5").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip5").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip6").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip7").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip8").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip6").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip7").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.starsedgesworditem.tooltip8").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.STARS_EDGE::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 120;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 120;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damageModifier = 0.40f;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float lifestealModifier = 0.10f;
+        @ValidatedInt.Restrict(min = 1)
+        public int stacks = 6;
+
     }
 }

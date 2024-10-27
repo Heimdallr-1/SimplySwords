@@ -23,7 +23,7 @@ import net.sweenus.simplyswords.util.HelperMethods;
 import java.util.List;
 
 public class RighteousRelicSwordItem extends UniqueSwordItem {
-    private static int stepMod = 0;
+
     int abilityChance = (int) Config.getFloat("righteousStandardChance", "UniqueEffects", ConfigDefaultValues.righteousStandardChance);
 
     public RighteousRelicSwordItem(ToolMaterial toolMaterial, Settings settings) {
@@ -48,9 +48,7 @@ public class RighteousRelicSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.MYCELIUM, ParticleTypes.MYCELIUM,
                 ParticleTypes.MYCELIUM, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }

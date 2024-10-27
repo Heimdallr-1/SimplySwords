@@ -1,6 +1,8 @@
 package net.sweenus.simplyswords.item.custom;
 
 import dev.architectury.platform.Platform;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -15,14 +17,14 @@ import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.entity.BattleStandardDarkEntity;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
@@ -30,6 +32,7 @@ import net.sweenus.simplyswords.registry.EntityRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -37,8 +40,6 @@ public class EnigmaSwordItem extends UniqueSwordItem {
     public EnigmaSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
-
-	private static int stepMod = 0;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -66,14 +67,14 @@ public class EnigmaSwordItem extends UniqueSwordItem {
                 if (banner != null) {
                     banner.setVelocity(0, -1, 0);
                     banner.ownerEntity = user;
-                    banner.decayRate = (int) Config.getFloat("enigmaDecayRate", "UniqueEffects", ConfigDefaultValues.enigmaDecayRate);
+                    banner.decayRate = Config.uniqueEffects.enigma.enigmaDecayRate;
                     banner.standardType = "enigma";
                     banner.setCustomName(Text.translatable("entity.simplyswords.battlestandard.name", user.getName()));
                     banner.setCustomNameVisible(false);
                     banner.setInvisible(true);
                     banner.addStatusEffect( new StatusEffectInstance(EffectRegistry.ELEMENTAL_VORTEX, 900, 11, false, false, false));
                 }
-                user.getItemCooldownManager().set(this.getDefaultStack().getItem(), (int) Config.getFloat("enigmaCooldown", "UniqueEffects", ConfigDefaultValues.enigmaCooldown));
+                user.getItemCooldownManager().set(this, Config.uniqueEffects.enigma.enigmaCooldown);
             }
         }
         return super.use(world, user, hand);
@@ -81,8 +82,6 @@ public class EnigmaSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
 
         //Drag weapon particles
         if (entity.isOnGround() && Platform.isModLoaded("bettercombat") && HelperMethods.isWalking(entity)
@@ -124,22 +123,34 @@ public class EnigmaSwordItem extends UniqueSwordItem {
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip3").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip3").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip6").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip7").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip8").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip6").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip7").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.enigmasworditem.tooltip8").setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.ENIGMA::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int enigmaCooldown = 800;
+        @ValidatedDouble.Restrict(min = 1.0)
+        public double enigmaChaseRadius = 16.0;
+        @ValidatedInt.Restrict(min = 1)
+        public int enigmaDecayRate = 2;
+
+
     }
 }
