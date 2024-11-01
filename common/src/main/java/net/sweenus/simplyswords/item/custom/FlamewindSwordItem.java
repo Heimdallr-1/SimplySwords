@@ -109,7 +109,7 @@ public class FlamewindSwordItem extends UniqueSwordItem {
         tooltip.add(Text.translatable("item.simplyswords.flamewindsworditem.tooltip8").setStyle(Styles.TEXT));
         tooltip.add(Text.translatable("item.simplyswords.flamewindsworditem.tooltip9").setStyle(Styles.TEXT));
         tooltip.add(Text.translatable("item.simplyswords.flamewindsworditem.tooltip10").setStyle(Styles.TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.flamewindsworditem.tooltip11", (int) Config.getFloat("emberstormSpreadCap", "UniqueEffects", ConfigDefaultValues.emberstormSpreadCap)).setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.flamewindsworditem.tooltip11", Config.uniqueEffects.emberstorm.spreadCap).setStyle(Styles.TEXT));
         if (Platform.isModLoaded("spell_power")) {
             tooltip.add(Text.literal(""));
             tooltip.add(Text.translatable("item.simplyswords.compat.scaleFire"));

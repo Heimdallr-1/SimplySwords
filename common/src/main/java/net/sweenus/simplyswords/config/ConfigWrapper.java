@@ -8,10 +8,7 @@ import net.sweenus.simplyswords.SimplySwords;
 @Config(name = SimplySwords.MOD_ID +"_main")
 @Config.Gui.Background("cloth-config2:transparent")
 public class ConfigWrapper extends PartitioningSerializer.GlobalData {
-    @ConfigEntry.Category("loot")
-    @ConfigEntry.Gui.TransitiveObject
-    public LootConfigOld loot = new LootConfigOld();
     @ConfigEntry.Category("weapon_attributes")
     @ConfigEntry.Gui.TransitiveObject
-    public WeaponAttributesConfig weapon_attributes = new WeaponAttributesConfig();
+    public WeaponAttributesConfigOld weapon_attributes = new WeaponAttributesConfigOld();
 }

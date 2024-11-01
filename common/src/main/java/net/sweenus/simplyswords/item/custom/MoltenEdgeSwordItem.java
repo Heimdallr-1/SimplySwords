@@ -40,8 +40,6 @@ public class MoltenEdgeSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    int roar_timer_max = (int) Config.getFloat("moltenRoarDuration", "UniqueEffects", ConfigDefaultValues.moltenRoarDuration);
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker.getWorld().isClient()) return super.postHit(stack, target, attacker);
@@ -86,7 +84,7 @@ public class MoltenEdgeSwordItem extends UniqueSwordItem {
         }
         world.playSoundFromEntity(null, user, SoundRegistry.DARK_SWORD_ENCHANT.get(),
                 user.getSoundCategory(), 0.7f, 1.5f);
-        int duration = roar_timer_max * amp / 2;
+        int duration = Config.uniqueEffects.moltenRoar.duration * amp / 2;
         user.addStatusEffect(new StatusEffectInstance(EffectRegistry.ONSLAUGHT, duration, 0), user);
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, duration, 3), user);
         user.getItemCooldownManager().set(this, abilityCooldown);

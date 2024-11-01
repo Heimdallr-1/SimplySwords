@@ -9,8 +9,8 @@ import net.sweenus.simplyswords.registry.ItemsRegistry;
 public class EldritchEndCompat {
 
     //Compat for Eldritch End
-    static float dreadtide_damage_modifier = Config.getFloat("dreadtide_damageModifier", "WeaponAttributes", ConfigDefaultValues.dreadtide_damageModifier);
-    static float dreadtide_attackspeed = Config.getFloat("dreadtide_attackSpeed", "WeaponAttributes", ConfigDefaultValues.dreadtide_attackSpeed);
+    static float dreadtide_damage_modifier = Config.weaponAttribute.uniqueDamageModifier.dreadtide_damageModifier.get();
+    static float dreadtide_attackspeed = Config.weaponAttribute.uniqueAttackSpeed.dreadtide_attackSpeed.get();
 
     public static final DeferredRegister<Item> ITEM = ItemsRegistry.ITEM;
 /*

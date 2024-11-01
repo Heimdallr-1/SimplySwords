@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -46,10 +47,9 @@ public class DormantRelicSwordItem extends UniqueSwordItem {
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style TEXT = HelperMethods.getStyle("text");
 
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.dormantrelicsworditem.tooltip2").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.dormantrelicsworditem.tooltip2").setStyle(Styles.TEXT));
         if (this.asItem().equals(ItemsRegistry.DECAYING_RELIC.get())) {
             tooltip.add(Text.literal(""));
             if (Screen.hasAltDown()) {

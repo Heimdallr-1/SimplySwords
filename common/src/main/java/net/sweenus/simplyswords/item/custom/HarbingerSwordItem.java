@@ -36,8 +36,6 @@ import java.util.List;
 
 public class HarbingerSwordItem extends UniqueSwordItem {
 
-    int skillCooldown = (int) Config.getFloat("abyssalStandardCooldown", "UniqueEffects", ConfigDefaultValues.abyssalStandardCooldown);
-
     public HarbingerSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }

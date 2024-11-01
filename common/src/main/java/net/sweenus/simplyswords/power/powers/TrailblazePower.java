@@ -25,8 +25,8 @@ public class TrailblazePower extends RunefusedGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		int hitChance = (int) Config.getFloat("trailblazeChance", "RunicEffects", ConfigDefaultValues.trailblazeChance);
-		int duration = (int) Config.getFloat("trailblazeDuration", "RunicEffects", ConfigDefaultValues.trailblazeDuration);
+		int hitChance = Config.gemPowers.trailblaze.chance;
+		int duration = Config.gemPowers.trailblaze.duration;
 
 		if (attacker.getRandom().nextInt(100) <= hitChance) {
 			attacker.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, duration, this.isGreater() ? 2 : 1), attacker);

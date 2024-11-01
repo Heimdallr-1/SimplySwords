@@ -26,12 +26,6 @@
     "main": [
       "net.sweenus.simplyswords.fabric.SimplySwordsFabric"
     ],
-    "preLaunch": [
-      "net.sweenus.simplyswords.fabric.SimplySwordsPreLaunch"
-    ],
-    "modmenu": [
-      "net.sweenus.simplyswords.fabric.client.ModMenuIntegration"
-    ],
     "dynamiclights": [
       "net.sweenus.simplyswords.fabric.compat.DynamicLightsCompat"
     ]

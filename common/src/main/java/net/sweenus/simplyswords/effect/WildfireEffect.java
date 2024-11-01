@@ -28,7 +28,7 @@ public class WildfireEffect extends StatusEffect {
                     double x = pLivingEntity.getX();
                     double y = pLivingEntity.getY();
                     double z = pLivingEntity.getZ();
-                    int pduration = (int) SimplySwords.runicEffectsConfig.wildfireDuration / 20;
+                    int pduration = Config.gemPowers.wildfire.duration / 20;
                     Box box = new Box(x + hradius, y + vradius, z + hradius, x - hradius, y - vradius, z - hradius);
 
                     for (Entity e : world.getEntitiesByType(pLivingEntity.getType(), box, EntityPredicates.VALID_ENTITY)) {

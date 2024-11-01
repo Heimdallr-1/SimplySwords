@@ -20,13 +20,13 @@ public class StormEffect extends StatusEffect {
     public boolean applyUpdateEffect(LivingEntity pLivingEntity, int pAmplifier) {
         if (!pLivingEntity.getWorld().isClient()) {
             ServerWorld world = (ServerWorld)pLivingEntity.getWorld();
-            int hradius = (int) Config.getFloat("stormRadius", "UniqueEffects", ConfigDefaultValues.stormRadius);
-            int vradius = (int) (Config.getFloat("stormRadius", "UniqueEffects", ConfigDefaultValues.stormRadius) / 2);
+            double hRadius = Config.uniqueEffects.storm.radius;
+            double vRadius = Config.uniqueEffects.storm.radius / 2f;
             double x = pLivingEntity.getX();
             double y = pLivingEntity.getY();
             double z = pLivingEntity.getZ();
             var pPlayer = pLivingEntity.getAttacker();
-            Box box = new Box(x + hradius, y +vradius, z + hradius, x - hradius, y - vradius, z - hradius);
+            Box box = new Box(x + hRadius, y +vRadius, z + hRadius, x - hRadius, y - vRadius, z - hRadius);
 
             for(Entity e: world.getOtherEntities(pPlayer, box, EntityPredicates.VALID_LIVING_ENTITY))
             {

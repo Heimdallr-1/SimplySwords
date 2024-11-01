@@ -5,12 +5,8 @@ import me.fzzyhmstrs.fzzy_config.config.ConfigSection;
 import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedSet;
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;
-import net.sweenus.simplyswords.power.GemPower;
 import net.sweenus.simplyswords.power.powers.ActiveDefencePower;
 import net.sweenus.simplyswords.power.powers.FloatPower;
 import net.sweenus.simplyswords.power.powers.FreezePower;
@@ -34,8 +30,8 @@ public class GemPowersConfig extends Config {
 		super(Identifier.of(SimplySwords.MOD_ID, "gem_powers"));
 	}
 
-	@SuppressWarnings({"deprecation", "unchecked"})
-	public ValidatedSet<Identifier> disabledPowers = ValidatedIdentifier.ofRegistryKey((RegistryKey<Registry<GemPower>>) GemPowerRegistry.REGISTRY.key()).toSet();
+	@SuppressWarnings("deprecation")
+	public ValidatedSet<Identifier> disabledPowers = ValidatedIdentifier.ofRegistryKey(GemPowerRegistry.REGISTRY.key()).toSet();
 
 	public ActiveDefencePower.Settings activeDefence = new ActiveDefencePower.Settings();
 	public FloatPower.Settings         floating = new FloatPower.Settings();

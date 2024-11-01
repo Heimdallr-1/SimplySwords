@@ -81,7 +81,7 @@ public class AbilityMethods {
     public static void tickAbilityStorm(ItemStack stack, World world, LivingEntity user,
                                         int ability_timer, int skillCooldown, int radius) {
         if (!user.getWorld().isClient()) {
-            int frequency = (int) Config.getFloat("stormFrequency", "UniqueEffects", ConfigDefaultValues.stormFrequency);
+            int frequency = Config.uniqueEffects.storm.frequency;
             if (user.age % frequency == 0) {
                 double x = user.getX();
                 double y = user.getY();

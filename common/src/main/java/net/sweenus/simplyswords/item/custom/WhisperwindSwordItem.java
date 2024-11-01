@@ -31,8 +31,6 @@ import java.util.List;
 
 public class WhisperwindSwordItem extends UniqueSwordItem implements TwoHandedWeapon {
 
-    int skillCooldown = (int) Config.getFloat("fatalFlickerCooldown", "UniqueEffects", ConfigDefaultValues.fatalFlickerCooldown);
-
     public WhisperwindSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }

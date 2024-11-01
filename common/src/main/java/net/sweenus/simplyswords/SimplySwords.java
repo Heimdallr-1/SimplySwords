@@ -63,11 +63,7 @@ public class SimplySwords {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public static boolean isConfigOutdated;
-    public static LootConfigOld lootConfigOld;
-    public static RunicEffectsConfig runicEffectsConfig;
-    public static StatusEffectsConfig statusEffectsConfig;
-    public static UniqueEffectsConfigOld uniqueEffectsConfigOld;
-    public static WeaponAttributesConfig weaponAttributesConfig;
+    public static WeaponAttributesConfigOld weaponAttributesConfigOld;
 
     public static String minimumEldritchEndVersion = "0.2.40";
     public static String minimumSpellPowerVersion = "0.10.0+1.20.1";
@@ -77,11 +73,9 @@ public class SimplySwords {
         //CONFIG
 
         Config.init();
-        SimplySwordsConfig.init();
 
         AutoConfig.register(ConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
-        lootConfigOld = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().loot;
-        weaponAttributesConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().weapon_attributes;
+        weaponAttributesConfigOld = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().weapon_attributes;
 
         String version = SimplySwordsExpectPlatform.getVersion();
         String defaultConfig = String.format("""
@@ -99,9 +93,6 @@ public class SimplySwords {
             //System.out.println("SimplySwords: It looks like you've updated from a previous version. Please regenerate the Simply Swords configs to get the latest features.");
             //System.out.println(version.substring(0, 4));
         }
-
-        SimplySwordsConfig.generateConfigs(json == null || !json.has("regen_simplyswords_config_file") || json.get("regen_simplyswords_config_file").getAsBoolean());
-        SimplySwordsConfig.loadConfig();
 
         SimplySwords.TABS.register();
         ItemsRegistry.ITEM.register();

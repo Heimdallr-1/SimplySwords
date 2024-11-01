@@ -42,14 +42,11 @@ public class TempestSwordItem extends UniqueSwordItem {
         super(toolMaterial, settings);
     }
 
-    private static int stepMod = 0;
-    public static boolean scalesWithSpellPower;
-
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
 
-            int vortexMaxStacks = (int) Config.getFloat("vortexMaxStacks", "UniqueEffects", ConfigDefaultValues.vortexMaxStacks);
+            int vortexMaxStacks = Config.uniqueEffects.vortex.maxStacks;
             ServerWorld serverWorld = (ServerWorld) attacker.getWorld();
             HelperMethods.playHitSounds(attacker, target);
             SoundEvent soundSelect;

@@ -17,11 +17,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Config {
+public final class Config {
 
     public static void init() {}
-
-
 
     public static File createFile(String path, String contents, boolean overwrite) {
         File file = new File(path);
@@ -191,5 +189,6 @@ public class Config {
     public static final GemPowersConfig gemPowers = ConfigApiJava.registerAndLoadConfig(GemPowersConfig::new);
     public static final StatusEffectsConfig statusEffects = ConfigApiJava.registerAndLoadConfig(StatusEffectsConfig::new);
     public static final UniqueEffectsConfig uniqueEffects = ConfigApiJava.registerAndLoadConfig(UniqueEffectsConfig::new);
+    public static final WeaponAttributesConfig weaponAttribute = ConfigApiJava.registerAndLoadConfig(WeaponAttributesConfig::new);
 
 }
