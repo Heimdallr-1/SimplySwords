@@ -8,7 +8,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 
 import java.util.ArrayList;
 import java.util.Arrays;

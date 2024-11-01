@@ -1,7 +1,5 @@
 package net.sweenus.simplyswords.power.powers;
 
-import me.fzzyhmstrs.fzzy_config.annotations.Translation;
-import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedDouble;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.Item;
@@ -14,7 +12,6 @@ import net.sweenus.simplyswords.power.RunefusedGemPower;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
-import net.sweenus.simplyswords.config.settings.ChanceDurationSettings;
 import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;

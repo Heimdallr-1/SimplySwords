@@ -7,8 +7,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-import java.util.List;
-
 public class RunicGemPower extends GemPower {
 
 	public RunicGemPower(boolean isGreater) {

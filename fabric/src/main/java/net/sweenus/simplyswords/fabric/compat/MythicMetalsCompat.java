@@ -1,7 +1,6 @@
 package net.sweenus.simplyswords.fabric.compat;
 
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 
 public class MythicMetalsCompat {
 

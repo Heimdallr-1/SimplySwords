@@ -1,7 +1,6 @@
 package net.sweenus.simplyswords.config;
 
 import me.fzzyhmstrs.fzzy_config.config.Config;
-
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;

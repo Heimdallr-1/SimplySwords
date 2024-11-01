@@ -10,9 +10,6 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.BeeEntityRenderer;
@@ -27,7 +24,7 @@ import net.sweenus.simplyswords.client.renderer.BattleStandardRenderer;
 import net.sweenus.simplyswords.client.renderer.model.BattleStandardDarkModel;
 import net.sweenus.simplyswords.client.renderer.model.BattleStandardModel;
 import net.sweenus.simplyswords.compat.eldritch_end.EldritchEndCompatRegistry;
-import net.sweenus.simplyswords.config.*;
+import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.entity.BattleStandardDarkEntity;
 import net.sweenus.simplyswords.entity.BattleStandardEntity;
 import net.sweenus.simplyswords.entity.SimplySwordsBeeEntity;
@@ -63,7 +60,6 @@ public class SimplySwords {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public static boolean isConfigOutdated;
-    public static WeaponAttributesConfigOld weaponAttributesConfigOld;
 
     public static String minimumEldritchEndVersion = "0.2.40";
     public static String minimumSpellPowerVersion = "0.10.0+1.20.1";
@@ -73,9 +69,6 @@ public class SimplySwords {
         //CONFIG
 
         Config.init();
-
-        AutoConfig.register(ConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
-        weaponAttributesConfigOld = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().weapon_attributes;
 
         String version = SimplySwordsExpectPlatform.getVersion();
         String defaultConfig = String.format("""

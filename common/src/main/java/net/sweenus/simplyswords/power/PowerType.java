@@ -6,7 +6,6 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.sweenus.simplyswords.registry.GemPowerRegistry;
 
 import java.util.List;
-import java.util.Map;
 
 public enum PowerType {
 	RUNIC,

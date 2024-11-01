@@ -3,7 +3,6 @@ package net.sweenus.simplyswords.compat;
 import dev.architectury.registry.registries.DeferredRegister;
 import net.minecraft.item.Item;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 
 public class EldritchEndCompat {
