@@ -396,7 +396,7 @@ public class HelperMethods {
 
     public static float commonSpellAttributeScaling(float damageModifier, Entity entity, String magicSchool) {
         if (Platform.isModLoaded("spell_power") && Platform.isFabric())
-            if ((entity instanceof PlayerEntity player) && Config.general.compatEnableSpellPowerScaling && SimplySwords.passVersionCheck("spell_power", minimumSpellPowerVersion))
+            if ((entity instanceof PlayerEntity player) && Config.general.compatEnableSpellPowerScaling.get() && SimplySwords.passVersionCheck("spell_power", minimumSpellPowerVersion))
                 return SimplySwordsExpectPlatform.getSpellPowerDamage(damageModifier, player, magicSchool);
 
         return 0f;

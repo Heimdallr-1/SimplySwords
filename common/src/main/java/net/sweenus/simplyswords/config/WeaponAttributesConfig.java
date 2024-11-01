@@ -1,6 +1,8 @@
 package net.sweenus.simplyswords.config;
 
 import dev.architectury.platform.Platform;
+import me.fzzyhmstrs.fzzy_config.annotations.Action;
+import me.fzzyhmstrs.fzzy_config.annotations.RequiresAction;
 import me.fzzyhmstrs.fzzy_config.config.Config;
 import me.fzzyhmstrs.fzzy_config.config.ConfigSection;
 import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedCondition;
@@ -9,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;
 
+@RequiresAction(action = Action.RESTART)
 public class WeaponAttributesConfig extends Config {
 
     public WeaponAttributesConfig() {
@@ -21,6 +24,7 @@ public class WeaponAttributesConfig extends Config {
     public UniqueDamageModifier uniqueDamageModifier = new UniqueDamageModifier();
     public UniqueAttackSpeed uniqueAttackSpeed = new UniqueAttackSpeed();
 
+    @RequiresAction(action = Action.RESTART)
     public static class TypeDamageModifier extends ConfigSection {
         public float chakram_damageModifier = -1.0f;
         public float claymore_damageModifier = 2.0f;
@@ -39,6 +43,7 @@ public class WeaponAttributesConfig extends Config {
         public float warglaive_damageModifier = 0.0f;
     }
 
+    @RequiresAction(action = Action.RESTART)
     public static class MaterialDamageModifier extends ConfigSection {
         public float iron_damageModifier = 3.0f;
         public float gold_damageModifier = 3.0f;
@@ -79,10 +84,11 @@ public class WeaponAttributesConfig extends Config {
                             () -> Platform.isModLoaded(modNeeded),
                             Text.translatable("simplyswords.weapon_attributes.materialDamageModifier." + modNeeded),
                             () -> defaultValue
-                    );
+                    ).withFailTitle(Text.translatable("simplyswords.loot.materialDamageModifier." + modNeeded + ".failTitle"));
         }
     }
 
+    @RequiresAction(action = Action.RESTART)
     public static class TypeAttackSpeed extends ConfigSection {
         public float chakram_attackSpeed = -3.0f;
         public float claymore_attackSpeed = -2.8f;
@@ -103,6 +109,7 @@ public class WeaponAttributesConfig extends Config {
 
     }
 
+    @RequiresAction(action = Action.RESTART)
     public static class UniqueDamageModifier extends ConfigSection {
         public float arcanethyst_damageModifier = 7.0f;
         public float bramblethorn_damageModifier = 3.0f;
@@ -154,6 +161,7 @@ public class WeaponAttributesConfig extends Config {
                 );
     }
 
+    @RequiresAction(action = Action.RESTART)
     public static class UniqueAttackSpeed extends ConfigSection {
         public float arcanethyst_attackSpeed = -2.7f;
         public float bramblethorn_attackSpeed = -1.8f;

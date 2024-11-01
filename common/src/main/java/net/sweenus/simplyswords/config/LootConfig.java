@@ -39,7 +39,12 @@ public class LootConfig extends Config {
     public ValidatedFloat runicLootTableWeight = new ValidatedFloat(0.007f, 1f, 0f);
     public ValidatedFloat uniqueLootTableWeight = new ValidatedFloat(0.001f, 1f, 0f);
 
-    public ValidatedCondition<Boolean> enableContainedRemnants = new ValidatedBoolean().toCondition(() -> uniqueLootTableWeight.get() > 0f, Text.translatable("simplyswords.loot.enableContainedRemnants.condition"), () -> false).withFailTitle(Text.translatable("simplyswords.loot.enableContainedRemnants.failTitle"));
+    public ValidatedCondition<Boolean> enableContainedRemnants = new ValidatedBoolean()
+            .toCondition(
+                    () -> uniqueLootTableWeight.get() > 0f,
+                    Text.translatable("simplyswords.loot.enableContainedRemnants.condition"),
+                    () -> false
+            ).withFailTitle(Text.translatable("simplyswords.loot.enableContainedRemnants.failTitle"));
 
     @SuppressWarnings("deprecation")
     public ValidatedIdentifierMap<Float> uniqueLootTableOptions = new ValidatedIdentifierMap.Builder<Float>()

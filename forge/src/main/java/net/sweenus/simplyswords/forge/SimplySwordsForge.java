@@ -1,13 +1,8 @@
 package net.sweenus.simplyswords.forge;
 
 
-import me.shedaniel.autoconfig.AutoConfig;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.sweenus.simplyswords.SimplySwords;
-import net.sweenus.simplyswords.config.ConfigWrapper;
-import net.sweenus.simplyswords.forge.compat.GobberCompat;
 
 @Mod(SimplySwords.MOD_ID)
 public class SimplySwordsForge {
