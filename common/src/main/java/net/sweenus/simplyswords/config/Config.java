@@ -188,7 +188,7 @@ public final class Config {
     public static final GeneralConfig general = ConfigApiJava.registerAndLoadConfig(GeneralConfig::new);
     public static final GemPowersConfig gemPowers = ConfigApiJava.registerAndLoadConfig(GemPowersConfig::new);
     public static final StatusEffectsConfig statusEffects = ConfigApiJava.registerAndLoadConfig(StatusEffectsConfig::new);
-    public static final UniqueEffectsConfig uniqueEffects = ConfigApiJava.registerAndLoadConfig(UniqueEffectsConfig::new);
     public static final WeaponAttributesConfig weaponAttribute = ConfigApiJava.registerAndLoadConfig(WeaponAttributesConfig::new);
+    public static final UniqueEffectsConfig uniqueEffects = ConfigApiJava.registerAndLoadConfig(UniqueEffectsConfig::new);
 
 }

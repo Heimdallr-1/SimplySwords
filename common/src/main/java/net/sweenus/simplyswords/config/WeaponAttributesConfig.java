@@ -84,7 +84,7 @@ public class WeaponAttributesConfig extends Config {
                             () -> Platform.isModLoaded(modNeeded),
                             Text.translatable("simplyswords.weapon_attributes.materialDamageModifier." + modNeeded),
                             () -> defaultValue
-                    ).withFailTitle(Text.translatable("simplyswords.loot.materialDamageModifier." + modNeeded + ".failTitle"));
+                    ).withFailTitle(Text.translatable("simplyswords.weapon_attributes.materialDamageModifier." + modNeeded + ".failTitle"));
         }
     }
 
@@ -158,7 +158,7 @@ public class WeaponAttributesConfig extends Config {
                         () -> SimplySwords.passVersionCheck("eldritch_end", SimplySwords.minimumEldritchEndVersion),
                         Text.translatable("simplyswords.weapon_attributes.uniqueDamageModifier.eldritch_end"),
                         () -> 3.0f
-                );
+                ).withFailTitle(Text.translatable("simplyswords.weapon_attributes.uniqueDamageModifier.eldritch_end.failTitle"));
     }
 
     @RequiresAction(action = Action.RESTART)
@@ -210,7 +210,7 @@ public class WeaponAttributesConfig extends Config {
                         () -> SimplySwords.passVersionCheck("eldritch_end", SimplySwords.minimumEldritchEndVersion),
                         Text.translatable("simplyswords.weapon_attributes.uniqueDamageModifier.eldritch_end"),
                         () -> -2.0f
-                );
+                ).withFailTitle(Text.translatable("simplyswords.weapon_attributes.uniqueDamageModifier.eldritch_end.failTitle"));
     }
 
 }

@@ -14,6 +14,7 @@ import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedCondition;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import net.minecraft.item.Item;
 import net.minecraft.loot.LootTables;
+import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
@@ -46,9 +47,8 @@ public class LootConfig extends Config {
                     () -> false
             ).withFailTitle(Text.translatable("simplyswords.loot.enableContainedRemnants.failTitle"));
 
-    @SuppressWarnings("deprecation")
     public ValidatedIdentifierMap<Float> uniqueLootTableOptions = new ValidatedIdentifierMap.Builder<Float>()
-            .keyHandler(ValidatedIdentifier.ofRegistryKey(LootTables.END_CITY_TREASURE_CHEST.getValue(), RegistryKeys.LOOT_TABLE))
+            .keyHandler(ValidatedIdentifier.ofDynamicKey(LootTables.END_CITY_TREASURE_CHEST.getValue(), RegistryKeys.LOOT_TABLE, "no_blocks", (id, e) -> e.value().getType() != LootContextTypes.BLOCK))
             .valueHandler(new ValidatedFloat(0.01f, 1f, 0f))
             .defaults(
                     ImmutableMap.<Identifier, Float>builder()

@@ -1,10 +1,14 @@
 package net.sweenus.simplyswords.config;
 
+import dev.architectury.platform.Platform;
 import me.fzzyhmstrs.fzzy_config.config.Config;
 import me.fzzyhmstrs.fzzy_config.config.ConfigSection;
 import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedSet;
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier;
+import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedCondition;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.power.powers.ActiveDefencePower;
@@ -53,23 +57,21 @@ public class GemPowersConfig extends Config {
 
 	public static class SimplySkills extends ConfigSection {
 
-		@ValidatedInt.Restrict(min = 0, max = 100)
-		public int preciseChance = 30;
+		public ValidatedCondition<Integer> preciseChance = createCondition(30);
+		public ValidatedCondition<Integer> mightyChance = createCondition(30);
+		public ValidatedCondition<Integer> stealthyChance = createCondition(30);
+		public ValidatedCondition<Integer> renewedChance = createCondition(30);
+		public ValidatedCondition<Integer> leapingChance = createCondition(65);
+		public ValidatedCondition<Integer> spellshieldChance = createCondition(15);
 
-		@ValidatedInt.Restrict(min = 0, max = 100)
-		public int mightyChance = 30;
-
-		@ValidatedInt.Restrict(min = 0, max = 100)
-		public int stealthyChance = 30;
-
-		@ValidatedInt.Restrict(min = 0, max = 100)
-		public int renewedChance = 30;
-
-		@ValidatedInt.Restrict(min = 0, max = 100)
-		public int leapingChance = 65;
-
-		@ValidatedInt.Restrict(min = 0, max = 100)
-		public int spellshieldChance = 15;
+		private ValidatedCondition<Integer> createCondition(int defaultValue) {
+			return new ValidatedInt(defaultValue, 100, 0)
+					.toCondition(
+							() -> Platform.isModLoaded("simplyskills"),
+							Text.translatable("simplyswords.gem_powers.simplySkills.condition"),
+							() -> defaultValue
+					).withFailTitle(Text.translatable("simplyswords.gem_powers.simplySkills.failTitle"));
+		}
 	}
 
 }

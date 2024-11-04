@@ -99,5 +99,5 @@ public class UniqueEffectsConfig extends Config {
                     () -> SimplySwords.passVersionCheck("eldritch_end", SimplySwords.minimumEldritchEndVersion),
                     Text.translatable("simplyswords.unique_effects.voidcaller.compat"),
 					DreadtideSwordItem.EffectSettings::new
-            );
+            ).withFailTitle(Text.translatable("simplyswords.unique_effects.voidcaller.compat.failTitle"));
 }
