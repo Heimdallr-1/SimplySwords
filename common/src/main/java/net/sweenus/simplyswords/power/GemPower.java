@@ -16,6 +16,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * A Runic, Nether, or other type of gem power
+ * <p>
+ * For the pre-existing gem types, it's best to use the subclasses made for that purpose
+ * @see RunicGemPower
+ * @see RunefusedGemPower
+ * @see NetherGemPower
+ */
 public class GemPower implements TooltipAppender {
 
 	public GemPower(boolean isGreater, PowerType... applicableTypes) {

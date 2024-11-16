@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.sweenus.simplyswords.api.SimplySwordsAPI;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -57,11 +58,6 @@ public abstract class UniqueSwordItem extends SwordItem {
     @Override
     public Text getName(ItemStack stack) {
 
-        Style COMMON = HelperMethods.getStyle("common");
-        Style UNIQUE = HelperMethods.getStyle("unique");
-        Style LEGENDARY = HelperMethods.getStyle("legendary");
-        Style CORRUPTED = HelperMethods.getStyle("corrupted");
-
         if (this.getDefaultStack().isOf(ItemsRegistry.AWAKENED_LICHBLADE.get())
                 || this.getDefaultStack().isOf(ItemsRegistry.HARBINGER.get())
                 || this.getDefaultStack().isOf(ItemsRegistry.SUNFIRE.get())
@@ -70,11 +66,11 @@ public abstract class UniqueSwordItem extends SwordItem {
                 || this.getDefaultStack().isOf(ItemsRegistry.MAGISCYTHE.get())
                 || this.getDefaultStack().isOf(ItemsRegistry.CAELESTIS.get())) {
             this.iRarity = "LEGENDARY";
-            return Text.translatable(this.getTranslationKey(stack)).setStyle(LEGENDARY);
+            return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.LEGENDARY);
         }
 
-        if (this.iRarity.equals("UNIQUE")) return Text.translatable(this.getTranslationKey(stack)).setStyle(UNIQUE);
-        else return Text.translatable(this.getTranslationKey(stack)).setStyle(COMMON);
+        if (this.iRarity.equals("UNIQUE")) return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.UNIQUE);
+        else return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.COMMON);
     }
 
     @Override

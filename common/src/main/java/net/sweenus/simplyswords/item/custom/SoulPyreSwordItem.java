@@ -68,7 +68,7 @@ public class SoulPyreSwordItem extends UniqueSwordItem implements TwoHandedWeapo
                 user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, resistance_duration, 0), user);
                 user.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, resistance_duration, 0), user);
                 user.addStatusEffect(new StatusEffectInstance(StatusEffects.HASTE, relocationDuration, 3), user);
-                target.addStatusEffect(new StatusEffectInstance(EffectRegistry.FREEZE, relocationDuration - 10, 0), user);
+                target.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.FREEZE), relocationDuration - 10, 0), user);
                 stack.set(ComponentTypeRegistry.RELOCATION.get(), new RelocationComponent(user.getX(), user.getY(), user.getZ(), target.getUuid(), relocationDuration, true));
                 //AOE ignite & pull
                 Box box = new Box(rememberX + radius, rememberY + radius, rememberZ + radius,

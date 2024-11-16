@@ -44,7 +44,7 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
             if (attacker instanceof PlayerEntity player)
                 damageSource = attacker.getDamageSources().playerAttack(player);
 
-            if (attacker.hasStatusEffect(EffectRegistry.FRENZY)) {
+            if (attacker.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FRENZY))) {
                 target.timeUntilRegen = 0;
                 target.damage(damageSource, (float) (HelperMethods.getEntityAttackDamage(attacker) * damageModifier));
                 world.playSound(null, attacker.getBlockPos(), SoundRegistry.SPELL_FIRE.get(),
@@ -68,7 +68,7 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
         world.playSound(null, user.getBlockPos(), SoundRegistry.SPELL_FIRE.get(),
                 user.getSoundCategory(), 0.5f, 1.0f);
 
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.FRENZY, effectDuration, 0));
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.FRENZY), effectDuration, 0));
         user.getItemCooldownManager().set(this, skillCooldown);
 
         return super.use(world, user, hand);

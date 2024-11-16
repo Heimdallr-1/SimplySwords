@@ -21,6 +21,7 @@ import java.util.List;
 
 public class ModLootTableModifiers {
 
+    //supplies a list of every unique sword item currently registered
     private static final Supplier<List<Item>> swords = Suppliers.memoize(() -> Registries.ITEM.stream().filter(it -> it instanceof UniqueSwordItem).toList());
 
 

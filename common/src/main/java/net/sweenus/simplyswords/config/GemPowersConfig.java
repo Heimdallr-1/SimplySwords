@@ -6,7 +6,6 @@ import me.fzzyhmstrs.fzzy_config.config.ConfigSection;
 import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedSet;
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier;
 import me.fzzyhmstrs.fzzy_config.validation.misc.ValidatedCondition;
-import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
 import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -73,5 +72,47 @@ public class GemPowersConfig extends Config {
 					).withFailTitle(Text.translatable("simplyswords.gem_powers.simplySkills.failTitle"));
 		}
 	}
+
+//Settings
+	    //Settings blocks are all stored within the corresponding power.
+		//some of them override predefined basic settings classes; Fzzy Config works with inherited settings as well as ones directly in the subclass
+	    //example
+			//type declaration: Settings extends TooltipSettings, if nothing else. This allows tooltips of what the power is to appear in-game
+			//constructor: TooltipSettings require a supplier of TooltipAppender.
+				//Conveniently, RegistrySupplier is a supplier, and GemPower is a TooltipAppender!
+			//settings: in most places I've restricted the settings so non-functional numbers aren't possible (like negative durations).
+				//Also, most power settings share names, so the @Translation mentioned in Config is here too
+			//Reference into a settings like
+				//int f = Config.gemPowers.activeDefence.frequency;
+		/*
+		public static class Settings extends TooltipSettings {
+
+			public Settings() {
+				super(GemPowerRegistry.ACTIVE_DEFENCE);
+			}
+
+			@Translation(prefix = "simplyswords.config.basic_settings")
+			@ValidatedInt.Restrict(min = 1)
+			public int frequency = 20;
+
+			@Translation(prefix = "simplyswords.config.basic_settings")
+			@ValidatedDouble.Restrict(min = 0.0)
+			public double radius = 5.0;
+		}
+		*/
+
+		//example 2, simple settings
+			//this exmaple uses one of the predefined settings classes. Many powers use the exact same set of 2 or 3 settings.
+			//simply provide the chance and duration and the super class handles all the config stuff for you
+
+		/*
+		public static class Settings extends ChanceDurationSettings {
+
+			public Settings() {
+				super(15, 50, GemPowerRegistry.FLOAT);
+			}
+		}
+		*/
+
 
 }

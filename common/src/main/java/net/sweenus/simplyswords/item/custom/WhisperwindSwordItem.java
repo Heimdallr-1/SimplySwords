@@ -51,7 +51,7 @@ public class WhisperwindSwordItem extends UniqueSwordItem implements TwoHandedWe
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         world.playSoundFromEntity(null, user, SoundRegistry.ELEMENTAL_BOW_SCIFI_SHOOT_IMPACT_01.get(),
                 user.getSoundCategory(), 0.6f, 1.0f);
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.FATAL_FLICKER, 12));
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.FATAL_FLICKER), 12));
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 100));
         user.getItemCooldownManager().set(this.getDefaultStack().getItem(), Config.uniqueEffects.fatalFlicker.cooldown);
 

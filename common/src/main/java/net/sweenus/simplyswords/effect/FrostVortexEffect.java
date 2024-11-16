@@ -31,7 +31,7 @@ public class FrostVortexEffect extends OrbitingEffect {
         if (!livingEntity.getWorld().isClient()) {
             ServerWorld serverWorld = (ServerWorld) livingEntity.getWorld();
             float abilityDamage = 0;
-            if (livingEntity.getStatusEffect(EffectRegistry.FROST_VORTEX) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+            if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
             }

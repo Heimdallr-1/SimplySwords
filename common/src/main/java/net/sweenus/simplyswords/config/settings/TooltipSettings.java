@@ -14,6 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * A settings block that will provide a tooltip from the supplied TooltipAppender
+ */
 public class TooltipSettings implements Translatable, Walkable {
 
 	public TooltipSettings(@Nullable Supplier<? extends TooltipAppender> appender) {

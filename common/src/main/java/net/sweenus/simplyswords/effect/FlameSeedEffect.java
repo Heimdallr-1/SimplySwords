@@ -43,7 +43,7 @@ public class FlameSeedEffect extends OrbitingEffect {
             float pitch = 1.3f;
             int frequency = 20;
             SoundEvent soundEvent = SoundEvents.ENTITY_GENERIC_BURN;
-            if (livingEntity.getStatusEffect(EffectRegistry.FLAMESEED) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+            if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FLAMESEED)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
                 duration = statusEffect.getDuration();
@@ -73,10 +73,10 @@ public class FlameSeedEffect extends OrbitingEffect {
                     for (Entity entity : serverWorld.getOtherEntities(livingEntity, box, EntityPredicates.VALID_LIVING_ENTITY)) {
                         if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, sourceEntity)) {
                             le.damage(damageSource, (abilityDamage));
-                            if (!le.hasStatusEffect(EffectRegistry.FLAMESEED) && additionalData > 0) {
+                            if (!le.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FLAMESEED)) && additionalData > 0) {
                                 additionalData -= 1;
                                 SimplySwordsStatusEffectInstance flamSeedEffect = new SimplySwordsStatusEffectInstance(
-                                        EffectRegistry.FLAMESEED, 101, 0, false,
+                                        EffectRegistry.getReference(EffectRegistry.FLAMESEED), 101, 0, false,
                                         false, true);
                                 flamSeedEffect.setSourceEntity(sourceEntity);
                                 flamSeedEffect.setAdditionalData(additionalData);

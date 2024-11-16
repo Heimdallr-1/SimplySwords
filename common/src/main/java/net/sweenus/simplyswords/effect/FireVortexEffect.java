@@ -30,7 +30,7 @@ public class FireVortexEffect extends OrbitingEffect {
     public boolean applyUpdateEffect(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.getWorld().isClient()) {
             ServerWorld serverWorld = (ServerWorld) livingEntity.getWorld();
-			if (livingEntity.getStatusEffect(EffectRegistry.FIRE_VORTEX) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+			if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FIRE_VORTEX)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
             }

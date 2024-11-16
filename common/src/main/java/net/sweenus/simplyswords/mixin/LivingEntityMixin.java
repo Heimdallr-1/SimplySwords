@@ -59,13 +59,13 @@ public abstract class LivingEntityMixin {
     private float simplyswords$modifyDamageAmount(float amount, DamageSource source) {
         LivingEntity livingEntity = (LivingEntity) (Object) this;
         if (!livingEntity.getWorld().isClient()) {
-            StatusEffectInstance voidcloakEffect = livingEntity.getStatusEffect(EffectRegistry.VOIDCLOAK);
-            StatusEffectInstance ribbonwrathEffect = livingEntity.getStatusEffect(EffectRegistry.RIBBONWRATH);
+            StatusEffectInstance voidcloakEffect = livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.VOIDCLOAK));
+            StatusEffectInstance ribbonwrathEffect = livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.RIBBONWRATH));
             if (voidcloakEffect != null) {
                 int amplifier = voidcloakEffect.getAmplifier();
                 float reductionFactor = 1 - (amplifier + 1) * 0.10f; // +1 because amplifier starts at 0
                 amount *= reductionFactor;
-                HelperMethods.decrementStatusEffect(livingEntity, EffectRegistry.VOIDCLOAK);
+                HelperMethods.decrementStatusEffect(livingEntity, EffectRegistry.getReference(EffectRegistry.VOIDCLOAK));
             }
             if (ribbonwrathEffect != null) {
                 float reductionFactor = 0.85f;

@@ -52,8 +52,6 @@ public class HelperMethods {
         return random;
     }
 
-
-
     /*
      * getTargetedEntity taken heavily from ZsoltMolnarrr's CombatSpells
      * https://github.com/ZsoltMolnarrr/SpellEngine/blob/1.19.2/common/src/main/java/net/spell_engine/utils/TargetHelper.java#L136
@@ -75,45 +73,6 @@ public class HelperMethods {
         return entity instanceof PlayerEntity player && (!player.isDead() && (player.isSwimming() || player.getVelocity().horizontalLength() > 0.1));
     }
 
-    private static final int rgbCommon =             0xFFFFFF;
-    private static final int rgbRunic =              0x9D62CA;
-    private static final int rgbUnique =             0xE2A834;
-    private static final int rgbLegendary =          0xE26234;
-    private static final int rgbAbility =            0xE2A834;
-    private static final int rgbRightClick =         0x20BD69;
-    private static final int rgbCorrupted =          0x544988;
-    private static final int rgbCorruptedLight =     0x7140A3;
-    private static final int rgbCorruptedAbility =   0xA987C2;
-    private static final int rgbCorruptedText =      0x7E7883;
-    private static final int rgbText =               0xE0E0E0;
-    private static final Style COMMON =              Style.EMPTY.withColor(TextColor.fromRgb(rgbCommon));
-    private static final Style UNIQUE =              Style.EMPTY.withColor(TextColor.fromRgb(rgbUnique));
-    private static final Style LEGENDARY =           Style.EMPTY.withColor(TextColor.fromRgb(rgbLegendary));
-    private static final Style ABILITY =             Style.EMPTY.withColor(TextColor.fromRgb(rgbAbility));
-    private static final Style RIGHTCLICK =          Style.EMPTY.withColor(TextColor.fromRgb(rgbRightClick));
-    private static final Style RUNIC =               Style.EMPTY.withColor(TextColor.fromRgb(rgbRunic));
-    private static final Style CORRUPTED =           Style.EMPTY.withColor(TextColor.fromRgb(rgbCorrupted));
-    private static final Style CORRUPTED_LIGHT =     Style.EMPTY.withColor(TextColor.fromRgb(rgbCorruptedLight));
-    private static final Style CORRUPTED_ABILITY =   Style.EMPTY.withColor(TextColor.fromRgb(rgbCorruptedAbility));
-    private static final Style CORRUPTED_TEXT =      Style.EMPTY.withColor(TextColor.fromRgb(rgbCorruptedText));
-    private static final Style TEXT =                Style.EMPTY.withColor(TextColor.fromRgb(rgbText));
-
-    public static Style getStyle(String styleType) {
-
-        return switch (styleType) {
-            case "unique" -> UNIQUE;
-            case "legendary" -> LEGENDARY;
-            case "ability" -> ABILITY;
-            case "rightclick" -> RIGHTCLICK;
-            case "runic" -> RUNIC;
-            case "corrupted" -> CORRUPTED;
-            case "corrupted_light" -> CORRUPTED_LIGHT;
-            case "corrupted_ability" -> CORRUPTED_ABILITY;
-            case "corrupted_text" -> CORRUPTED_TEXT;
-            case "text" -> TEXT;
-            default -> COMMON;
-        };
-    }
 
     //Check if we should be able to hit the target
     public static boolean checkFriendlyFire(LivingEntity target, LivingEntity attacker) {

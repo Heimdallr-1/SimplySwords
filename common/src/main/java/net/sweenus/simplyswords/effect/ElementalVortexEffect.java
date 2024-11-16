@@ -36,7 +36,7 @@ public class ElementalVortexEffect extends OrbitingEffect {
             ServerWorld serverWorld = (ServerWorld) livingEntity.getWorld();
 			SoundHelper.loopSound(livingEntity, SoundRegistry.AMBIENCE_WIND_LOOP.getId(), 20);
 
-            if (livingEntity.getStatusEffect(EffectRegistry.ELEMENTAL_VORTEX) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+            if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.ELEMENTAL_VORTEX)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
             }

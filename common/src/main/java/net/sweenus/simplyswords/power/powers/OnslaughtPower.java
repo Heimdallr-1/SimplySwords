@@ -22,7 +22,7 @@ public class OnslaughtPower extends NetherGemPower {
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (target.hasStatusEffect(StatusEffects.SLOWNESS) && !attacker.hasStatusEffect(StatusEffects.WEAKNESS)) {
-			attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.ONSLAUGHT, 80, 0), attacker);
+			attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.ONSLAUGHT), 80, 0), attacker);
 		}
 	}
 

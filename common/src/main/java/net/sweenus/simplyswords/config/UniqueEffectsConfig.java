@@ -100,4 +100,36 @@ public class UniqueEffectsConfig extends Config {
                     Text.translatable("simplyswords.unique_effects.voidcaller.compat"),
 					DreadtideSwordItem.EffectSettings::new
             ).withFailTitle(Text.translatable("simplyswords.unique_effects.voidcaller.compat.failTitle"));
+
+//EffectSettings
+        //much like the gem power settings, each setting block is stored within the sword item it's used for
+        //These settings use the unique item themselves to provide a config context tooltip
+        //example
+            //Type declaration: A tooltip settings, so needs a supplier of TooltipAppender
+            //Constructor
+                //Items are not tooltip appenders, so I made a class ItemStackTooltipAppender to help
+                //NOTE: the ::get part is very important. RegistrySuppliers are suppliers, but without the get you get load order issues
+            //settings: work basically like the gem power configs.
+                //note that here I've left all the sword-specific naming
+                //so instead of using the basic "Cooldown", it still will say "Harbinger cooldown" and so on.
+            //like gem powers, call like
+                //int c = Config.uniqueEffects.abyssalStandard.cooldown;
+        /*
+        public static class EffectSettings extends TooltipSettings {
+
+            public EffectSettings() {
+                super(new ItemStackTooltipAppender(ItemsRegistry.HARBINGER::get));
+            }
+
+            @ValidatedInt.Restrict(min = 0, max = 100)
+            public int chance = 15;
+            @ValidatedInt.Restrict(min = 0)
+            public int cooldown = 700;
+            @ValidatedFloat.Restrict(min = 0f)
+            public float damage = 3f;
+            @ValidatedFloat.Restrict(min = 0f)
+            public float spellScaling = 1.2f;
+
+        }
+        */
 }

@@ -27,7 +27,7 @@ public class PainEffect extends StatusEffect {
         if (!livingEntity.getWorld().isClient()) {
             int startingTickFrequency = 15;
 
-            if (livingEntity.getStatusEffect(EffectRegistry.PAIN) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+            if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.PAIN)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
             }

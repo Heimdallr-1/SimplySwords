@@ -62,7 +62,7 @@ public class FlamewindSwordItem extends UniqueSwordItem {
 
             if (closestEntity != null) {
                 if ((closestEntity instanceof LivingEntity ee)) {
-                    if (HelperMethods.checkFriendlyFire(ee, user) && !ee.hasStatusEffect(EffectRegistry.FLAMESEED)) {
+                    if (HelperMethods.checkFriendlyFire(ee, user) && !ee.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FLAMESEED))) {
 
                         SoundEvent soundSelect = SoundRegistry.SPELL_FIRE.get();
                         int particleCount = 20; // Number of particles along the line
@@ -71,7 +71,7 @@ public class FlamewindSwordItem extends UniqueSwordItem {
                                 user.getSoundCategory(), 0.3f, 1.3f);
 
                         SimplySwordsStatusEffectInstance flamSeedEffect = new SimplySwordsStatusEffectInstance(
-                                EffectRegistry.FLAMESEED, flameSeedDuration, 0, false,
+                                EffectRegistry.getReference(EffectRegistry.FLAMESEED), flameSeedDuration, 0, false,
                                 false, true);
                         flamSeedEffect.setSourceEntity(user);
                         flamSeedEffect.setAdditionalData(flameSeedSpreadCap);

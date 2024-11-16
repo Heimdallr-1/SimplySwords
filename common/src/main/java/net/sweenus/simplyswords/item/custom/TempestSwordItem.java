@@ -15,6 +15,7 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -50,7 +51,7 @@ public class TempestSwordItem extends UniqueSwordItem {
             HelperMethods.playHitSounds(attacker, target);
             SoundEvent soundSelect;
             ParticleEffect particleSelect;
-            RegistrySupplier<StatusEffect> statusSelect;
+            RegistryEntry<StatusEffect> statusSelect;
 
             List<SoundEvent> sounds = new ArrayList<>();
             sounds.add(SoundRegistry.SPELL_FIRE.get());
@@ -64,11 +65,11 @@ public class TempestSwordItem extends UniqueSwordItem {
             particles.add(ParticleTypes.SMOKE);
             particles.add(ParticleTypes.CLOUD);
 
-            List<RegistrySupplier<StatusEffect>> status = new ArrayList<>();
-            status.add(EffectRegistry.FIRE_VORTEX);
-            status.add(EffectRegistry.FROST_VORTEX);
-            status.add(EffectRegistry.FIRE_VORTEX);
-            status.add(EffectRegistry.FROST_VORTEX);
+            List<RegistryEntry<StatusEffect>> status = new ArrayList<>();
+            status.add(EffectRegistry.getReference(EffectRegistry.FIRE_VORTEX));
+            status.add(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX));
+            status.add(EffectRegistry.getReference(EffectRegistry.FIRE_VORTEX));
+            status.add(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX));
 
             int random      = attacker.getRandom().nextInt(3);
             soundSelect     = sounds.get(random);
@@ -104,9 +105,9 @@ public class TempestSwordItem extends UniqueSwordItem {
             for (Entity entity : serverWorld.getOtherEntities(user, box, EntityPredicates.VALID_LIVING_ENTITY)) {
                 if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, user)) {
 
-                    if (le.hasStatusEffect(EffectRegistry.FIRE_VORTEX) && le.hasStatusEffect(EffectRegistry.FROST_VORTEX)) {
-                        StatusEffectInstance frostVortex = le.getStatusEffect(EffectRegistry.FROST_VORTEX);
-                        StatusEffectInstance fireVortex  = le.getStatusEffect(EffectRegistry.FIRE_VORTEX);
+                    if (le.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FIRE_VORTEX)) && le.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX))) {
+                        StatusEffectInstance frostVortex = le.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX));
+                        StatusEffectInstance fireVortex  = le.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FIRE_VORTEX));
                         int totalAmplifier = 0;
                         if (fireVortex != null && frostVortex != null)
                             totalAmplifier = fireVortex.getAmplifier() + frostVortex.getAmplifier();
@@ -119,11 +120,11 @@ public class TempestSwordItem extends UniqueSwordItem {
                             soundHasPlayed = true;
                         }
 
-                        SimplySwordsStatusEffectInstance status = HelperMethods.incrementSimplySwordsStatusEffect(user, EffectRegistry.ELEMENTAL_VORTEX, vortexDuration, totalAmplifier, vortexMaxSize);
+                        SimplySwordsStatusEffectInstance status = HelperMethods.incrementSimplySwordsStatusEffect(user, EffectRegistry.getReference(EffectRegistry.ELEMENTAL_VORTEX), vortexDuration, totalAmplifier, vortexMaxSize);
                         status.setAdditionalData(Math.max(1, totalAmplifier));
                         status.setSourceEntity(user);
-                        le.removeStatusEffect(EffectRegistry.FIRE_VORTEX);
-                        le.removeStatusEffect(EffectRegistry.FROST_VORTEX);
+                        le.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.FIRE_VORTEX));
+                        le.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX));
                         user.getItemCooldownManager().set(this, skillCooldown);
                     }
                 }

@@ -22,7 +22,7 @@ public class EchoPower extends NetherGemPower {
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		int amp = HelperMethods.isUniqueTwohanded(stack) ? 2 : 0;
-		target.addStatusEffect(new StatusEffectInstance(EffectRegistry.ECHO, 20, amp), attacker);
+		target.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.ECHO), 20, amp), attacker);
 	}
 
 	@Override

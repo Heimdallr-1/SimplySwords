@@ -72,7 +72,7 @@ public class EnigmaSwordItem extends UniqueSwordItem {
                     banner.setCustomName(Text.translatable("entity.simplyswords.battlestandard.name", user.getName()));
                     banner.setCustomNameVisible(false);
                     banner.setInvisible(true);
-                    banner.addStatusEffect( new StatusEffectInstance(EffectRegistry.ELEMENTAL_VORTEX, 900, 11, false, false, false));
+                    banner.addStatusEffect( new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.ELEMENTAL_VORTEX), 900, 11, false, false, false));
                 }
                 user.getItemCooldownManager().set(this, Config.uniqueEffects.enigma.enigmaCooldown);
             }

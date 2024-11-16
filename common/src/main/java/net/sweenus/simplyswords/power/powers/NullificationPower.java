@@ -27,7 +27,7 @@ public class NullificationPower extends NetherGemPower {
 
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		if (!attacker.hasStatusEffect(EffectRegistry.BATTLE_FATIGUE)) {
+		if (!attacker.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.BATTLE_FATIGUE))) {
 			if (!attacker.getWorld().isClient()) {
 				ServerWorld serverWorld = (ServerWorld) attacker.getWorld();
 				BlockState currentState = serverWorld.getBlockState(attacker.getBlockPos().up(4).offset(attacker.getMovementDirection(), 3));
@@ -46,7 +46,7 @@ public class NullificationPower extends NetherGemPower {
 						banner.standardType = "nullification";
 						banner.setCustomName(Text.translatable("entity.simplyswords.battlestandard.name", attacker.getName()));
 					}
-					attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.BATTLE_FATIGUE, 800, 0), attacker);
+					attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.BATTLE_FATIGUE), 800, 0), attacker);
 				}
 			}
 		}

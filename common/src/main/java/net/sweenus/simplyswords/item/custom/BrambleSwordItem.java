@@ -33,8 +33,8 @@ public class BrambleSwordItem extends UniqueSwordItem {
             int hitChance = Config.uniqueEffects.bramble.chance;
             HelperMethods.playHitSounds(attacker, target);
             if (attacker.getRandom().nextInt(100) <= hitChance) {
-                if (!attacker.hasStatusEffect(EffectRegistry.SPORE_SWARM))
-                    attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.SPORE_SWARM, 200, 2, false, false, true));
+                if (!attacker.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.SPORE_SWARM)))
+                    attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.SPORE_SWARM), 200, 2, false, false, true));
             }
 
         }

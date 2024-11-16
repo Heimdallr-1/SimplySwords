@@ -119,7 +119,7 @@ public class BattleStandardDarkEntity extends PathAwareEntity {
                             le.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 120, 0), this);
                             if (standardType.equals("enigma")) {
                                 SimplySwordsStatusEffectInstance effect = HelperMethods.incrementSimplySwordsStatusEffect(
-                                        le, EffectRegistry.PAIN, 60, 1, 49);
+                                        le, EffectRegistry.getReference(EffectRegistry.PAIN), 60, 1, 49);
                                 effect.setSourceEntity(ownerEntity);
                                 effect.setAdditionalData(0);
                                 le.addStatusEffect(effect);

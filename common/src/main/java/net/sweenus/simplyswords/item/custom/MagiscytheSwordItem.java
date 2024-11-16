@@ -42,7 +42,7 @@ public class MagiscytheSwordItem extends UniqueSwordItem {
             HelperMethods.playHitSounds(attacker, target);
             ServerWorld world = (ServerWorld) attacker.getWorld();
 
-            if (attacker.hasStatusEffect(EffectRegistry.MAGISTORM)) {
+            if (attacker.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.MAGISTORM))) {
                 world.playSound(null, attacker.getBlockPos(), SoundRegistry.ELEMENTAL_BOW_SCIFI_SHOOT_IMPACT_03.get(),
                         attacker.getSoundCategory(), 0.1f, 1.9f);
 
@@ -69,7 +69,7 @@ public class MagiscytheSwordItem extends UniqueSwordItem {
 
         world.playSound(null, user.getBlockPos(), SoundRegistry.MAGIC_SHAMANIC_NORDIC_22.get(),
                 user.getSoundCategory(), 0.2f, 1.1f);
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.MAGISTORM, baseEffectDuration, 1));
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.MAGISTORM), baseEffectDuration, 1));
         user.getItemCooldownManager().set(this, skillCooldown);
 
         return super.use(world, user, hand);

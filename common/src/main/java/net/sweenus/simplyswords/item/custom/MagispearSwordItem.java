@@ -59,8 +59,8 @@ public class MagispearSwordItem extends UniqueSwordItem {
 
         world.playSound(null, user.getBlockPos(), SoundRegistry.MAGIC_SHAMANIC_NORDIC_27.get(),
                 user.getSoundCategory(), 0.2f, 1.1f);
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.MAGISLAM, 62, 1));
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.RESILIENCE, 64, 3));
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.MAGISLAM), 62, 1));
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.RESILIENCE), 64, 3));
         user.getItemCooldownManager().set(this, skillCooldown);
 
         return super.use(world, user, hand);

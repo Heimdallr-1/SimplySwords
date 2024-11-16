@@ -59,8 +59,6 @@ public class SimplySwords {
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-    public static boolean isConfigOutdated;
-
     public static String minimumEldritchEndVersion = "0.2.40";
     public static String minimumSpellPowerVersion = "0.10.0+1.20.1";
 
@@ -69,23 +67,6 @@ public class SimplySwords {
         //CONFIG
 
         Config.init();
-
-        String version = SimplySwordsExpectPlatform.getVersion();
-        String defaultConfig = String.format("""
-                {
-                  "regen_simplyswords_config_file": false,
-                  "config_version": %s
-                }""", version.substring(0, 4));
-
-        File configFile = Config.createFile("config/simplyswords_extra/backupconfig.json", defaultConfig, false);
-        JsonObject json = Config.getJsonObject(Config.readFile(configFile));
-        if (json.has("config_version") && version.startsWith(json.get("config_version").getAsString())) {
-            isConfigOutdated = false;
-        } else {
-            isConfigOutdated = true;
-            //System.out.println("SimplySwords: It looks like you've updated from a previous version. Please regenerate the Simply Swords configs to get the latest features.");
-            //System.out.println(version.substring(0, 4));
-        }
 
         SimplySwords.TABS.register();
         ItemsRegistry.ITEM.register();

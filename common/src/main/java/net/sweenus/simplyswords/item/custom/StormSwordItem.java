@@ -40,7 +40,7 @@ public class StormSwordItem extends UniqueSwordItem {
             int hitChance = Config.uniqueEffects.storm.chance;
 
             if (attacker.getRandom().nextInt(100) <= hitChance) {
-                target.addStatusEffect(new StatusEffectInstance(EffectRegistry.STORM, 2, 1), attacker);
+                target.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.STORM), 2, 1), attacker);
             }
         }
         return super.postHit(stack, target, attacker);

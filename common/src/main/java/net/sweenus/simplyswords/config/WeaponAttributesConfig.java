@@ -51,7 +51,7 @@ public class WeaponAttributesConfig extends Config {
         public float netherite_damageModifier = 3.0f;
         public float runic_damageModifier = 3.0f;
 
-        //mythic metals compat
+        //mythic metals compat, all gated behind a mod-loaded condition
         public ValidatedCondition<Float> adamantite_damageModifier = createCondition(3.0f, "mythicmetals");
         public ValidatedCondition<Float> aquarium_damageModifier = createCondition(3.0f, "mythicmetals");
         public ValidatedCondition<Float> banglum_damageModifier = createCondition(3.0f, "mythicmetals");
@@ -73,7 +73,7 @@ public class WeaponAttributesConfig extends Config {
         public ValidatedCondition<Float> steel_damageModifier = createCondition(3.0f, "mythicmetals");
         public ValidatedCondition<Float> stormyx_damageModifier = createCondition(3.0f, "mythicmetals");
 
-        //gobber compat
+        //gobber compat - all mod-loaded gated
         public ValidatedCondition<Float> gobber_damageModifier = createCondition(1.0f, "gobber2");
         public ValidatedCondition<Float> gobberNether_damageModifier = createCondition(3.0f, "gobber2");
         public ValidatedCondition<Float> gobberEnd_damageModifier = createCondition(6.0f, "gobber2");

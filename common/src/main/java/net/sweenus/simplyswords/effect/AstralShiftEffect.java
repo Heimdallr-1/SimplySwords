@@ -28,8 +28,8 @@ public class AstralShiftEffect extends StatusEffect {
             ServerWorld world = (ServerWorld) entity.getWorld();
 
             if (entity instanceof PlayerEntity player) {
-                if (player.hasStatusEffect(EffectRegistry.ASTRAL_SHIFT)) {
-                    StatusEffectInstance effectInstance = player.getStatusEffect(EffectRegistry.ASTRAL_SHIFT);
+                if (player.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT))) {
+                    StatusEffectInstance effectInstance = player.getStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT));
                     if (effectInstance != null && effectInstance.getDuration() < 10) {
 
                         double x = entity.getX();
@@ -63,7 +63,7 @@ public class AstralShiftEffect extends StatusEffect {
                                 HelperMethods.spawnRainingParticles(world, ParticleTypes.EXPLOSION, target, 2, 1);
                             }
                         }
-                        entity.removeStatusEffect(EffectRegistry.ASTRAL_SHIFT);
+                        entity.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT));
                     }
                 }
             }

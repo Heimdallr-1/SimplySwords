@@ -40,12 +40,12 @@ public class SporeSwarmEffect extends WideOrbitingEffect {
                         if ((livingEntity.getMainHandStack().getItem() instanceof BrambleSwordItem) && (livingEntity.getOffHandStack().getItem() instanceof BrambleSwordItem))
                             maxAmp = 74;
                         SimplySwordsStatusEffectInstance effect = HelperMethods.incrementSimplySwordsStatusEffect(
-                                ee, EffectRegistry.PAIN, 60, 1, maxAmp);
+                                ee, EffectRegistry.getReference(EffectRegistry.PAIN), 60, 1, maxAmp);
                         effect.setSourceEntity(livingEntity);
                         effect.setAdditionalData(0);
                         ee.addStatusEffect(effect);
                         HelperMethods.spawnWaistHeightParticles(world, ParticleTypes.SMOKE, ee, livingEntity, 10);
-                        HelperMethods.incrementStatusEffect(livingEntity, EffectRegistry.SPORE_SWARM, 200, 1, 4);
+                        HelperMethods.incrementStatusEffect(livingEntity, EffectRegistry.getReference(EffectRegistry.SPORE_SWARM), 200, 1, 4);
                     }
                 }
             }

@@ -60,9 +60,9 @@ public class RibboncleaverSwordItem extends UniqueSwordItem {
         user.setVelocity(user.getRotationVector().multiply(+1.7));
         user.setVelocity(user.getVelocity().x, 0, user.getVelocity().z); // Prevent user flying to the heavens
         user.velocityModified = true;
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.RIBBONCLEAVE,
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.RIBBONCLEAVE),
                 60, 0, false, false, true));
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.RESILIENCE,
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.RESILIENCE),
                 15, resilienceAmplifier, false, false, true));
         user.getItemCooldownManager().set(this, skillCooldown);
 

@@ -43,9 +43,9 @@ public class EmberlashSwordItem extends UniqueSwordItem {
 
             HelperMethods.playHitSounds(attacker, target);
 
-            if (target.hasStatusEffect(EffectRegistry.SMOULDERING)) {
+            if (target.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.SMOULDERING))) {
                 target.timeUntilRegen = 0;
-                StatusEffectInstance smoulderingEffect = target.getStatusEffect(EffectRegistry.SMOULDERING);
+                StatusEffectInstance smoulderingEffect = target.getStatusEffect(EffectRegistry.getReference(EffectRegistry.SMOULDERING));
                 if (smoulderingEffect != null) {
                     DamageSource damageSource = attacker instanceof PlayerEntity player ? player.getDamageSources().playerAttack(player) : world.getDamageSources().generic();
                     float abilityDamage = Math.max(HelperMethods.commonSpellAttributeScaling(Config.uniqueEffects.smoulder.spellScaling, attacker, "fire"), (float) HelperMethods.getEntityAttackDamage(attacker));
@@ -54,7 +54,7 @@ public class EmberlashSwordItem extends UniqueSwordItem {
                 }
             }
             int maximum_stacks = Config.uniqueEffects.smoulder.maxStacks;
-            HelperMethods.incrementStatusEffect(target, EffectRegistry.SMOULDERING, 100, 1, maximum_stacks + 1);
+            HelperMethods.incrementStatusEffect(target, EffectRegistry.getReference(EffectRegistry.SMOULDERING), 100, 1, maximum_stacks + 1);
 
         }
         return super.postHit(stack, target, attacker);

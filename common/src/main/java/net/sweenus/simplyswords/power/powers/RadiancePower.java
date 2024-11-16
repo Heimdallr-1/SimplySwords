@@ -22,7 +22,7 @@ public class RadiancePower extends NetherGemPower {
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (target.hasStatusEffect(StatusEffects.WEAKNESS)) {
-			attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.IMMOLATION, 200, 4), attacker);
+			attacker.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.IMMOLATION), 200, 4), attacker);
 		}
 	}
 

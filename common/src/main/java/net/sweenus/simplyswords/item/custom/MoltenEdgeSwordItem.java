@@ -84,7 +84,7 @@ public class MoltenEdgeSwordItem extends UniqueSwordItem {
         world.playSoundFromEntity(null, user, SoundRegistry.DARK_SWORD_ENCHANT.get(),
                 user.getSoundCategory(), 0.7f, 1.5f);
         int duration = Config.uniqueEffects.moltenRoar.duration * amp / 2;
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.ONSLAUGHT, duration, 0), user);
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.ONSLAUGHT), duration, 0), user);
         user.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, duration, 3), user);
         user.getItemCooldownManager().set(this, abilityCooldown);
 

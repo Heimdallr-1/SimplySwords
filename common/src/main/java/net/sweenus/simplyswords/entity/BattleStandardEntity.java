@@ -185,7 +185,7 @@ public class BattleStandardEntity extends PathAwareEntity {
                                         RegistryEntry<StatusEffect> effectEntry = statusEffectInstance.getEffectType();
                                         StatusEffect effect = effectEntry.value();
                                         if (effect != null && !effect.isBeneficial()
-                                                && !Objects.equals(effectEntry, EffectRegistry.BATTLE_FATIGUE.get())) {
+                                                && !Objects.equals(effectEntry, EffectRegistry.getReference(EffectRegistry.BATTLE_FATIGUE))) {
                                             le.removeStatusEffect(effectEntry);
                                             break;
                                         }

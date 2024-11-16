@@ -30,7 +30,7 @@ public class MagislamEffect extends OrbitingEffect {
         if (!livingEntity.getWorld().isClient()) {
 
             if (livingEntity instanceof PlayerEntity player) {
-                int ability_timer = Objects.requireNonNull(player.getStatusEffect(EffectRegistry.MAGISLAM)).getDuration();
+                int ability_timer = Objects.requireNonNull(player.getStatusEffect(EffectRegistry.getReference(EffectRegistry.MAGISLAM))).getDuration();
                 double radius = Config.uniqueEffects.magislam.radius;
                 double leapVelocity = 1.5;
                 double height = 0.9;
@@ -61,8 +61,8 @@ public class MagislamEffect extends OrbitingEffect {
                         HelperMethods.spawnOrbitParticles((ServerWorld) player.getWorld(), player.getPos(), ParticleTypes.EXPLOSION, 1, 3);
                         player.getWorld().playSoundFromEntity(null, player, SoundEvents.ENTITY_GENERIC_EXPLODE.value(),
                                 SoundCategory.PLAYERS, 0.9f, 1.1f);
-                        player.removeStatusEffect(EffectRegistry.MAGISLAM);
-                        player.removeStatusEffect(EffectRegistry.RESILIENCE);
+                        player.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.MAGISLAM));
+                        player.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.RESILIENCE));
                     }
                 }
             }

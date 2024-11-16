@@ -7,6 +7,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.config.Config;
@@ -39,6 +40,12 @@ import net.sweenus.simplyswords.effect.WildfireEffect;
 public class EffectRegistry {
 
     public static final DeferredRegister<StatusEffect> EFFECT = DeferredRegister.create(SimplySwords.MOD_ID, RegistryKeys.STATUS_EFFECT);
+
+    //This is currently REQUIRED as a wrapper around a call to one of the effects below, since Architectury has a bug involving RegistrySuppliers not being able to save properly.
+    //Once they fix that bug, this could be removed (but also works fine as is)
+    public static RegistryEntry<StatusEffect> getReference(RegistrySupplier<StatusEffect> input) {
+        return EFFECT.getRegistrar().getHolder(input.getId());
+    }
 
     public static final RegistrySupplier<StatusEffect> WILDFIRE = EFFECT.register("wildfire", () ->
             new WildfireEffect(StatusEffectCategory.HARMFUL, 1124687));

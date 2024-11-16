@@ -42,7 +42,7 @@ public class FatalFlickerEffect extends StatusEffect {
         }
         for (Entity entity : entities) {
             if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, user)) {
-                HelperMethods.incrementStatusEffect(le, EffectRegistry.ECHO, 20, amplifier, maxAmplifier);
+                HelperMethods.incrementStatusEffect(le, EffectRegistry.getReference(EffectRegistry.ECHO), 20, amplifier, maxAmplifier);
             }
         }
 
@@ -61,7 +61,7 @@ public class FatalFlickerEffect extends StatusEffect {
 
         if (!user.getWorld().isClient()) {
 
-            int ability_timer = Objects.requireNonNull(user.getStatusEffect(EffectRegistry.FATAL_FLICKER)).getDuration();
+            int ability_timer = Objects.requireNonNull(user.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FATAL_FLICKER))).getDuration();
             World world = user.getWorld();
             int radius = Config.uniqueEffects.fatalFlicker.radius;
 

@@ -48,10 +48,10 @@ public class ImmolationEffect extends WideOrbitingEffect {
                                 || offComponent.hasRunic(GemPowerRegistry.IMMOLATION)
                                 || mainComponent.hasNether(GemPowerRegistry.RADIANCE)
                                 || offComponent.hasNether(GemPowerRegistry.RADIANCE))) {
-                            player.removeStatusEffect(EffectRegistry.IMMOLATION);
+                            player.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.IMMOLATION));
                         }
                     } else {
-                        player.removeStatusEffect(EffectRegistry.IMMOLATION);
+                        player.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.IMMOLATION));
                     }
 
                     float abilityDamage = (player.getHealth() / 3);

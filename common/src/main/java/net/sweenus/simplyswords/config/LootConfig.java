@@ -40,6 +40,7 @@ public class LootConfig extends Config {
     public ValidatedFloat runicLootTableWeight = new ValidatedFloat(0.007f, 1f, 0f);
     public ValidatedFloat uniqueLootTableWeight = new ValidatedFloat(0.001f, 1f, 0f);
 
+    //contained remnants will be disabled by default if the unique loot chance is set to 0
     public ValidatedCondition<Boolean> enableContainedRemnants = new ValidatedBoolean()
             .toCondition(
                     () -> uniqueLootTableWeight.get() > 0f,
@@ -47,8 +48,11 @@ public class LootConfig extends Config {
                     () -> false
             ).withFailTitle(Text.translatable("simplyswords.loot.enableContainedRemnants.failTitle"));
 
+    //Unique table options are copied over from the previous sub-config system.
+    //This map only allows non-block loot table ids, and chances clamped 0f to 1f.
+    //if you ever use another toDynamicKey, the predicate id should be unique unless the predicate is exactly the same (non-block)
     public ValidatedIdentifierMap<Float> uniqueLootTableOptions = new ValidatedIdentifierMap.Builder<Float>()
-            .keyHandler(ValidatedIdentifier.ofDynamicKey(LootTables.END_CITY_TREASURE_CHEST.getValue(), RegistryKeys.LOOT_TABLE, "no_blocks", (id, e) -> e.value().getType() != LootContextTypes.BLOCK))
+            .keyHandler(ValidatedIdentifier.ofDynamicKey(LootTables.END_CITY_TREASURE_CHEST.getValue(), RegistryKeys.LOOT_TABLE, "simplyswords_no_blocks", (id, e) -> e.value().getType() != LootContextTypes.BLOCK))
             .valueHandler(new ValidatedFloat(0.01f, 1f, 0f))
             .defaults(
                     ImmutableMap.<Identifier, Float>builder()
@@ -75,4 +79,6 @@ public class LootConfig extends Config {
             ).build();
 
     public ValidatedSet<Item> disabledUniqueWeaponLoot = ValidatedRegistryType.of(ItemsRegistry.ARCANETHYST.value(), Registries.ITEM, (entry) -> entry.value() instanceof UniqueSwordItem).toSet();
+
+    //
 }

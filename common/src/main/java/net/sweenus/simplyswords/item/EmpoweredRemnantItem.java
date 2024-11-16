@@ -9,6 +9,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -21,8 +22,7 @@ public class EmpoweredRemnantItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        Style UNIQUE = HelperMethods.getStyle("unique");
-        return Text.translatable(this.getTranslationKey(stack)).setStyle(UNIQUE);
+        return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.UNIQUE);
     }
 
     @Override

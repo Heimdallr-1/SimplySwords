@@ -68,7 +68,7 @@ public class DreadtideSwordItem extends UniqueSwordItem {
                 if ((closestEntity instanceof LivingEntity ee)) {
                     if (HelperMethods.checkFriendlyFire(ee, user)) {
 
-                        StatusEffectInstance voidcloakEffect = user.getStatusEffect(EffectRegistry.VOIDCLOAK);
+                        StatusEffectInstance voidcloakEffect = user.getStatusEffect(EffectRegistry.getReference(EffectRegistry.VOIDCLOAK));
                         if (voidcloakEffect != null) {
                             SoundEvent soundSelect = SoundRegistry.MAGIC_SHAMANIC_VOICE_04.get();
                             List<SoundEvent> sounds = new ArrayList<>();
@@ -91,12 +91,12 @@ public class DreadtideSwordItem extends UniqueSwordItem {
                                     user.getSoundCategory(), 0.3f, 1.3f);
 
                             SimplySwordsStatusEffectInstance voidAssaultEffect = new SimplySwordsStatusEffectInstance(
-                                    EffectRegistry.VOIDASSAULT, voidcallerDuration, voidcloakEffect.getAmplifier(), false,
+                                    EffectRegistry.getReference(EffectRegistry.VOIDASSAULT), voidcallerDuration, voidcloakEffect.getAmplifier(), false,
                                     false, true);
                             voidAssaultEffect.setSourceEntity(user);
                             voidAssaultEffect.setAdditionalData((int) (HelperMethods.getEntityAttackDamage(user) * voidcallerDamageModifier));
                             ee.addStatusEffect(voidAssaultEffect);
-                            user.removeStatusEffect(EffectRegistry.VOIDCLOAK);
+                            user.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.VOIDCLOAK));
                             user.getItemCooldownManager().set(this, skillCooldown);
                         }
                     }

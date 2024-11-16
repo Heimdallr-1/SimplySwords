@@ -49,21 +49,21 @@ public abstract class ServerPlayerEntityMixin {
         if (player instanceof ServerPlayerEntity serverPlayer) {
 
             //Effect Resilience
-            if (serverPlayer.hasStatusEffect(EffectRegistry.RESILIENCE)) {
-                HelperMethods.decrementStatusEffect(serverPlayer, EffectRegistry.RESILIENCE);
+            if (serverPlayer.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.RESILIENCE))) {
+                HelperMethods.decrementStatusEffect(serverPlayer, EffectRegistry.getReference(EffectRegistry.RESILIENCE));
                 cir.setReturnValue(false);
-                if (!player.hasStatusEffect(EffectRegistry.MAGISLAM))
+                if (!player.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.MAGISLAM)))
                     serverPlayer.getWorld().playSoundFromEntity(null, serverPlayer, SoundRegistry.MAGIC_SWORD_PARRY_03.get(),
                         SoundCategory.PLAYERS, 0.7f, 0.5f + (serverPlayer.getRandom().nextBetween(1, 5) * 0.1f));
             }
 
-            if (serverPlayer.hasStatusEffect(EffectRegistry.ASTRAL_SHIFT)) {
-                StatusEffectInstance astralShiftInstance = player.getStatusEffect(EffectRegistry.ASTRAL_SHIFT);
+            if (serverPlayer.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT))) {
+                StatusEffectInstance astralShiftInstance = player.getStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT));
                 if (astralShiftInstance != null) {
                     int duration = astralShiftInstance.getDuration();
 
                     if (duration > 10) {
-                        HelperMethods.incrementStatusEffect(serverPlayer, EffectRegistry.ASTRAL_SHIFT, duration, (int) Math.max(1, (amount / 10)), 99);
+                        HelperMethods.incrementStatusEffect(serverPlayer, EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT), duration, (int) Math.max(1, (amount / 10)), 99);
                         AbilityMethods.astralShiftSounds(serverPlayer);
                         cir.setReturnValue(false);
                     }
@@ -105,7 +105,7 @@ public abstract class ServerPlayerEntityMixin {
             if (serverPlayer.getMainHandStack().isOf(ItemsRegistry.RIBBONCLEAVER.get()) || serverPlayer.getMainHandStack().isOf(ItemsRegistry.ENIGMA.get())) {
                 int frequency = 6;
                 if (serverPlayer.age % 20 == 0 && serverPlayer.getMainHandStack().isOf(ItemsRegistry.RIBBONCLEAVER.get()))
-                    serverPlayer.addStatusEffect(new StatusEffectInstance(EffectRegistry.RIBBONWRATH,
+                    serverPlayer.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.RIBBONWRATH),
                             30, 0, true, false, false));
 
                 if (player.age % frequency == 0 && player.isSprinting() && player.isOnGround()) {
@@ -250,8 +250,8 @@ public abstract class ServerPlayerEntityMixin {
                 if (!target.handleAttack(player)) {
                     ServerWorld serverWorld = (ServerWorld) player.getWorld();
                     //Ribboncleaver Cleave buff
-                    if (serverPlayer.hasStatusEffect(EffectRegistry.RIBBONCLEAVE)) {
-                        serverPlayer.removeStatusEffect(EffectRegistry.RIBBONCLEAVE);
+                    if (serverPlayer.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.RIBBONCLEAVE))) {
+                        serverPlayer.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.RIBBONCLEAVE));
                         HelperMethods.spawnOrbitParticles(serverWorld, target.getPos().add(0, 0.3, 0),
                                 ParticleTypes.POOF, 0.5, 6);
                         HelperMethods.spawnOrbitParticles(serverWorld, target.getPos().add(0, 0.5, 0),

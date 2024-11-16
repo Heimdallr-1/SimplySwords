@@ -18,7 +18,7 @@ public class EchoEffect extends StatusEffect {
                 int damage = Config.statusEffects.echoDamage;
                 livingEntity.timeUntilRegen = 0;
                 livingEntity.damage(livingEntity.getDamageSources().magic(), damage+amplifier);
-                livingEntity.removeStatusEffect(EffectRegistry.ECHO);
+                livingEntity.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.ECHO));
             }
         }
         super.applyUpdateEffect(livingEntity, amplifier);

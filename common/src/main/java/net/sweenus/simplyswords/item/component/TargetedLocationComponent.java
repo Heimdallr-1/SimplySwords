@@ -21,6 +21,7 @@ public record TargetedLocationComponent(UUID uuid, double lastX, double lastY, d
 
 	@Nullable
 	public LivingEntity getEntity(ServerWorld world) {
+		if (uuid == DEFAULT_UUID) return null;
 		Entity entity = world.getEntity(uuid);
 		return entity instanceof LivingEntity ? (LivingEntity) entity : null;
 	}
@@ -29,7 +30,8 @@ public record TargetedLocationComponent(UUID uuid, double lastX, double lastY, d
 		return new TargetedLocationComponent(newTarget.getUuid(), lastX, lastY, lastZ);
 	}
 
-	public static TargetedLocationComponent DEFAULT = new TargetedLocationComponent(UUID.randomUUID(), 0.0, 0.0, 0.0);
+	private static final UUID DEFAULT_UUID = UUID.randomUUID();
+	public static TargetedLocationComponent DEFAULT = new TargetedLocationComponent(DEFAULT_UUID, 0.0, 0.0, 0.0);
 
 	public static Codec<TargetedLocationComponent> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(

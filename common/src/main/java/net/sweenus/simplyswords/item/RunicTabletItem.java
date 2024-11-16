@@ -9,6 +9,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -21,8 +22,7 @@ public class RunicTabletItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        Style RUNIC = HelperMethods.getStyle("runic");
-        return Text.translatable(this.getTranslationKey(stack)).setStyle(RUNIC);
+        return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.RUNIC);
     }
 
     @Override
