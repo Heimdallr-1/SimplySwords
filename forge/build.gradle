@@ -47,8 +47,6 @@ configurations {
 }
 
 dependencies {
-    modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
-
     //Patchouli
     modImplementation ("vazkii.patchouli:Patchouli:1.21-87-NEOFORGE")
 
