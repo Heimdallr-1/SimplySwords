@@ -31,14 +31,14 @@ public class OnslaughtEffect extends StatusEffect {
                 }
 
                 //If Onslaught is expiring, remove all haste and grant weakness. Also expire Onslaught early.
-                if (pLivingEntity.hasStatusEffect(EffectRegistry.ONSLAUGHT)) {
-                    StatusEffectInstance statusEffect = pLivingEntity.getStatusEffect(EffectRegistry.ONSLAUGHT);
+                if (pLivingEntity.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.ONSLAUGHT))) {
+                    StatusEffectInstance statusEffect = pLivingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.ONSLAUGHT));
                     assert statusEffect != null;
                     if (statusEffect.getDuration() < 10 && pLivingEntity.hasStatusEffect(StatusEffects.HASTE)) {
                         pLivingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 80,
                                 0), pLivingEntity);
                         pLivingEntity.removeStatusEffect(StatusEffects.HASTE);
-                        pLivingEntity.removeStatusEffect(EffectRegistry.ONSLAUGHT);
+                        pLivingEntity.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.ONSLAUGHT));
                     }
                 }
             }

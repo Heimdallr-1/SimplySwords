@@ -1,5 +1,8 @@
 package net.sweenus.simplyswords.item.custom;
 
+import dev.architectury.platform.Platform;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -11,7 +14,6 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -19,29 +21,24 @@ import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
+import net.sweenus.simplyswords.item.component.ChargedLocationComponent;
+import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.AbilityMethods;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
-public class IcewhisperSwordItem extends UniqueSwordItem {
+public class IcewhisperSwordItem extends UniqueSwordItem implements TwoHandedWeapon {
     public IcewhisperSwordItem(ToolMaterial toolMaterial, Settings settings) {
         super(toolMaterial, settings);
     }
-
-    private static int stepMod = 0;
-    public static boolean scalesWithSpellPower;
-    int radius = (int) Config.getFloat("permafrostRadius", "UniqueEffects", ConfigDefaultValues.permafrostRadius);
-    float abilityDamage = Config.getFloat("permafrostDamage", "UniqueEffects", ConfigDefaultValues.permafrostDamage);
-    int blizzard_timer_max = (int) Config.getFloat("permafrostDuration", "UniqueEffects", ConfigDefaultValues.permafrostDuration);
-    int skillCooldown = (int) Config.getFloat("permafrostCooldown", "UniqueEffects", ConfigDefaultValues.permafrostCooldown);
-    float spellScalingModifier = Config.getFloat("permafrostSpellScaling", "UniqueEffects", ConfigDefaultValues.permafrostSpellScaling);
-    double lastX;
-    double lastY;
-    double lastZ;
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
@@ -55,10 +52,7 @@ public class IcewhisperSwordItem extends UniqueSwordItem {
         if (itemStack.getDamage() >= itemStack.getMaxDamage() - 1) {
             return TypedActionResult.fail(itemStack);
         }
-
-        lastX = user.getX();
-        lastY = user.getY();
-        lastZ = user.getZ();
+        itemStack.set(ComponentTypeRegistry.CHARGED_LOCATION.get(), new ChargedLocationComponent(user.getX(), user.getY(), user.getZ()));
 
         user.setCurrentHand(hand);
         return TypedActionResult.consume(itemStack);
@@ -67,14 +61,19 @@ public class IcewhisperSwordItem extends UniqueSwordItem {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         if (user.getEquippedStack(EquipmentSlot.MAINHAND) == stack && user instanceof PlayerEntity) {
-            AbilityMethods.tickAbilityPermafrost(stack, world, user, remainingUseTicks, blizzard_timer_max, abilityDamage,
-                    skillCooldown, radius, lastX, lastY, lastZ);
+
+            ChargedLocationComponent location = stack.getOrDefault(ComponentTypeRegistry.CHARGED_LOCATION.get(), ChargedLocationComponent.DEFAULT);
+            int radius = Config.uniqueEffects.permafrost.radius;
+            float abilityDamage = HelperMethods.spellScaledDamage("frost", user, Config.uniqueEffects.permafrost.spellScaling, Config.uniqueEffects.permafrost.damage);
+
+            AbilityMethods.tickAbilityPermafrost(stack, world, user, remainingUseTicks, abilityDamage,
+                    radius, location.lastX(), location.lastY(), location.lastZ());
         }
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return blizzard_timer_max;
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        return Config.uniqueEffects.permafrost.duration;
     }
 
     @Override
@@ -85,19 +84,15 @@ public class IcewhisperSwordItem extends UniqueSwordItem {
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         if (!world.isClient && (user instanceof PlayerEntity player)) {
+            int skillCooldown = Config.uniqueEffects.permafrost.cooldown;
             player.getItemCooldownManager().set(stack.getItem(), skillCooldown);
         }
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "frost") > 0) {
-            abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, entity, "frost");
-            scalesWithSpellPower = true;
-        }
-
         if (!world.isClient && (entity instanceof PlayerEntity player)) {
-
+            int radius = Config.uniqueEffects.permafrost.radius;
             //AOE Aura
             if (player.age % 35 == 0 && player.getEquippedStack(EquipmentSlot.MAINHAND) == stack) {
                 Box box = new Box(player.getX() + radius, player.getY() + radius, player.getZ() + radius,
@@ -106,18 +101,13 @@ public class IcewhisperSwordItem extends UniqueSwordItem {
                     if ((otherEntity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, player)) {
                         if (le.hasStatusEffect(StatusEffects.SLOWNESS)) {
                             int a = (le.getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() + 1);
-
-                            if (a < 4) {
-                                le.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 120, a), player);
-                            } else {
-                                le.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 120, a - 1), player);
-                            }
+                            le.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 120, Math.max(a, 3)), player);
                         } else {
                             le.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 120, 0), player);
                         }
                         float choose = (float) (Math.random() * 1);
-                        world.playSoundFromEntity(null, le, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_03.get(),
-                                le.getSoundCategory(), 0.1f, choose);
+                        world.playSoundFromEntity(null, le, SoundRegistry.ELEMENTAL_BOW_ICE_SHOOT_IMPACT_03.get(), le.getSoundCategory(), 0.1f, choose);
+                        float abilityDamage = HelperMethods.spellScaledDamage("frost", entity, Config.uniqueEffects.permafrost.spellScaling, Config.uniqueEffects.permafrost.damage);
                         le.damage(player.getDamageSources().indirectMagic(entity, entity), abilityDamage);
                     }
                 }
@@ -143,32 +133,45 @@ public class IcewhisperSwordItem extends UniqueSwordItem {
                 }
             }
         }
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.SNOWFLAKE, ParticleTypes.SNOWFLAKE,
                 ParticleTypes.WHITE_ASH, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
+        double radius = Config.uniqueEffects.permafrost.radius;
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip3", radius).setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip3", radius).setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclickheld").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip6", radius * 2).setStyle(TEXT));
-        if (scalesWithSpellPower) {
+        tooltip.add(Text.translatable("item.simplyswords.onrightclickheld").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.icewhispersworditem.tooltip6", radius * 2).setStyle(Styles.TEXT));
+        if (Platform.isModLoaded("spell_power")) {
             tooltip.add(Text.literal(""));
             tooltip.add(Text.translatable("item.simplyswords.compat.scaleFrost"));
         }
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.ICEWHISPER::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 600;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damage = 1f;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 200;
+        @ValidatedInt.Restrict(min = 1)
+        public int radius = 4;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float spellScaling = 0.9f;
     }
 }

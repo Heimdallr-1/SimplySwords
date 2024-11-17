@@ -23,7 +23,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.LootConfig;
 import net.sweenus.simplyswords.item.custom.CaelestisSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
@@ -49,21 +49,21 @@ public abstract class ServerPlayerEntityMixin {
         if (player instanceof ServerPlayerEntity serverPlayer) {
 
             //Effect Resilience
-            if (serverPlayer.hasStatusEffect(EffectRegistry.RESILIENCE)) {
-                HelperMethods.decrementStatusEffect(serverPlayer, EffectRegistry.RESILIENCE);
+            if (serverPlayer.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.RESILIENCE))) {
+                HelperMethods.decrementStatusEffect(serverPlayer, EffectRegistry.getReference(EffectRegistry.RESILIENCE));
                 cir.setReturnValue(false);
-                if (!player.hasStatusEffect(EffectRegistry.MAGISLAM))
+                if (!player.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.MAGISLAM)))
                     serverPlayer.getWorld().playSoundFromEntity(null, serverPlayer, SoundRegistry.MAGIC_SWORD_PARRY_03.get(),
                         SoundCategory.PLAYERS, 0.7f, 0.5f + (serverPlayer.getRandom().nextBetween(1, 5) * 0.1f));
             }
 
-            if (serverPlayer.hasStatusEffect(EffectRegistry.ASTRAL_SHIFT)) {
-                StatusEffectInstance astralShiftInstance = player.getStatusEffect(EffectRegistry.ASTRAL_SHIFT);
+            if (serverPlayer.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT))) {
+                StatusEffectInstance astralShiftInstance = player.getStatusEffect(EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT));
                 if (astralShiftInstance != null) {
                     int duration = astralShiftInstance.getDuration();
 
                     if (duration > 10) {
-                        HelperMethods.incrementStatusEffect(serverPlayer, EffectRegistry.ASTRAL_SHIFT, duration, (int) Math.max(1, (amount / 10)), 99);
+                        HelperMethods.incrementStatusEffect(serverPlayer, EffectRegistry.getReference(EffectRegistry.ASTRAL_SHIFT), duration, (int) Math.max(1, (amount / 10)), 99);
                         AbilityMethods.astralShiftSounds(serverPlayer);
                         cir.setReturnValue(false);
                     }
@@ -105,7 +105,7 @@ public abstract class ServerPlayerEntityMixin {
             if (serverPlayer.getMainHandStack().isOf(ItemsRegistry.RIBBONCLEAVER.get()) || serverPlayer.getMainHandStack().isOf(ItemsRegistry.ENIGMA.get())) {
                 int frequency = 6;
                 if (serverPlayer.age % 20 == 0 && serverPlayer.getMainHandStack().isOf(ItemsRegistry.RIBBONCLEAVER.get()))
-                    serverPlayer.addStatusEffect(new StatusEffectInstance(EffectRegistry.RIBBONWRATH,
+                    serverPlayer.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.RIBBONWRATH),
                             30, 0, true, false, false));
 
                 if (player.age % frequency == 0 && player.isSprinting() && player.isOnGround()) {
@@ -119,8 +119,8 @@ public abstract class ServerPlayerEntityMixin {
             //Magiblade repellent
             if (serverPlayer.getMainHandStack().isOf(ItemsRegistry.MAGIBLADE.get())) {
                 int frequency = 8;
-                int radius = (int) Config.getFloat("magibladeRepelRadius", "UniqueEffects", ConfigDefaultValues.magibladeRepelRadius);
-                int chance = (int) Config.getFloat("magibladeRepelChance", "UniqueEffects", ConfigDefaultValues.magibladeRepelChance);
+                double radius = Config.uniqueEffects.magiblade.repelRadius;
+                int chance = Config.uniqueEffects.magiblade.repelChance;
                 int totalChance = new Random().nextInt(100);
                 if (serverPlayer.age % frequency == 0 && totalChance < chance) {
                     Box box = HelperMethods.createBox(player, radius);
@@ -165,7 +165,7 @@ public abstract class ServerPlayerEntityMixin {
                     ItemStack stackInSlot = serverPlayer.getInventory().getStack(i);
 
                     if (stackInSlot.isOf(containedRemnant.getItem()) || stackInSlot.isOf(tamperedRemnant.getItem())) {
-                        if (chance < 21 && Config.getBoolean("enableContainedRemnants", "Loot", ConfigDefaultValues.enableContainedRemnants)) {
+                        if (chance < 21 && LootConfig.INSTANCE.enableContainedRemnants.get()) {
                             List<Item> itemsFromTag = Registries.ITEM.stream()
                                     .filter(item -> item.getDefaultStack().isIn(desiredItemsTag))
                                     .toList();
@@ -250,8 +250,8 @@ public abstract class ServerPlayerEntityMixin {
                 if (!target.handleAttack(player)) {
                     ServerWorld serverWorld = (ServerWorld) player.getWorld();
                     //Ribboncleaver Cleave buff
-                    if (serverPlayer.hasStatusEffect(EffectRegistry.RIBBONCLEAVE)) {
-                        serverPlayer.removeStatusEffect(EffectRegistry.RIBBONCLEAVE);
+                    if (serverPlayer.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.RIBBONCLEAVE))) {
+                        serverPlayer.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.RIBBONCLEAVE));
                         HelperMethods.spawnOrbitParticles(serverWorld, target.getPos().add(0, 0.3, 0),
                                 ParticleTypes.POOF, 0.5, 6);
                         HelperMethods.spawnOrbitParticles(serverWorld, target.getPos().add(0, 0.5, 0),

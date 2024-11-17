@@ -4,7 +4,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 
 public class EchoEffect extends StatusEffect {
@@ -15,11 +14,11 @@ public class EchoEffect extends StatusEffect {
     @Override
     public boolean applyUpdateEffect(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.getWorld().isClient()) {
-            int damage = Config.getInt("echoDamage", "StatusEffects", ConfigDefaultValues.echoDamage);
             if (livingEntity.age % 15 == 0) {
+                int damage = Config.statusEffects.echoDamage;
                 livingEntity.timeUntilRegen = 0;
                 livingEntity.damage(livingEntity.getDamageSources().magic(), damage+amplifier);
-                livingEntity.removeStatusEffect(EffectRegistry.ECHO);
+                livingEntity.removeStatusEffect(EffectRegistry.getReference(EffectRegistry.ECHO));
             }
         }
         super.applyUpdateEffect(livingEntity, amplifier);

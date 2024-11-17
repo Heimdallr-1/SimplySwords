@@ -20,7 +20,7 @@ public class EldritchEndCompatMethods {
                             livingEntity.getSoundCategory(), 0.1f, 1.4f);
                 }
             }
-            int voidcallerCorruptionFrequency = (int) Config.getFloat("voidcallerCorruptionFrequency", "UniqueEffects", ConfigDefaultValues.voidcallerCorruptionFrequency);
+            int voidcallerCorruptionFrequency = Config.uniqueEffects.voidcaller.get().corruptionFrequency;
             if (player.age % voidcallerCorruptionFrequency == 0) {
                 generateVoidhungerStacks(player, stack);
             }
@@ -28,9 +28,9 @@ public class EldritchEndCompatMethods {
     }
 
     public static void generateVoidhungerStacks(LivingEntity livingEntity, ItemStack stack) {
-        int voidcallerCorruptionPerTick = (int) Config.getFloat("voidcallerCorruptionPerTick", "UniqueEffects", ConfigDefaultValues.voidcallerCorruptionPerTick);
-        int voidcallerCorruptionDuration = (int) Config.getFloat("voidcallerCorruptionDuration", "UniqueEffects", ConfigDefaultValues.voidcallerCorruptionDuration);
-        int voidcallerCorruptionMax = (int) Config.getFloat("voidcallerCorruptionMax", "UniqueEffects", ConfigDefaultValues.voidcallerCorruptionMax);
+        int voidcallerCorruptionPerTick = Config.uniqueEffects.voidcaller.get().corruptionPerTick;
+        int voidcallerCorruptionDuration = Config.uniqueEffects.voidcaller.get().corruptionDuration;
+        int voidcallerCorruptionMax = Config.uniqueEffects.voidcaller.get().corruptionMax;
         if (!stack.isEmpty() && (stack.isOf(EldritchEndCompat.DREADTIDE.get()))) {
             HelperMethods.incrementStatusEffect(livingEntity, EldritchEndCompatRegistry.VOIDHUNGER, voidcallerCorruptionDuration, voidcallerCorruptionPerTick, voidcallerCorruptionMax);
         }

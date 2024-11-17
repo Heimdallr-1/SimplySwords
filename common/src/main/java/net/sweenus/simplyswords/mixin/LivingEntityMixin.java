@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.compat.eldritch_end.EldritchEndCompatMethods;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -42,7 +41,7 @@ public abstract class LivingEntityMixin {
                         && (stack.isOf(ItemsRegistry.WAXWEAVER.get())
                         || stack.isOf(ItemsRegistry.WICKPIERCER.get()))) {
 
-                    int skillCooldown = (int) Config.getFloat("waxweaveCooldown", "UniqueEffects", ConfigDefaultValues.waxweaveCooldown);
+                    int skillCooldown = Config.uniqueEffects.waxweave.cooldown;
                     player.setHealth(player.getMaxHealth());
                     HelperMethods.incrementStatusEffect(player, StatusEffects.RESISTANCE, 100, 2, 3);
                     player.getItemCooldownManager().set(stack.getItem(), skillCooldown);
@@ -60,13 +59,13 @@ public abstract class LivingEntityMixin {
     private float simplyswords$modifyDamageAmount(float amount, DamageSource source) {
         LivingEntity livingEntity = (LivingEntity) (Object) this;
         if (!livingEntity.getWorld().isClient()) {
-            StatusEffectInstance voidcloakEffect = livingEntity.getStatusEffect(EffectRegistry.VOIDCLOAK);
-            StatusEffectInstance ribbonwrathEffect = livingEntity.getStatusEffect(EffectRegistry.RIBBONWRATH);
+            StatusEffectInstance voidcloakEffect = livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.VOIDCLOAK));
+            StatusEffectInstance ribbonwrathEffect = livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.RIBBONWRATH));
             if (voidcloakEffect != null) {
                 int amplifier = voidcloakEffect.getAmplifier();
                 float reductionFactor = 1 - (amplifier + 1) * 0.10f; // +1 because amplifier starts at 0
                 amount *= reductionFactor;
-                HelperMethods.decrementStatusEffect(livingEntity, EffectRegistry.VOIDCLOAK);
+                HelperMethods.decrementStatusEffect(livingEntity, EffectRegistry.getReference(EffectRegistry.VOIDCLOAK));
             }
             if (ribbonwrathEffect != null) {
                 float reductionFactor = 0.85f;

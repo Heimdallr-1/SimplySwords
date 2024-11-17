@@ -10,9 +10,6 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.BeeEntityRenderer;
@@ -27,12 +24,14 @@ import net.sweenus.simplyswords.client.renderer.BattleStandardRenderer;
 import net.sweenus.simplyswords.client.renderer.model.BattleStandardDarkModel;
 import net.sweenus.simplyswords.client.renderer.model.BattleStandardModel;
 import net.sweenus.simplyswords.compat.eldritch_end.EldritchEndCompatRegistry;
-import net.sweenus.simplyswords.config.*;
+import net.sweenus.simplyswords.config.Config;
 import net.sweenus.simplyswords.entity.BattleStandardDarkEntity;
 import net.sweenus.simplyswords.entity.BattleStandardEntity;
 import net.sweenus.simplyswords.entity.SimplySwordsBeeEntity;
+import net.sweenus.simplyswords.registry.ComponentTypeRegistry;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.EntityRegistry;
+import net.sweenus.simplyswords.registry.GemPowerRegistry;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.FileCopier;
@@ -60,15 +59,6 @@ public class SimplySwords {
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-    public static boolean isConfigOutdated;
-    public static GeneralConfig generalConfig;
-    public static LootConfig lootConfig;
-    public static GemEffectsConfig gemEffectsConfig;
-    public static RunicEffectsConfig runicEffectsConfig;
-    public static StatusEffectsConfig statusEffectsConfig;
-    public static UniqueEffectsConfig uniqueEffectsConfig;
-    public static WeaponAttributesConfig weaponAttributesConfig;
-
     public static String minimumEldritchEndVersion = "0.2.40";
     public static String minimumSpellPowerVersion = "0.10.0+1.20.1";
 
@@ -76,43 +66,15 @@ public class SimplySwords {
 
         //CONFIG
 
-        SimplySwordsConfig.init();
-
-        AutoConfig.register(ConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
-        generalConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().general;
-        lootConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().loot;
-        gemEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().gem_effects;
-        runicEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().runic_effects;
-        statusEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().status_effects;
-        uniqueEffectsConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().unique_effects;
-        weaponAttributesConfig = AutoConfig.getConfigHolder(ConfigWrapper.class).getConfig().weapon_attributes;
-
-        String version = SimplySwordsExpectPlatform.getVersion();
-        String defaultConfig = String.format("""
-                {
-                  "regen_simplyswords_config_file": false,
-                  "config_version": %s
-                }""", version.substring(0, 4));
-
-        File configFile = Config.createFile("config/simplyswords_extra/backupconfig.json", defaultConfig, false);
-        JsonObject json = Config.getJsonObject(Config.readFile(configFile));
-        if (json.has("config_version") && version.startsWith(json.get("config_version").getAsString())) {
-            isConfigOutdated = false;
-        } else {
-            isConfigOutdated = true;
-            //System.out.println("SimplySwords: It looks like you've updated from a previous version. Please regenerate the Simply Swords configs to get the latest features.");
-            //System.out.println(version.substring(0, 4));
-        }
-
-        SimplySwordsConfig.generateConfigs(json == null || !json.has("regen_simplyswords_config_file") || json.get("regen_simplyswords_config_file").getAsBoolean());
-        SimplySwordsConfig.loadConfig();
-
+        Config.init();
 
         SimplySwords.TABS.register();
         ItemsRegistry.ITEM.register();
         SoundRegistry.SOUND.register();
         EffectRegistry.EFFECT.register();
         EntityRegistry.ENTITIES.register();
+        ComponentTypeRegistry.COMPONENT_TYPES.register();
+        GemPowerRegistry.register();
         EntityAttributeRegistry.register(EntityRegistry.BATTLESTANDARD, BattleStandardEntity::createBattleStandardAttributes);
         EntityAttributeRegistry.register(EntityRegistry.BATTLESTANDARDDARK, BattleStandardDarkEntity::createBattleStandardDarkAttributes);
         EntityAttributeRegistry.register(EntityRegistry.SIMPLYBEEENTITY, SimplySwordsBeeEntity::createSimplyBeeAttributes);

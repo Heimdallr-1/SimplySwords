@@ -10,7 +10,14 @@ repositories {
         name = 'NeoForged'
         url = 'https://maven.neoforged.net/releases'
     }
-
+    maven {
+        name = "FzzyMaven"
+        url = "https://maven.fzzyhmstrs.me/"
+    }
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
 }
 
 architectury {
@@ -40,8 +47,6 @@ configurations {
 }
 
 dependencies {
-    modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
-
     //Patchouli
     modImplementation ("vazkii.patchouli:Patchouli:1.21-87-NEOFORGE")
 
@@ -53,6 +58,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowCommon(project(path: ':common', configuration: 'transformProductionNeoForge')) { transitive false }
 
+    modImplementation "me.fzzyhmstrs:fzzy_config:${project.fzz_config_version}+neoforge"
     //modImplementation ("curse.maven:gobber-301700:4007899")
 }
 

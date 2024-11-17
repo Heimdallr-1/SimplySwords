@@ -11,6 +11,7 @@ import net.minecraft.util.Rarity;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -23,8 +24,7 @@ public class ContainedRemnantItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        Style LEGENDARY = HelperMethods.getStyle("legendary");
-        return Text.translatable(this.getTranslationKey(stack)).setStyle(LEGENDARY);
+        return Text.translatable(this.getTranslationKey(stack)).setStyle(Styles.LEGENDARY);
     }
 
     @Override

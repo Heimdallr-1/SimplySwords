@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.server.world.ServerWorld;
@@ -32,24 +31,32 @@ import net.minecraft.world.World;
 import net.sweenus.simplyswords.SimplySwords;
 import net.sweenus.simplyswords.SimplySwordsExpectPlatform;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance;
 import net.sweenus.simplyswords.entity.BattleStandardDarkEntity;
 import net.sweenus.simplyswords.entity.BattleStandardEntity;
-import net.sweenus.simplyswords.registry.ItemsRegistry;
+import net.sweenus.simplyswords.item.TwoHandedWeapon;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import static net.sweenus.simplyswords.SimplySwords.minimumSpellPowerVersion;
 
 public class HelperMethods {
 
+    private static final Random random = new Random();
+
+    public static Random random() {
+        return random;
+    }
+
     /*
      * getTargetedEntity taken heavily from ZsoltMolnarrr's CombatSpells
      * https://github.com/ZsoltMolnarrr/SpellEngine/blob/1.19.2/common/src/main/java/net/spell_engine/utils/TargetHelper.java#L136
      */
-    public static Entity getTargetedEntity(Entity user, int range) {
+    public static Entity getTargetedEntity(Entity user, double range) {
         Vec3d rayCastOrigin = user.getEyePos();
         Vec3d userView = user.getRotationVec(1.0F).normalize().multiply(range);
         Vec3d rayCastEnd = rayCastOrigin.add(userView);
@@ -66,44 +73,6 @@ public class HelperMethods {
         return entity instanceof PlayerEntity player && (!player.isDead() && (player.isSwimming() || player.getVelocity().horizontalLength() > 0.1));
     }
 
-    public static Style getStyle(String styleType) {
-        int rgbCommon =             0xFFFFFF;
-        int rgbRunic =              0x9D62CA;
-        int rgbUnique =             0xE2A834;
-        int rgbLegendary =          0xE26234;
-        int rgbAbility =            0xE2A834;
-        int rgbRightClick =         0x20BD69;
-        int rgbCorrupted =          0x544988;
-        int rgbCorruptedLight =     0x7140A3;
-        int rgbCorruptedAbility =   0xA987C2;
-        int rgbCorruptedText =      0x7E7883;
-        int rgbText = 0xE0E0E0;
-        Style COMMON =              Style.EMPTY.withColor(TextColor.fromRgb(rgbCommon));
-        Style UNIQUE =              Style.EMPTY.withColor(TextColor.fromRgb(rgbUnique));
-        Style LEGENDARY =           Style.EMPTY.withColor(TextColor.fromRgb(rgbLegendary));
-        Style ABILITY =             Style.EMPTY.withColor(TextColor.fromRgb(rgbAbility));
-        Style RIGHTCLICK =          Style.EMPTY.withColor(TextColor.fromRgb(rgbRightClick));
-        Style RUNIC =               Style.EMPTY.withColor(TextColor.fromRgb(rgbRunic));
-        Style CORRUPTED =           Style.EMPTY.withColor(TextColor.fromRgb(rgbCorrupted));
-        Style CORRUPTED_LIGHT =     Style.EMPTY.withColor(TextColor.fromRgb(rgbCorruptedLight));
-        Style CORRUPTED_ABILITY =   Style.EMPTY.withColor(TextColor.fromRgb(rgbCorruptedAbility));
-        Style CORRUPTED_TEXT =      Style.EMPTY.withColor(TextColor.fromRgb(rgbCorruptedText));
-        Style TEXT =                Style.EMPTY.withColor(TextColor.fromRgb(rgbText));
-
-        return switch (styleType) {
-            case "unique" -> UNIQUE;
-            case "legendary" -> LEGENDARY;
-            case "ability" -> ABILITY;
-            case "rightclick" -> RIGHTCLICK;
-            case "runic" -> RUNIC;
-            case "corrupted" -> CORRUPTED;
-            case "corrupted_light" -> CORRUPTED_LIGHT;
-            case "corrupted_ability" -> CORRUPTED_ABILITY;
-            case "corrupted_text" -> CORRUPTED_TEXT;
-            case "text" -> TEXT;
-            default -> COMMON;
-        };
-    }
 
     //Check if we should be able to hit the target
     public static boolean checkFriendlyFire(LivingEntity target, LivingEntity attacker) {
@@ -162,8 +131,8 @@ public class HelperMethods {
     public static void playHitSounds(LivingEntity attacker, LivingEntity target) {
         if (!attacker.getWorld().isClient()) {
             ServerWorld world = (ServerWorld) attacker.getWorld();
-            boolean impactsounds_enabled = Config.getBoolean("enableWeaponImpactSounds", "General",ConfigDefaultValues.enableWeaponImpactSounds);
-            float impactsounds_volume = Config.getFloat("weaponImpactSoundsVolume", "General",ConfigDefaultValues.weaponImpactSoundsVolume);
+            boolean impactsounds_enabled = Config.general.enableWeaponImpactSounds;
+            float impactsounds_volume = Config.general.weaponImpactSoundsVolume;
 
             if (impactsounds_enabled) {
                 int choose_sound = (int) (Math.random() * 30);
@@ -180,136 +149,13 @@ public class HelperMethods {
         }
     }
 
-    public static boolean checkRunicBlacklist(String runicPower) {
-        return switch (runicPower) {
-            case "active_defence" ->        Config.getBoolean("enableActiveDefence", "RunicEffects",ConfigDefaultValues.enableActiveDefence);
-            case "float" ->                 Config.getBoolean("enableFloat", "RunicEffects",ConfigDefaultValues.enableFloat);
-            case "greater_float" ->         Config.getBoolean("enableGreaterFloat", "RunicEffects",ConfigDefaultValues.enableGreaterFloat);
-            case "freeze" ->                Config.getBoolean("enableFreeze", "RunicEffects",ConfigDefaultValues.enableFreeze);
-            case "shielding" ->             Config.getBoolean("enableShielding", "RunicEffects",ConfigDefaultValues.enableShielding);
-            case "greater_shielding" ->     Config.getBoolean("enableGreaterShielding", "RunicEffects",ConfigDefaultValues.enableGreaterShielding);
-            case "slow" ->                  Config.getBoolean("enableSlow", "RunicEffects",ConfigDefaultValues.enableSlow);
-            case "greater_slow" ->          Config.getBoolean("enableGreaterSlow", "RunicEffects",ConfigDefaultValues.enableGreaterSlow);
-            case "stoneskin" ->             Config.getBoolean("enableStoneskin", "RunicEffects",ConfigDefaultValues.enableStoneskin);
-            case "greater_stoneskin" ->     Config.getBoolean("enableGreaterStoneskin", "RunicEffects",ConfigDefaultValues.enableGreaterStoneskin);
-            case "swiftness" ->             Config.getBoolean("enableSwiftness", "RunicEffects",ConfigDefaultValues.enableSwiftness);
-            case "greater_swiftness" ->     Config.getBoolean("enableGreaterSwiftness", "RunicEffects",ConfigDefaultValues.enableGreaterSwiftness);
-            case "trailblaze" ->            Config.getBoolean("enableTrailblaze", "RunicEffects",ConfigDefaultValues.enableTrailblaze);
-            case "greater_trailblaze" ->    Config.getBoolean("enableGreaterTrailblaze", "RunicEffects",ConfigDefaultValues.enableGreaterTrailblaze);
-            case "weaken" ->                Config.getBoolean("enableWeaken", "RunicEffects",ConfigDefaultValues.enableWeaken);
-            case "greater_weaken" ->        Config.getBoolean("enableGreaterWeaken", "RunicEffects",ConfigDefaultValues.enableGreaterWeaken);
-            case "zephyr" ->                Config.getBoolean("enableZephyr", "RunicEffects",ConfigDefaultValues.enableZephyr);
-            case "greater_zephyr" ->        Config.getBoolean("enableGreaterZephyr", "RunicEffects",ConfigDefaultValues.enableGreaterZephyr);
-            case "frost_ward" ->            Config.getBoolean("enableFrostWard", "RunicEffects",ConfigDefaultValues.enableFrostWard);
-            case "wildfire" ->              Config.getBoolean("enableWildfire", "RunicEffects",ConfigDefaultValues.enableWildfire);
-            case "unstable" ->              Config.getBoolean("enableUnstable", "RunicEffects",ConfigDefaultValues.enableUnstable);
-            case "momentum" ->              Config.getBoolean("enableMomentum", "RunicEffects",ConfigDefaultValues.enableMomentum);
-            case "greater_momentum" ->      Config.getBoolean("enableGreaterMomentum", "RunicEffects",ConfigDefaultValues.enableGreaterMomentum);
-            case "imbued" ->                Config.getBoolean("enableImbued", "RunicEffects",ConfigDefaultValues.enableImbued);
-            case "greater_imbued" ->        Config.getBoolean("enableGreaterImbued", "RunicEffects",ConfigDefaultValues.enableGreaterImbued);
-            case "pincushion" ->            Config.getBoolean("enablePincushion", "RunicEffects",ConfigDefaultValues.enablePincushion);
-            case "greater_pincushion" ->    Config.getBoolean("enableGreaterPincushion", "RunicEffects",ConfigDefaultValues.enableGreaterPincushion);
-            case "ward" ->                  Config.getBoolean("enableWard", "RunicEffects",ConfigDefaultValues.enableWard);
-            case "immolation" ->            Config.getBoolean("enableImmolate", "RunicEffects",ConfigDefaultValues.enableImmolate);
-            default -> false;
-        };
-    }
-
-    public static boolean checkNetherBlacklist(String netherPower) {
-        return switch (netherPower) {
-            case "echo" ->                  Config.getBoolean("enableEcho", "GemEffects",ConfigDefaultValues.enableEcho);
-            case "berserk" ->               Config.getBoolean("enableBerserk", "GemEffects",ConfigDefaultValues.enableBerserk);
-            case "radiance" ->              Config.getBoolean("enableRadiance", "GemEffects",ConfigDefaultValues.enableRadiance);
-            case "onslaught" ->             Config.getBoolean("enableOnslaught", "GemEffects",ConfigDefaultValues.enableOnslaught);
-            case "nullification" ->         Config.getBoolean("enableNullification", "GemEffects",ConfigDefaultValues.enableNullification);
-            case "precise" ->               Config.getBoolean("enablePrecise", "GemEffects",ConfigDefaultValues.enablePrecise);
-            case "mighty" ->                Config.getBoolean("enableMighty", "GemEffects",ConfigDefaultValues.enableMighty);
-            case "stealthy" ->              Config.getBoolean("enableStealthy", "GemEffects",ConfigDefaultValues.enableStealthy);
-            case "renewed" ->               Config.getBoolean("enableRenewed", "GemEffects",ConfigDefaultValues.enableRenewed);
-            case "accelerant" ->            Config.getBoolean("enableAccelerant", "GemEffects",ConfigDefaultValues.enableAccelerant);
-            case "leaping" ->               Config.getBoolean("enableLeaping", "GemEffects",ConfigDefaultValues.enableLeaping);
-            case "spellshield" ->           Config.getBoolean("enableSpellshield", "GemEffects",ConfigDefaultValues.enableSpellshield);
-            case "spellforged" ->           Config.getBoolean("enableSpellforged", "GemEffects",ConfigDefaultValues.enableSpellforged);
-            case "soulshock" ->             Config.getBoolean("enableSoulshock", "GemEffects",ConfigDefaultValues.enableSoulshock);
-            case "spell_standard" ->         Config.getBoolean("enableSpellStandard", "GemEffects",ConfigDefaultValues.enableSpellStandard);
-            case "war_standard" ->           Config.getBoolean("enableWarStandard", "GemEffects",ConfigDefaultValues.enableWarStandard);
-            case "deception" ->             Config.getBoolean("enableDeception", "GemEffects",ConfigDefaultValues.enableDeception);
-            default -> false;
-        };
-    }
-
-    // choose Powers from provided list
-    public static String chooseRunicPower() {
-        List<String> runicList = Arrays.asList(
-                "active_defence", "float", "greater_float", "freeze", "shielding", "greater_shielding", "slow",
-                "greater_slow", "stoneskin", "greater_stoneskin", "swiftness", "greater_swiftness", "trailblaze",
-                "greater_trailblaze", "weaken", "greater_weaken", "zephyr", "greater_zephyr", "frost_ward",
-                "wildfire", "unstable", "momentum", "greater_momentum", "imbued", "greater_imbued", "pincushion",
-                "greater_pincushion", "ward", "immolation");
-
-        String runicSelection;
-        do {
-            Random choose = new Random();
-            int randomIndex = choose.nextInt(runicList.size());
-            runicSelection = runicList.get(randomIndex);
-        } while (!checkRunicBlacklist(runicSelection));
-        return runicSelection;
-    }
-
-    public static String chooseRunefusedPower() {
-        List<String> runicList = Arrays.asList(
-                "active_defence", "float", "greater_float", "freeze", "shielding", "greater_shielding", "slow",
-                "greater_slow", "stoneskin", "greater_stoneskin", "swiftness", "greater_swiftness", "trailblaze",
-                "greater_trailblaze", "weaken", "greater_weaken", "zephyr", "greater_zephyr", "frost_ward", "wildfire",
-                "unstable", "imbued", "greater_imbued", "pincushion", "greater_pincushion");
-
-        String runicSelection;
-        do {
-            Random choose = new Random();
-            int randomIndex = choose.nextInt(runicList.size());
-            runicSelection = runicList.get(randomIndex);
-        } while (!checkRunicBlacklist(runicSelection));
-        return runicSelection;
-    }
-
-    public static String chooseNetherfusedPower() {
-        List<String> netherList;
-        if (Platform.isModLoaded("simplyskills"))
-            netherList = Arrays.asList("echo", "berserk", "radiance", "onslaught", "nullification",
-                    "precise", "mighty", "stealthy", "renewed", "accelerant", "leaping", "spellshield", "spellforged",
-                    "soulshock", "spell_standard", "war_standard", "deception");
-        else
-            netherList = Arrays.asList("echo", "berserk", "radiance", "onslaught", "nullification");
-
-        String netherSelection;
-        do {
-            Random choose = new Random();
-            int randomIndex = choose.nextInt(netherList.size());
-            netherSelection = netherList.get(randomIndex);
-        } while (!checkNetherBlacklist(netherSelection));
-        return netherSelection;
-    }
-
     //Check if item is a unique 2H weapon
     public static boolean isUniqueTwohanded(ItemStack stack) {
-        return stack.isOf(ItemsRegistry.SOULPYRE.get()) ||
-                stack.isOf(ItemsRegistry.SOULKEEPER.get()) ||
-                stack.isOf(ItemsRegistry.TWISTED_BLADE.get()) ||
-                stack.isOf(ItemsRegistry.HEARTHFLAME.get()) ||
-                stack.isOf(ItemsRegistry.SOULRENDER.get()) ||
-                stack.isOf(ItemsRegistry.SLUMBERING_LICHBLADE.get()) ||
-                stack.isOf(ItemsRegistry.WAKING_LICHBLADE.get()) ||
-                stack.isOf(ItemsRegistry.AWAKENED_LICHBLADE.get()) ||
-                stack.isOf(ItemsRegistry.BRIMSTONE_CLAYMORE.get()) ||
-                stack.isOf(ItemsRegistry.ICEWHISPER.get()) ||
-                stack.isOf(ItemsRegistry.ARCANETHYST.get()) ||
-                stack.isOf(ItemsRegistry.THUNDERBRAND.get()) ||
-                stack.isOf(ItemsRegistry.WHISPERWIND.get()) ||
-                stack.isOf(ItemsRegistry.WATCHER_CLAYMORE.get());
+        return stack.getItem() instanceof TwoHandedWeapon;
     }
 
     //Create Box
-    public static Box createBox(Entity entity, int radius) {
+    public static Box createBox(Entity entity, double radius) {
         return new Box(entity.getX() + radius, entity.getY() + (float) radius / 3, entity.getZ() + radius,
                 entity.getX() - radius, entity.getY() - (float) radius / 3, entity.getZ() - radius);
     }
@@ -395,9 +241,10 @@ public class HelperMethods {
     }
 
     // createFootfalls - creates weapon footfall particle effects (footsteps)
-    public static void createFootfalls(Entity entity, ItemStack stack, World world, int stepMod, SimpleParticleType particle,
-                                       SimpleParticleType sprintParticle, SimpleParticleType passiveParticle, boolean passiveParticles) {
-        if ((entity instanceof PlayerEntity player) && Config.getBoolean("enableWeaponFootfalls", "General",ConfigDefaultValues.enableWeaponFootfalls) && player.getEquippedStack(EquipmentSlot.MAINHAND) == stack) {
+    public static void createFootfalls(Entity entity, ItemStack stack, World world, ParticleEffect particle,
+                                       ParticleEffect sprintParticle, ParticleEffect passiveParticle, boolean passiveParticles) {
+        int stepMod = 7 - (int)(world.getTime() % 7);
+        if ((entity instanceof PlayerEntity player) && Config.general.enableWeaponFootfalls && player.getEquippedStack(EquipmentSlot.MAINHAND) == stack) {
             if (isWalking(player) && !player.isSwimming() && player.isOnGround()) {
                 if (stepMod == 6) {
                     if (player.isSprinting()) {
@@ -425,7 +272,7 @@ public class HelperMethods {
                     }
                 }
             }
-            if (passiveParticles && Config.getBoolean("enablePassiveParticles", "General",ConfigDefaultValues.enablePassiveParticles)) {
+            if (passiveParticles && Config.general.enablePassiveParticles) {
                 float randomy = (float) (Math.random());
                 if (stepMod == 1) {
                     world.addParticle(passiveParticle, player.getX() - player.getHandPosOffset(stack.getItem()).getX(),
@@ -501,10 +348,14 @@ public class HelperMethods {
         }
     }
 
+    public static float spellScaledDamage(String spellSchool, Entity entity, float damageModifier, float damageFallback) {
+        float scaling = commonSpellAttributeScaling(damageModifier, entity, spellSchool);
+        return scaling > 0 ? scaling : damageFallback;
+    }
 
     public static float commonSpellAttributeScaling(float damageModifier, Entity entity, String magicSchool) {
         if (Platform.isModLoaded("spell_power") && Platform.isFabric())
-            if ((entity instanceof PlayerEntity player) && Config.getBoolean("compatEnableSpellPowerScaling", "General",ConfigDefaultValues.compatEnableSpellPowerScaling) && SimplySwords.passVersionCheck("spell_power", minimumSpellPowerVersion))
+            if ((entity instanceof PlayerEntity player) && Config.general.compatEnableSpellPowerScaling.get() && SimplySwords.passVersionCheck("spell_power", minimumSpellPowerVersion))
                 return SimplySwordsExpectPlatform.getSpellPowerDamage(damageModifier, player, magicSchool);
 
         return 0f;

@@ -3,6 +3,7 @@ package net.sweenus.simplyswords.config;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import me.fzzyhmstrs.fzzy_config.api.ConfigApiJava;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,170 +17,67 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Config {
+public final class Config {
 
-    public static File createFile(String path, String contents, boolean overwrite) {
-        File file = new File(path);
-        if (file.exists() && !overwrite) {
-            return file;
-        }
-        file.getParentFile().mkdirs();
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        file.setReadable(true);
-        file.setWritable(true);
-        file.setExecutable(true);
-        if (contents == null || "".equals(contents)) {
-            return file;
-        }
-        try (FileWriter writer = new FileWriter(file)) {
-            writer.write(contents);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
+    public static void init() {}
+
+    //////////
+    //Loot config is registered internally in LootConfig. There were some load order issues otherwise.
+    //////////
+    public static final GeneralConfig general = ConfigApiJava.registerAndLoadConfig(GeneralConfig::new);
+    public static final GemPowersConfig gemPowers = ConfigApiJava.registerAndLoadConfig(GemPowersConfig::new);
+    public static final StatusEffectsConfig statusEffects = ConfigApiJava.registerAndLoadConfig(StatusEffectsConfig::new);
+    public static final WeaponAttributesConfig weaponAttribute = ConfigApiJava.registerAndLoadConfig(WeaponAttributesConfig::new);
+    public static final UniqueEffectsConfig uniqueEffects = ConfigApiJava.registerAndLoadConfig(UniqueEffectsConfig::new);
+
+//Guide to Config Features
+
+//ValidatedThings
+        //Validated[Thing] is a fancy setting. In most cases you won't need it, I've used them sparingly where it had functional benefit
+        //Validation are suppliers and consumers.
+            // Retrieve the setting with [mySetting].get()
+            //update the setting internally (not recommended) with [mySetting].accept(newthing)
+        //ValidatedSet/List/Map are also themselves Set/List/Map, so you can call the normal collection methods like get() and containsKey() directly.
 
 
-    public static String readFile(File file) {
-        String output = "";
-        try (Scanner scanner = new Scanner(file)) {
-            scanner.useDelimiter("\\Z");
-            output = scanner.next();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return output;
-    }
+//ValidatedCondition
+        //ValidatedCondition is a wrapper around a setting that only allows interaction with the setting if a condition is met.
+        //in SS case, I've used it to gate mod compat settings behind checks for the mod being loaded.
+        //Example below.
+            //line1: the setting itself, using a `Validated[Thing] instead of a plain java type
+            //line2: wraps the setting in the condition
+            //line3: supplies the conditional boolean check
+            //line4: tooltip text for when the condition is failing. "Requires Gobber" etc.
+            //line5: Fallback value. This supplies the value to get from the setting if the condition fails, regardless of the config choices made underneath.
+                //So in this case, it will always return false if gobber isn't loaded.
+            //line6: adds a unique Caption to the setting button. Normally "Condition not met", in SS I changed it to "Disabled"
+        /*
+        public ValidatedCondition<Boolean> compatGobberEndWeaponsUnbreakable = new ValidatedBoolean(true)
+            .toCondition(
+                    () -> Platform.isModLoaded("gobber2"),
+                    Text.translatable("simplyswords.general.compatGobberEndWeaponsUnbreakable.condition"),
+                    () -> false
+            ).withFailTitle(Text.translatable("simplyswords.general.compatGobberEndWeaponsUnbreakable.failTitle"));
+        */
 
-    public static JsonObject getJsonObject(String json) {
-        try {
-            return new JsonParser().parse(json).getAsJsonObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//@Validated[Number].Restrict
+        //Works basically like the Cloth version of this annotation. Just make sure the [Number] type matches the actual number being restricted.
 
+//Disabled Things
+        //With fzzy config, I decided to make sets of disabled things, rather than a collection of booleans for everything being enabled
+        //if a things id is in the set, it's disabled
+        //Example
+            // ValidatedSet<Identifier> disabledPowers = ValidatedIdentifier.ofRegistryKey(GemPowerRegistry.REGISTRY.key()).toSet();
+        //To see if a thing is enabled, I check that it's id isn't in the set
+            // !Config.gemPowers.disabledPowers.contains(entry.getId()));
 
-
-    // -- Safe Config Fetching --
-    // Allows safely fetching config values in a scenario where we do not know if they exist.
-    // EG. Addon mod for Simply Swords attempting to load config values before Simply Swords has initialised.
-
-    private static final HashMap<String, Boolean> BOOLEAN = new LinkedHashMap<>();
-    private static final HashMap<String, Float> FLOAT = new LinkedHashMap<>();
-    private static final HashMap<String, Double> DOUBLE = new LinkedHashMap<>();
-    private static final HashMap<String, Integer> INT = new LinkedHashMap<>();
-
-    public static boolean getBoolean(String key, String parent, boolean defaultValue) {
-        //System.out.println("Trying to fetch config value for " + key + " from " + parent);
-        safeValueFetch("boolean", parent);
-        if (!BOOLEAN.isEmpty()) {
-            if (BOOLEAN.containsKey(key)) {
-                //System.out.println("Successfully fetched value for " + key + " : " + BOOLEAN.get(key));
-                return BOOLEAN.get(key);
-            }
-        }
-        System.out.println("Failed to fetch config value for " + key + ". Loading default value.\nIt is recommended that you restart your game.");
-        return defaultValue;
-    }
-
-    public static float getFloat(String key, String parent, float defaultValue) {
-        //System.out.println("Trying to fetch config value for " + key + " from " + parent);
-        safeValueFetch("float", parent);
-        if (!FLOAT.isEmpty()) {
-            if (FLOAT.containsKey(key)) {
-                //System.out.println("Successfully fetched value for " + key + " : " + FLOAT.get(key));
-                return FLOAT.get(key);
-            }
-        }
-        System.out.println("Failed to fetch config value for " + key + ". Loading default value.\nIt is recommended that you restart your game.");
-        //System.out.print(FLOAT);
-        return defaultValue;
-    }
-
-    public static double getDouble(String key, String parent, double defaultValue) {
-        safeValueFetch("double", parent);
-        if (!DOUBLE.isEmpty()) {
-            if (DOUBLE.containsKey(key))
-                return DOUBLE.get(key);
-        }
-        System.out.println("Failed to fetch config value for " + key + ". Loading default value.\nIt is recommended that you restart your game.");
-        return defaultValue;
-    }
-
-    public static int getInt(String key, String parent, int defaultValue) {
-        safeValueFetch("int", parent);
-        if (!INT.isEmpty()) {
-            if (INT.containsKey(key))
-                return INT.get(key);
-        }
-        System.out.println("Failed to fetch config value for " + key + ". Loading default value.\nIt is recommended that you restart your game.");
-        return defaultValue;
-    }
-
-    public static void safeValueFetch(String type, String parent) {
-        Path path = Paths.get("config/simplyswords_main/");
-        JsonObject json = null;
-        if (Files.exists(path)) {
-            json = switch (parent) {
-                case "GemEffects" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/gem_effects.json5")));
-                case "General" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/general.json5")));
-                case "Loot" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/loot.json5")));
-                case "RunicEffects" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/runic_effects.json5")));
-                case "StatusEffects" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/status_effects.json5")));
-                case "UniqueEffects" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/unique_effects.json5")));
-                case "WeaponAttributes" -> Config.getJsonObject(Config.readFile(new File("config/simplyswords_main/weapon_attributes.json5")));
-                default -> null;
-            };
-        }
-
-        if (json != null) {
-
-            switch (type) {
-                case "boolean" -> {
-                    for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                        try {
-                            BOOLEAN.put(entry.getKey(), entry.getValue().getAsBoolean());
-                        } catch (Exception e) {
-                            //System.out.println(entry.getKey() + ": " + entry.getValue() + " is not a valid value. Skipping this entry.");
-                        }
-                    }
-                }
-                case "float" -> {
-                    for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                        try {
-                            FLOAT.put(entry.getKey(), entry.getValue().getAsFloat());
-                        } catch (Exception e) {
-                            //System.out.println(entry.getKey() + ": " + entry.getValue() + " is not a valid value. Skipping this entry.");
-                        }
-                    }
-                }
-                case "double" -> {
-                    for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                        try {
-                            DOUBLE.put(entry.getKey(), entry.getValue().getAsDouble());
-                        } catch (Exception e) {
-                            //System.out.println(entry.getKey() + ": " + entry.getValue() + " is not a valid value. Skipping this entry.");
-                        }
-                    }
-                }
-                case "int" -> {
-                    for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                        try {
-                            INT.put(entry.getKey(), entry.getValue().getAsInt());
-                        } catch (Exception e) {
-                            //System.out.println(entry.getKey() + ": " + entry.getValue() + " is not a valid value. Skipping this entry.");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+//Translation
+        //For repeated basic effects on gem powers like cooldown, duration, etc. I made common translation keys.
+        //These are referenced using the @Translation annotation
+        //Example
+            // @Translation(prefix = "simplyswords.config.basic_settings")
+        //the entire key will be "simplyswords.config.basic_settings.[fieldName]"
+        //Example
+            //"simplyswords.config.basic_settings.cooldown"
 
 }

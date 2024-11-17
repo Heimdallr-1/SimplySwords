@@ -1,5 +1,7 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
@@ -12,18 +14,20 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.entity.SimplySwordsBeeEntity;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EntityRegistry;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -33,18 +37,11 @@ public class HiveheartSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
-
-    @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
             ServerWorld serverWorld = (ServerWorld) attacker.getWorld();
-            int skillCooldown = (int) Config.getFloat("hivemindCooldown", "UniqueEffects", ConfigDefaultValues.hivemindCooldown);
-            float skillDamage = Config.getFloat("hivemindDamage", "UniqueEffects", ConfigDefaultValues.hivemindDamage);
+            int skillCooldown = Config.uniqueEffects.hivemind.cooldown;
+            float skillDamage = Config.uniqueEffects.hivemind.damage;
             HelperMethods.playHitSounds(attacker, target);
 
             if (attacker instanceof PlayerEntity player && !player.getItemCooldownManager().isCoolingDown(stack.getItem())) {
@@ -73,8 +70,8 @@ public class HiveheartSwordItem extends UniqueSwordItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 
-        int regenDuration = (int) Config.getFloat("hivemindDuration", "UniqueEffects", ConfigDefaultValues.hivemindDuration);
-        int skillCooldown = (int) Config.getFloat("hivemindCooldown", "UniqueEffects", ConfigDefaultValues.hivemindCooldown);
+        int regenDuration = Config.uniqueEffects.hivemind.duration;
+        int skillCooldown = Config.uniqueEffects.hivemind.cooldown;
         HelperMethods.incrementStatusEffect(user, StatusEffects.REGENERATION, regenDuration, 1, 3);
         ItemStack stack = user.getMainHandStack();
         world.playSound(null, user.getBlockPos(), SoundRegistry.SPELL_MISC_02.get(),
@@ -86,33 +83,42 @@ public class HiveheartSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.FALLING_HONEY,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.FALLING_HONEY,
                 ParticleTypes.LANDING_HONEY, ParticleTypes.LANDING_HONEY, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip3").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip4").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip3").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip4").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip6", Config.getFloat("hivemindCooldown", "UniqueEffects", ConfigDefaultValues.hivemindCooldown) / 20).setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip6", Config.uniqueEffects.hivemind.cooldown / 20).setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip7").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip8").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip9").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip10").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip7").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip8").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip9").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.hiveheartsworditem.tooltip10").setStyle(Styles.TEXT));
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.HIVEHEART::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 60;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damage = 1.1f;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 450;
+
     }
 }

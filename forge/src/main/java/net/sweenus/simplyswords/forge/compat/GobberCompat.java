@@ -1,82 +1,52 @@
 package net.sweenus.simplyswords.forge.compat;
 
 import net.sweenus.simplyswords.SimplySwords;
+import net.sweenus.simplyswords.config.Config;
 
 public class GobberCompat {
 
     //Compat for Gobber
-    static float longsword_positive_modifier = SimplySwords.weaponAttributesConfig.longsword_positiveDamageModifier;
-    static float twinblade_positive_modifier = SimplySwords.weaponAttributesConfig.twinblade_positiveDamageModifier;
-    static float rapier_positive_modifier = SimplySwords.weaponAttributesConfig.rapier_positiveDamageModifier;
-    static float katana_positive_modifier = SimplySwords.weaponAttributesConfig.katana_positiveDamageModifier;
-    static float sai_positive_modifier = SimplySwords.weaponAttributesConfig.sai_positiveDamageModifier;
-    static float spear_positive_modifier = SimplySwords.weaponAttributesConfig.spear_positiveDamageModifier;
-    static float glaive_positive_modifier = SimplySwords.weaponAttributesConfig.glaive_positiveDamageModifier;
-    static float warglaive_positive_modifier = SimplySwords.weaponAttributesConfig.warglaive_positiveDamageModifier;
-    static float cutlass_positive_modifier = SimplySwords.weaponAttributesConfig.cutlass_positiveDamageModifier;
-    static float claymore_positive_modifier = SimplySwords.weaponAttributesConfig.claymore_positiveDamageModifier;
-    static float greataxe_positive_modifier = SimplySwords.weaponAttributesConfig.greataxe_positiveDamageModifier;
-    static float greathammer_positive_modifier = SimplySwords.weaponAttributesConfig.greathammer_positiveDamageModifier;
-    static float chakram_positive_modifier = SimplySwords.weaponAttributesConfig.chakram_positiveDamageModifier;
-    static float scythe_positive_modifier = SimplySwords.weaponAttributesConfig.scythe_positiveDamageModifier;
-    static float halberd_positive_modifier = SimplySwords.weaponAttributesConfig.halberd_positiveDamageModifier;
+    static float longsword_modifier = Config.weaponAttribute.typeDamageModifier.longsword_damageModifier;
+    static float twinblade_modifier = Config.weaponAttribute.typeDamageModifier.twinblade_damageModifier;
+    static float rapier_modifier = Config.weaponAttribute.typeDamageModifier.rapier_damageModifier;
+    static float katana_modifier = Config.weaponAttribute.typeDamageModifier.katana_damageModifier;
+    static float sai_modifier = Config.weaponAttribute.typeDamageModifier.sai_damageModifier;
+    static float spear_modifier = Config.weaponAttribute.typeDamageModifier.spear_damageModifier;
+    static float glaive_modifier = Config.weaponAttribute.typeDamageModifier.glaive_damageModifier;
+    static float warglaive_modifier = Config.weaponAttribute.typeDamageModifier.warglaive_damageModifier;
+    static float cutlass_modifier = Config.weaponAttribute.typeDamageModifier.cutlass_damageModifier;
+    static float claymore_modifier = Config.weaponAttribute.typeDamageModifier.claymore_damageModifier;
+    static float greataxe_modifier = Config.weaponAttribute.typeDamageModifier.greataxe_damageModifier;
+    static float greathammer_modifier = Config.weaponAttribute.typeDamageModifier.greathammer_damageModifier;
+    static float chakram_modifier = Config.weaponAttribute.typeDamageModifier.chakram_damageModifier;
+    static float scythe_modifier = Config.weaponAttribute.typeDamageModifier.scythe_damageModifier;
+    static float halberd_modifier = Config.weaponAttribute.typeDamageModifier.halberd_damageModifier;
 
-    static float longsword_negative_modifier = SimplySwords.weaponAttributesConfig.longsword_negativeDamageModifier;
-    static float twinblade_negative_modifier = SimplySwords.weaponAttributesConfig.twinblade_negativeDamageModifier;
-    static float rapier_negative_modifier = SimplySwords.weaponAttributesConfig.rapier_negativeDamageModifier;
-    static float sai_negative_modifier = SimplySwords.weaponAttributesConfig.sai_negativeDamageModifier;
-    static float spear_negative_modifier = SimplySwords.weaponAttributesConfig.spear_negativeDamageModifier;
-    static float katana_negative_modifier = SimplySwords.weaponAttributesConfig.katana_negativeDamageModifier;
-    static float glaive_negative_modifier = SimplySwords.weaponAttributesConfig.glaive_negativeDamageModifier;
-    static float warglaive_negative_modifier = SimplySwords.weaponAttributesConfig.warglaive_negativeDamageModifier;
-    static float cutlass_negative_modifier = SimplySwords.weaponAttributesConfig.cutlass_negativeDamageModifier;
-    static float claymore_negative_modifier = SimplySwords.weaponAttributesConfig.claymore_negativeDamageModifier;
-    static float greataxe_negative_modifier = SimplySwords.weaponAttributesConfig.greataxe_negativeDamageModifier;
-    static float greathammer_negative_modifier = SimplySwords.weaponAttributesConfig.greathammer_negativeDamageModifier;
-    static float chakram_negative_modifier = SimplySwords.weaponAttributesConfig.chakram_negativeDamageModifier;
-    static float scythe_negative_modifier = SimplySwords.weaponAttributesConfig.scythe_negativeDamageModifier;
-    static float halberd_negative_modifier = SimplySwords.weaponAttributesConfig.halberd_negativeDamageModifier;
+    static float longsword_attackspeed = Config.weaponAttribute.typeAttackSpeed.longsword_attackSpeed;
+    static float twinblade_attackspeed = Config.weaponAttribute.typeAttackSpeed.twinblade_attackSpeed;
+    static float rapier_attackspeed = Config.weaponAttribute.typeAttackSpeed.rapier_attackSpeed;
+    static float sai_attackspeed = Config.weaponAttribute.typeAttackSpeed.sai_attackSpeed;
+    static float spear_attackspeed = Config.weaponAttribute.typeAttackSpeed.spear_attackSpeed;
+    static float katana_attackspeed = Config.weaponAttribute.typeAttackSpeed.katana_attackSpeed;
+    static float glaive_attackspeed = Config.weaponAttribute.typeAttackSpeed.glaive_attackSpeed;
+    static float warglaive_attackspeed = Config.weaponAttribute.typeAttackSpeed.warglaive_attackSpeed;
+    static float cutlass_attackspeed = Config.weaponAttribute.typeAttackSpeed.cutlass_attackSpeed;
+    static float claymore_attackspeed = Config.weaponAttribute.typeAttackSpeed.claymore_attackSpeed;
+    static float greataxe_attackspeed = Config.weaponAttribute.typeAttackSpeed.greataxe_attackSpeed;
+    static float greathammer_attackspeed = Config.weaponAttribute.typeAttackSpeed.greathammer_attackSpeed;
+    static float chakram_attackspeed = Config.weaponAttribute.typeAttackSpeed.chakram_attackSpeed;
+    static float scythe_attackspeed = Config.weaponAttribute.typeAttackSpeed.scythe_attackSpeed;
+    static float halberd_attackspeed = Config.weaponAttribute.typeAttackSpeed.halberd_attackSpeed;
 
-    static float longsword_attackspeed = SimplySwords.weaponAttributesConfig.longsword_attackSpeed;
-    static float twinblade_attackspeed = SimplySwords.weaponAttributesConfig.twinblade_attackSpeed;
-    static float rapier_attackspeed = SimplySwords.weaponAttributesConfig.rapier_attackSpeed;
-    static float sai_attackspeed = SimplySwords.weaponAttributesConfig.sai_attackSpeed;
-    static float spear_attackspeed = SimplySwords.weaponAttributesConfig.spear_attackSpeed;
-    static float katana_attackspeed = SimplySwords.weaponAttributesConfig.katana_attackSpeed;
-    static float glaive_attackspeed = SimplySwords.weaponAttributesConfig.glaive_attackSpeed;
-    static float warglaive_attackspeed = SimplySwords.weaponAttributesConfig.warglaive_attackSpeed;
-    static float cutlass_attackspeed = SimplySwords.weaponAttributesConfig.cutlass_attackSpeed;
-    static float claymore_attackspeed = SimplySwords.weaponAttributesConfig.claymore_attackSpeed;
-    static float greataxe_attackspeed = SimplySwords.weaponAttributesConfig.greataxe_attackSpeed;
-    static float greathammer_attackspeed = SimplySwords.weaponAttributesConfig.greathammer_attackSpeed;
-    static float chakram_attackspeed = SimplySwords.weaponAttributesConfig.chakram_attackSpeed;
-    static float scythe_attackspeed = SimplySwords.weaponAttributesConfig.scythe_attackSpeed;
-    static float halberd_attackspeed = SimplySwords.weaponAttributesConfig.halberd_attackSpeed;
-
-    static int longsword_modifier = (int) (longsword_positive_modifier - longsword_negative_modifier);
-    static int twinblade_modifier = (int) (twinblade_positive_modifier - twinblade_negative_modifier);
-    static int rapier_modifier = (int) (rapier_positive_modifier - rapier_negative_modifier);
-    static int sai_modifier = (int) (sai_positive_modifier - sai_negative_modifier);
-    static int spear_modifier = (int) (spear_positive_modifier - spear_negative_modifier);
-    static int katana_modifier = (int) (katana_positive_modifier - katana_negative_modifier);
-    static int glaive_modifier = (int) (glaive_positive_modifier - glaive_negative_modifier);
-    static int warglaive_modifier = (int) (warglaive_positive_modifier - warglaive_negative_modifier);
-    static int cutlass_modifier = (int) (cutlass_positive_modifier - cutlass_negative_modifier);
-    static int chakram_modifier = (int) (chakram_positive_modifier - chakram_negative_modifier);
-    static int scythe_modifier = (int) (scythe_positive_modifier - scythe_negative_modifier);
-    static int claymore_modifier = (int) (claymore_positive_modifier - claymore_negative_modifier);
-    static int greathammer_modifier = (int) (greathammer_positive_modifier - greathammer_negative_modifier);
-    static int greataxe_modifier = (int) (greataxe_positive_modifier - greataxe_negative_modifier);
-    static int halberd_modifier = (int) (halberd_positive_modifier - halberd_negative_modifier);
-    static int gobber_modifier = (int) SimplySwords.weaponAttributesConfig.gobber_damageModifier;
-    static int gobber_nether_modifier = (int) SimplySwords.weaponAttributesConfig.gobberNether_damageModifier;
-    static int gobber_end_modifier = (int) SimplySwords.weaponAttributesConfig.gobberEnd_damageModifier;
+    static float gobber_modifier = Config.weaponAttribute.materialDamageModifier.gobber_damageModifier.get();
+    static float gobber_nether_modifier = Config.weaponAttribute.materialDamageModifier.gobberNether_damageModifier.get();
+    static float gobber_end_modifier = Config.weaponAttribute.materialDamageModifier.gobberEnd_damageModifier.get();
 
     //GOBBER
     /* 1.21
 
     public static final DeferredRegister<Item> GOBBER_ITEM = DeferredRegister.create(ForgeRegistries.ITEMS, SimplySwords.MOD_ID);
-    
+
     public static final RegistryObject<SimplySwordsSwordItem> GOBBER_LONGSWORD = GOBBER_ITEM.register("gobber_compat/gobber/gobber_longsword", () ->
             new SimplySwordsSwordItem(ModToolMaterial.GOBBER, gobber_modifier + longsword_modifier, longsword_attackspeed,
                     "gobber2:gobber2_ingot"));

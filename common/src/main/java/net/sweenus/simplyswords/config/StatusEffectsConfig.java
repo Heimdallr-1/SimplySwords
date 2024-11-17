@@ -1,10 +1,15 @@
 package net.sweenus.simplyswords.config;
 
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
 
-@Config(name = "status_effects")
-public class StatusEffectsConfig implements ConfigData {
+import me.fzzyhmstrs.fzzy_config.config.Config;
+import net.minecraft.util.Identifier;
+import net.sweenus.simplyswords.SimplySwords;
+
+public class StatusEffectsConfig extends Config {
+
+    public StatusEffectsConfig() {
+        super(Identifier.of(SimplySwords.MOD_ID, "status_effects"));
+    }
 
     public int echoDamage = 2;
 

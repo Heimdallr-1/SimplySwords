@@ -1,5 +1,7 @@
 package net.sweenus.simplyswords.item.custom;
 
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedFloat;
+import me.fzzyhmstrs.fzzy_config.validation.number.ValidatedInt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,17 +12,19 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
+import net.sweenus.simplyswords.config.settings.ItemStackTooltipAppender;
+import net.sweenus.simplyswords.config.settings.TooltipSettings;
 import net.sweenus.simplyswords.item.UniqueSwordItem;
 import net.sweenus.simplyswords.registry.EffectRegistry;
+import net.sweenus.simplyswords.registry.ItemsRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
+import net.sweenus.simplyswords.util.Styles;
 
 import java.util.List;
 
@@ -30,16 +34,9 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack) {
-        return 0;
-    }
-
-    private static int stepMod = 0;
-
-    @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (!attacker.getWorld().isClient()) {
-            float damageModifier = Config.getFloat("flickerFuryDamage", "UniqueEffects", ConfigDefaultValues.flickerFuryDamage);
+            float damageModifier = Config.uniqueEffects.flickerFury.damage;
             HelperMethods.playHitSounds(attacker, target);
 
             ServerWorld world = (ServerWorld) attacker.getWorld();
@@ -47,7 +44,7 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
             if (attacker instanceof PlayerEntity player)
                 damageSource = attacker.getDamageSources().playerAttack(player);
 
-            if (attacker.hasStatusEffect(EffectRegistry.FRENZY)) {
+            if (attacker.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FRENZY))) {
                 target.timeUntilRegen = 0;
                 target.damage(damageSource, (float) (HelperMethods.getEntityAttackDamage(attacker) * damageModifier));
                 world.playSound(null, attacker.getBlockPos(), SoundRegistry.SPELL_FIRE.get(),
@@ -60,8 +57,8 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        int skillCooldown = (int) Config.getFloat("flickerFuryCooldown", "UniqueEffects", ConfigDefaultValues.flickerFuryCooldown);
-        int baseEffectDuration = (int) Config.getFloat("flickerFuryDuration", "UniqueEffects", ConfigDefaultValues.flickerFuryDuration);
+        int skillCooldown = Config.uniqueEffects.flickerFury.cooldown;
+        int baseEffectDuration = Config.uniqueEffects.flickerFury.duration;
         int effectDuration = baseEffectDuration;
         ItemStack mainhand = user.getMainHandStack();
         ItemStack offhand  = user.getOffHandStack();
@@ -71,7 +68,7 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
         world.playSound(null, user.getBlockPos(), SoundRegistry.SPELL_FIRE.get(),
                 user.getSoundCategory(), 0.5f, 1.0f);
 
-        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.FRENZY, effectDuration, 0));
+        user.addStatusEffect(new StatusEffectInstance(EffectRegistry.getReference(EffectRegistry.FRENZY), effectDuration, 0));
         user.getItemCooldownManager().set(this, skillCooldown);
 
         return super.use(world, user, hand);
@@ -79,36 +76,45 @@ public class WickpiercerSwordItem extends UniqueSwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (stepMod > 0) stepMod--;
-        if (stepMod <= 0) stepMod = 7;
-        HelperMethods.createFootfalls(entity, stack, world, stepMod, ParticleTypes.WHITE_ASH,
+        HelperMethods.createFootfalls(entity, stack, world, ParticleTypes.WHITE_ASH,
                 ParticleTypes.WHITE_ASH, ParticleTypes.WHITE_ASH, true);
         super.inventoryTick(stack, world, entity, slot, selected);
     }
 
     @Override
     public void appendTooltip(ItemStack itemStack, TooltipContext tooltipContext, List<Text> tooltip, TooltipType type) {
-        Style RIGHTCLICK = HelperMethods.getStyle("rightclick");
-        Style ABILITY = HelperMethods.getStyle("ability");
-        Style TEXT = HelperMethods.getStyle("text");
-
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip1").setStyle(ABILITY));
-        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip6").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip7").setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip1").setStyle(Styles.ABILITY));
+        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip6").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip7").setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip8").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip9", Config.getFloat("waxweaveCooldown", "UniqueEffects", ConfigDefaultValues.waxweaveCooldown) / 20).setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip8").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.waxweaversworditem.tooltip9", Config.uniqueEffects.waxweave.cooldown / 20).setStyle(Styles.TEXT));
         tooltip.add(Text.literal(""));
-        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(RIGHTCLICK));
-        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip2").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip3").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip4").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip5").setStyle(TEXT));
-        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip6", Config.getFloat("flickerFuryDuration", "UniqueEffects", ConfigDefaultValues.flickerFuryDuration) / 20).setStyle(TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.onrightclick").setStyle(Styles.RIGHT_CLICK));
+        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip2").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip3").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip4").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip5").setStyle(Styles.TEXT));
+        tooltip.add(Text.translatable("item.simplyswords.wickpiercersworditem.tooltip6", Config.uniqueEffects.flickerFury.duration / 20).setStyle(Styles.TEXT));
 
         super.appendTooltip(itemStack, tooltipContext, tooltip, type);
+    }
+
+    public static class EffectSettings extends TooltipSettings {
+
+        public EffectSettings() {
+            super(new ItemStackTooltipAppender(ItemsRegistry.WICKPIERCER::get));
+        }
+
+        @ValidatedInt.Restrict(min = 0)
+        public int cooldown = 220;
+        @ValidatedFloat.Restrict(min = 0f)
+        public float damage = 1.0f;
+        @ValidatedInt.Restrict(min = 0)
+        public int duration = 40;
+
     }
 }

@@ -8,7 +8,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.util.HelperMethods;
@@ -32,7 +31,7 @@ public class FrostVortexEffect extends OrbitingEffect {
         if (!livingEntity.getWorld().isClient()) {
             ServerWorld serverWorld = (ServerWorld) livingEntity.getWorld();
             float abilityDamage = 0;
-            if (livingEntity.getStatusEffect(EffectRegistry.FROST_VORTEX) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+            if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FROST_VORTEX)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
             }
@@ -42,9 +41,8 @@ public class FrostVortexEffect extends OrbitingEffect {
                 livingEntity.timeUntilRegen = 0;
                 if (sourceEntity != null) {
                     damageSource = livingEntity.getDamageSources().indirectMagic(livingEntity, sourceEntity);
-                    float spellScalingModifier = Config.getFloat("vortexSpellScaling", "UniqueEffects", ConfigDefaultValues.vortexSpellScaling);
-                    if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "frost") > 1)
-                        abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "frost");
+                    float spellScalingModifier = Config.uniqueEffects.vortex.spellScaling;
+                    abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "frost");
                     if (livingEntity instanceof PlayerEntity && sourceEntity instanceof PlayerEntity sourcePlayer)
                         damageSource = livingEntity.getDamageSources().playerAttack(sourcePlayer);
                 }

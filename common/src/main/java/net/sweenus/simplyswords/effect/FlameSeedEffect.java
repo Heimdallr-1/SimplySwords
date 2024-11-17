@@ -14,7 +14,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
 import net.sweenus.simplyswords.config.Config;
-import net.sweenus.simplyswords.config.ConfigDefaultValues;
 import net.sweenus.simplyswords.effect.instance.SimplySwordsStatusEffectInstance;
 import net.sweenus.simplyswords.registry.EffectRegistry;
 import net.sweenus.simplyswords.registry.SoundRegistry;
@@ -39,12 +38,12 @@ public class FlameSeedEffect extends OrbitingEffect {
         int duration = 0;
         if (!livingEntity.getWorld().isClient()) {
             ServerWorld serverWorld = (ServerWorld) livingEntity.getWorld();
-            float abilityDamage = Config.getFloat("emberstormDamage", "UniqueEffects", ConfigDefaultValues.emberstormDamage);
+            float abilityDamage = Config.uniqueEffects.emberstorm.damage;
             float volume = 0.3f;
             float pitch = 1.3f;
             int frequency = 20;
             SoundEvent soundEvent = SoundEvents.ENTITY_GENERIC_BURN;
-            if (livingEntity.getStatusEffect(EffectRegistry.FLAMESEED) instanceof SimplySwordsStatusEffectInstance statusEffect) {
+            if (livingEntity.getStatusEffect(EffectRegistry.getReference(EffectRegistry.FLAMESEED)) instanceof SimplySwordsStatusEffectInstance statusEffect) {
                 sourceEntity = statusEffect.getSourceEntity();
                 additionalData = statusEffect.getAdditionalData();
                 duration = statusEffect.getDuration();
@@ -60,12 +59,12 @@ public class FlameSeedEffect extends OrbitingEffect {
                     HelperMethods.spawnOrbitParticles(serverWorld, livingEntity.getPos(), ParticleTypes.POOF, 1, 10);
                     HelperMethods.spawnOrbitParticles(serverWorld, livingEntity.getPos(), ParticleTypes.EXPLOSION, 0.5, 2);
                     HelperMethods.spawnOrbitParticles(serverWorld, livingEntity.getPos(), ParticleTypes.WARPED_SPORE, 1, 10);
-                    abilityDamage = Config.getFloat("emberstormDetonationDamage", "UniqueEffects", ConfigDefaultValues.emberstormDetonationDamage);
+                    abilityDamage = Config.uniqueEffects.emberstorm.detonationDamage;
                     volume = 0.6f;
                     pitch = 1.0f;
                     soundEvent = SoundRegistry.SPELL_FIRE.get();
                     if (livingEntity.distanceTo(sourceEntity) < 30) {
-                        int maxHaste = (int) Config.getFloat("emberstormMaxHaste", "UniqueEffects", ConfigDefaultValues.emberstormMaxHaste);
+                        int maxHaste = Config.uniqueEffects.emberstorm.maxHaste;
                         HelperMethods.incrementStatusEffect(sourceEntity, StatusEffects.HASTE, 120, 1, maxHaste);
                         //HelperMethods.spawnWaistHeightParticles(serverWorld, ParticleTypes.EFFECT, sourceEntity, livingEntity, 20);
                     }
@@ -74,10 +73,10 @@ public class FlameSeedEffect extends OrbitingEffect {
                     for (Entity entity : serverWorld.getOtherEntities(livingEntity, box, EntityPredicates.VALID_LIVING_ENTITY)) {
                         if ((entity instanceof LivingEntity le) && HelperMethods.checkFriendlyFire(le, sourceEntity)) {
                             le.damage(damageSource, (abilityDamage));
-                            if (!le.hasStatusEffect(EffectRegistry.FLAMESEED) && additionalData > 0) {
+                            if (!le.hasStatusEffect(EffectRegistry.getReference(EffectRegistry.FLAMESEED)) && additionalData > 0) {
                                 additionalData -= 1;
                                 SimplySwordsStatusEffectInstance flamSeedEffect = new SimplySwordsStatusEffectInstance(
-                                        EffectRegistry.FLAMESEED, 101, 0, false,
+                                        EffectRegistry.getReference(EffectRegistry.FLAMESEED), 101, 0, false,
                                         false, true);
                                 flamSeedEffect.setSourceEntity(sourceEntity);
                                 flamSeedEffect.setAdditionalData(additionalData);
@@ -90,7 +89,7 @@ public class FlameSeedEffect extends OrbitingEffect {
 
                 if (sourceEntity != null) {
                     damageSource = livingEntity.getDamageSources().indirectMagic(livingEntity, sourceEntity);
-                    float spellScalingModifier = Config.getFloat("emberstormSpellScaling", "UniqueEffects", ConfigDefaultValues.emberstormSpellScaling);
+                    float spellScalingModifier = Config.uniqueEffects.emberstorm.spellScaling;
                     if (HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "fire") > abilityDamage)
                         abilityDamage = HelperMethods.commonSpellAttributeScaling(spellScalingModifier, sourceEntity, "fire");
                 }
